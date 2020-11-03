@@ -5,7 +5,7 @@ BIBTEX=bibtex
 BIBFILE=paper
 PAPER=paper
 TEXFILES = $(wildcard *.tex) $(wildcard sections/*.tex) $(wildcard figures/*.tex) $(wildcard figures/*.pdf)
-TEXFILES = $(wildcard *_fr.tex) $(wildcard sections/*_fr.tex) $(wildcard figures/*_fr.tex) $(wildcard figures/*.pdf)
+TEXFILES_FR = $(wildcard *_fr.tex) $(wildcard sections/*_fr.tex) $(wildcard figures/*_fr.tex) $(wildcard figures/*.pdf)
 
 SUBDIRS =
 #figs
@@ -23,7 +23,7 @@ $(PAPER).pdf: $(TEXFILES) $(BIBFILE).bib usenix2019_v3.sty
 
 $(PAPER)_fr.pdf: $(TEXFILES_FR) $(BIBFILE).bib usenix2019_v3.sty
 	$(LATEX) $(PAPER)_fr
-	$(BIBTEX) $(BIBFILE)
+	$(BIBTEX) $(BIBFILE)_fr
 	$(LATEX) $(PAPER)_fr
 	$(LATEX) $(PAPER)_fr
 
