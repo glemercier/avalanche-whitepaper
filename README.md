@@ -33,7 +33,7 @@ The project comes with the following make targets:
 For instance, to generate the French version of the paper, type:
 
 ```
-make
+make paper_fr.pdf
 ```
 
 ## Submissions
