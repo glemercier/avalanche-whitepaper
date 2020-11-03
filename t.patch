@@ -1,0 +1,692 @@
+diff --git a/paper/paper.tex b/paper/paper.tex
+index 5b9d94c..2cc76ec 100644
+--- a/paper/paper.tex
++++ b/paper/paper.tex
+@@ -1,12 +1,17 @@
+-%\documentclass[letterpaper,twocolumn,10pt]{article}
+-\documentclass[conference]{IEEEtran}
+-\newcommand{\subparagraph}{}
++\documentclass[letterpaper,twocolumn,10pt]{article}
++\usepackage{usenix2019_v3}
++%\documentclass[conference]{IEEEtran}
++%\newcommand{\subparagraph}{}
+ %\usepackage[letterpaper, total={6.5in, 9in}, columnsep=0.25in]{geometry}
+ %\usepackage[letterpaper, total={7in, 9in}, columnsep=0.33in]{geometry}
+-\usepackage[letterpaper, total={7.15in, 9.5in}, columnsep=0.15in]{geometry}
+-\newcommand{\tronly}[2]{#1}
+-%\usepackage{newtxtext}
+-%\usepackage{appendix}
++%\usepackage[letterpaper, total={7.15in, 9.5in}, columnsep=0.15in]{geometry}
++\newcommand{\tronly}[2]{#2}
++\usepackage{newtxtext}
++\usepackage{appendix}
++\tronly{}{%
++%\usepackage{microtype}
++\usepackage[subtle]{savetrees}
++}
+ \usepackage{comment}
+ \usepackage{mathtools}
+ \usepackage{fancyvrb}
+@@ -16,11 +21,14 @@
+ \setlength{\parskip}{0pt}
+ \setlength{\abovedisplayskip}{3pt}
+ \setlength{\belowdisplayskip}{3pt}
+-\setlength{\textfloatsep}{2pt plus 1.0pt minus 2.0pt}
+-\setlength{\floatsep}{2pt plus 1.0pt minus 2.0pt}
++\setlength{\textfloatsep}{2pt plus 1.0pt minus 1.0pt}
++\setlength{\floatsep}{2pt plus 1.0pt minus 1.0pt}
++%\setlength{\textfloatsep}{1pt plus 0.0pt minus 1.0pt}
++%\setlength{\floatsep}{1pt plus 0.0pt minus 1.0pt}
++
+ \usepackage{cite}
+ \usepackage{paralist}
+-\usepackage[hyphens]{url}
++%\usepackage[hyphens]{url}
+ \usepackage[compact]{titlesec}
+ \usepackage{enumitem}
+ \setdefaultleftmargin{0em}{}{}{}{}{}
+@@ -90,34 +98,32 @@
+ 
+ \settimeformat{hhmmsstime}
+ \mmddyyyydate
+-\title{Scalable and Probabilistic Leaderless BFT Consensus through Metastability}
+-%\author{%
+-%    Team Rocket\IEEEauthorrefmark{1}\\
+-%    t-rocket@protonmail.com\\
+-%    Revision: \today{} \currenttime{} UTC
+-%}
++\title{%\vspace{-0.30in}
++\Large\bf Scalable and Probabilistic Leaderless BFT Consensus through Metastability}
+ \author{%
+-Team~Rocket,
+-Maofan~Yin,
+-Kevin~Sekniqi,
+-Robbert~van~Renesse, and
+-Emin~G\"un~Sirer\\
+-Cornell University\IEEEauthorrefmark{1}
++Anonymous Submission 134
++%Team~Rocket,
++%Maofan~Yin,
++%Kevin~Sekniqi,
++%Robbert~van~Renesse, and
++%Emin~G\"un~Sirer\\
++%Cornell University\IEEEauthorrefmark{1}
+ }
+ \date{}
+ 
+-\usepackage[hang]{footmisc}
+-\setlength\footnotemargin{0em}
++%\usepackage[hang]{footmisc}
++%\setlength\footnotemargin{0em}
+ \begin{document}
+ \maketitle
+ \VerbatimFootnotes
+-\blfootnote{%
+-\IEEEauthorrefmark{1}\emph{Blasts off at the speed of light!} --- Team Rocket\\
+-An earlier version of this paper published on May 16th 2018, IPFS, was titled \emph{Snowflake to Avalanche: A Novel Metastable Consensus Protocol Family for Cryptocurrencies}.
+-%Proof of Team Rocket: \verb|SHA256("avalanche ted yin kevin sekniqi robbert van |\\
+-%\verb|renesse emin gun sirer\n") = 0x 8a5d 2d32 e68b c500 36e4 |\\
+-%\verb|d086 0446 17fe 4a0a 0296 b274 999b a568 ea92 da46 d533|
+-}
++%\blfootnote{%
++%\IEEEauthorrefmark{1}\emph{Blasts off at the speed of light!} --- Team Rocket\\
++%An earlier version of this paper published on May 16th 2018, IPFS, was titled \emph{Snowflake to Avalanche: A Novel Metastable Consensus Protocol Family for Cryptocurrencies}.
++%
++%%Proof of Team Rocket: \verb|SHA256("avalanche ted yin kevin sekniqi robbert van |\\
++%%\verb|renesse emin gun sirer\n") = 0x 8a5d 2d32 e68b c500 36e4 |\\
++%%\verb|d086 0446 17fe 4a0a 0296 b274 999b a568 ea92 da46 d533|
++%}
+ 
+ \begin{abstract}
+ This paper introduces a family of leaderless Byzantine fault tolerance protocols, built around a metastable mechanism via network subsampling.
+@@ -138,21 +144,21 @@ The paper describes the Snow protocol family, analyzes its guarantees, and descr
+ Experiments demonstrate that the system can achieve high throughput (3400 tps), provide low confirmation latency (1.35 sec), and scale well compared to existing systems that deliver similar functionality. For our implementation and setup, the bottleneck of the system is in transaction verification.
+ \end{abstract}
+ 
+-\section{Introduction}%\tronly{}{\vspace{-0.5em}}
++\section{Introduction}\tronly{}{}%\vspace{-0.5em}}
+ 
+-\tronly{Achieving agreement among a set of distributed hosts lies at the core of countless applications, ranging from Internet-scale services that serve billions of people~\cite{Burrows06,HuntKJR10} to cryptocurrencies worth billions of dollars~\cite{marketcapcryptocurrency}.}{}
++Achieving agreement among a set of distributed hosts lies at the core of countless applications, ranging from Internet-scale services that serve billions of people~\cite{Burrows06,HuntKJR10} to cryptocurrencies worth billions of dollars~\cite{marketcapcryptocurrency}.
+ To date, there have been two main families of solutions to this problem.
+ Traditional consensus protocols %, exemplified by PBFT~\cite{castro1999practical},
+ rely on all-to-all communication to ensure that all correct nodes reach the same decisions with absolute certainty.
+-Because they require quadratic communication overhead and accurate knowledge of membership, they have been difficult to scale
+-\tronly{to large numbers of participants.}{.}
++Because they usually require quadratic communication overhead and accurate knowledge of membership, they have been difficult to scale
++to large numbers of participants.
+ On the other hand, Nakamoto consensus protocols~\cite{nakamoto2008bitcoin,GarayKL15, PassSS17, SompolinskyZ15, SompolinskyLZ16, SompolinskyZ18, BentovHMN17, EyalGSR16,Kokoris-KogiasJ16,PassS16a, PassS18} have become popular with the rise of Bitcoin.
+ These protocols provide a probabilistic safety guarantee: Nakamoto consensus decisions may revert with some probability $\varepsilon$.
+-A protocol parameter allows this probability to be rendered arbitrarily small\tronly{, enabling high-value financial systems to be constructed on this foundation.}{.}
++A protocol parameter allows this probability to be rendered arbitrarily small, enabling high-value financial systems to be constructed on this foundation.
+ This family is a natural fit for open, permissionless settings where any node can join the system at any time.
+ Yet, these protocols are costly, wasteful, and limited in performance.
+ By construction, they cannot quiesce: their security relies on constant participation by miners, even when there are no decisions to be made.
+-\tronly{Bitcoin currently consumes around 63.49 TWh/year~\cite{bitcoinpower}, about twice as all of Denmark~\cite{denmarkpower}.}{}
++Bitcoin currently consumes around 63.49 TWh/year~\cite{bitcoinpower}, about twice as all of Denmark~\cite{denmarkpower}.
+ Moreover, these protocols suffer from an inherent scalability bottleneck that is difficult to overcome through simple reparameterization~\cite{CromanDEGJKMSSS16}. % \Jon{I wanted the paper to expand on this point, but I missed it.}
+ 
+ This paper introduces a new family of consensus protocols called Snow.
+@@ -176,7 +182,7 @@ It also exposes new tradeoffs between safety and liveness: the Snow family is mo
+ nodes by trading off liveness.
+ 
+ To demonstrate the potential of this protocol family, we illustrate a practical
+-peer-to-peer payment system, Avalanche. In effect, Avalanche executes multiple Snowball instances with the aid of a Directed Acyclic Graph (DAG). The DAG serves to piggyback multiple instances, reducing the cost from $\Oh{\log{n}}$ to $\Oh{1}$ per node and streamlining the path where there are no conflicting transactions.
++peer-to-peer payment system, Avalanche. In effect, Avalanche executes multiple Snowball (one from the Snow family) instances with the aid of a Directed Acyclic Graph (DAG). The DAG serves to piggyback multiple instances, reducing the cost from $\Oh{\log{n}}$ to $\Oh{1}$ per node and streamlining the path where there are no conflicting transactions.
+ %This combination of the best features of traditional and Nakamoto consensus involves one significant tradeoff: liveness for \editchange{equivocating proposals}. %conflicting transactions.
+ %
+ %\editchange{Specifically, the consensus protocol from the Snowball family does not guarantee liveness in all cases. It does, however, guarantee logarithmic expected rounds for termination given a propoer initialization heuristic (Section~\ref{sec:liveness}). It also guarantees fast termination when the proposed value is unanimous. As the core part of Avalanche, it guarantees liveness only for \emph{virtuous} transactions, i.e.\ those issued by correct clients and thus guaranteed not to conflict with other transactions.}
+@@ -193,14 +199,14 @@ Section~\ref{sec:implementation} describes Avalanche, a Bitcoin-like payment sys
+ Section~\ref{sec:evaluation} evaluates Avalanche,
+ Section~\ref{sec:related-work} presents related work, and finally, Section~\ref{sec:conclusions} summarizes our contributions.
+ 
+-\section{Model and Goals}%\tronly{}{\vspace{-0.5em}}
++\section{Model and Goals}\tronly{}{}%\vspace{-0.25em}}
+ \label{sec:model_and_goals}
+ % \editchange{Because our Snowball family provides strong safety guarantee and liveness guarantee},
+ % it is possible to build other applications involving large-scale probabilistic consensus. We focus on a cryptocurrency application because of many challenges it poses.
+ %Nevertheless, Snowball does provide liveness guarantee for conflicting values, so it is possible to extend this single-decree protocol for other possible applications involving large-scale probabilistic consensus.
+ %\Jon{Are there other applications where this consensus model would be valuable? It's not a BFT RSM, but it would be very intriguing if there were other additional applications.}
+ 
+-\paragraph{Key Guarantees}%\tronly{}{\vspace{-0.5em}}
++\tronly{\paragraph{Key Guarantees}}{}
+ 
+ % XXXKEVIN NOT CLEAR THIS PARAGRAPH BELOW BELONGS IN THIS SECTION
+ % \editinsert{In Avalanche}, we adopt what is commonly known as
+@@ -223,33 +229,38 @@ Section~\ref{sec:related-work} presents related work, and finally, Section~\ref{
+ % Each client can be considered a replicated state machine whose
+ % transitions are defined by a totally ordered list of accepted transactions.
+ 
+-\emph{Safety}: Unlike classical consensus protocols, and similar to longest-chain-based consensus protocols such as Nakamoto consensus~\cite{nakamoto2008bitcoin}, we adopt an $\varepsilon$-safety guarantee that is probabilistic. 
++\paragraph{Safety} Unlike classical consensus protocols, and similar to longest-chain-based consensus protocols such as Nakamoto consensus~\cite{nakamoto2008bitcoin}, we adopt an $\varepsilon$-safety guarantee that is probabilistic. 
+ In practice, this probabilistic guarantee is as strong as traditional safety guarantees, since appropriately small choices of $\varepsilon$ can render consensus failure negligible, lower than the probability of hardware failure due to random events.
++Figure~\ref{fig:fandepsilon} shows how the portion ($f/n$) of misbehaving participants (or computation power) affects the probability of system safety failure (decision of two conflicting proposals), given a choice of finality.
+ % The maximum tolerated Byzantine presence $f$, is dependent on the choice of $\varepsilon$. Similar to Nakamoto consensus, given an observed Byzantine presence $f'$, where $f' \leq f$, the safety failure probability of our protocols maintains the property that $\varepsilon' \leq \varepsilon$. On the other hand, for classical consensus protocols, the failure probability is simply zero for all $f' \leq f$, and almost sure (i.e. one) for $f' > f$.
+ 
+ \begin{figure}[h]
+     \includegraphics[width=\linewidth]{figures/safety-f-eps.pdf}
+-    \caption{The relation between $f/n$ and the probability of system safety failure (decision of two conflicting proposals), given a choice of finality. Classical BFT protocols that tolerate $f$ failures will encounter total safety failure when the threshold is exceeded even by one additional node. The Bitcoin curve shows a typical finality choice for Bitcoin where a block is considered final when it is ``buried'' in a branch having 6 additional blocks compared to any other competing forks. Snowflake belongs to the Snow family, and it is configured with $k=10$, $\beta=150$. Snowflake-7,8 uses $\alpha=7$ and $\alpha=8$ respectively.}
++    \caption{Classical BFT protocols that tolerate $f$ failures will encounter total safety failure when the threshold is exceeded even by one additional node. The Bitcoin curve shows a typical finality choice for Bitcoin where a block is considered final when it is ``buried'' in a branch having 6 additional blocks compared to any other competing forks. Snowflake belongs to the Snow family, and it is configured with $k=10$, $\beta=150$. Snowflake-7,8 uses $\alpha=7$ and $\alpha=8$ respectively (see Section~\ref{sec:protocol} for the definition of $k$, $\alpha$ and $\beta$.}
+     \label{fig:fandepsilon}
+ \end{figure}
+ 
++\tronly{%
+ \begin{figure}[h]
+     \includegraphics[width=\linewidth]{figures/safety-f-eps-log.pdf}
+     \caption{Figure~\ref{fig:fandepsilon} with log-scaled y-axis.}
+     \label{fig:fandepsilonlog}
+ \end{figure}
++}{}
+ 
+-\emph{Liveness}: All our protocols provide a non-zero probability guarantee of termination within a bounded amount of time. 
++\paragraph{Liveness} All our protocols provide a non-zero probability guarantee of termination within a bounded amount of time. 
+ This bounded guarantee is similar to various protocols such as Ben-Or~\cite{ben1983another} and longest-chain protocols.
+ In particular, for Nakamoto consensus, the number of required blocks for a transaction increases exponentially with the number of adversarial nodes, with an asymptote at $f = n/2$ wherein the number is infinite.
+-In other words, the time required for finality approaches $\infty$ as $f$ approaches $n/2$ (Figure~\ref{fig:livenessproperties}).
++In other words, the time required for finality approaches $\infty$ as $f$ approaches $n/2$\tronly{ (Figure~\ref{fig:livenessproperties}).}{.}
+ Furthermore, the required number of rounds is calculable ahead of time, as to allow the system designer to tune liveness at the expense of safety. Lastly, unlike traditional consensus protocols and similar to Nakamoto, our protocols benefit from lower adversarial presence, as discussed in property P3 below.
+ 
++\tronly{%
+ \begin{figure}[h!]
+     \includegraphics[width=\linewidth]{figures/liveness-f-time.pdf}
+     \caption{The relation between $f/n$ and the convergence speed, given $\varepsilon = 10^{-20}$. The left figure shows the expected number of blocks to guarantee $\varepsilon$ in Bitcoin, which, counter to commonly accepted folk wisdom, is not a constant $6$, but depends on adversary size to withhold the same $\varepsilon$. The right figure shows the maximum number of rounds required by Snowflake, where being different from Bitcoin, the asymptote is below $0.5$ and varies by the choice of parameters.}
+     \label{fig:livenessproperties}
+ \end{figure}
++}
+ 
+ \emph{Formal Guarantees}: Let the system be parameterized for an $\varepsilon$ safety failure probability under a maximum expected $f$ number of adversarial nodes. Let $\Oh{\log n} < t_{max} < \infty$ be the upper bound of the execution of the protocols. The Snow protocols then provide the following guarantees:
+ \begin{compactitem}
+@@ -259,18 +270,18 @@ Furthermore, the required number of rounds is calculable ahead of time, as to al
+     \item \textbf{P1. Safety.} When decisions are made by any two correct nodes, they decide on conflicting transactions with negligible probability ($\leq \varepsilon$).
+     % \item \textbf{P2. Liveness.} Transactions will be accepted by every correct node in $\Oh{\log n}$ rounds if either the observed Byzantine presence $f'$, where $f' < f$, is sufficiently small, or the network is initialized in a univalent state.
+     \item \textbf{P2. Liveness (Upper Bound).} Snow protocols terminate with a strictly positive probability within $t_{max}$ rounds.  
+-    \item \textbf{P3. Liveness (Lower Bound).} If $f \leq \Oh{\sqrt{n}}$, then the Snow protocols terminate with high probability ($\geq 1 - \varepsilon$) in $\Oh{\log{n}}$ rounds. 
++    \item \textbf{P3. Liveness (Strong Form).} If $f \leq \Oh{\sqrt{n}}$, then the Snow protocols terminate with high probability ($\geq 1 - \varepsilon$) in $\Oh{\log{n}}$ rounds. 
+ \end{compactitem}
+ % Instead of unconditional agreement, our approach guarantees that safety will be upheld with probability $1-\varepsilon$, where the choice of the security parameter $\varepsilon$ is under the control of the system designer and applications.
+ 
+ \paragraph{Network} 
+-In the standard definition of asynchrony~\cite{ben1983another}, message transmission is finite, but the distribution is undefined. This implies that the scheduling of message transmission itself could behave arbitrarily, and potentially even maliciously. 
++In the standard definition of asynchrony~\cite{ben1983another}, message transmission time is finite, but the distribution is unspecified (and thus the delivery time can be unbounded for some messages). This implies that the scheduling of message transmission itself could behave arbitrarily, and potentially even maliciously (with full asynchrony).
+ We use a modified version of this model, which is well-accepted~\cite{banerjee2014epidemic, ganesh2005effect, draief2006thresholds, keeling2011modeling, liggett1997stochastic} in the analysis of epidemic networks and gossip-based stochastic systems. In particular, we fix the distribution of message delay to that of the exponential distribution.
+ We note that, just like in the standard asynchronous model, there is a strictly non-zero probability that any correct node may execute its next local round only after an arbitrarily large amount of time has passed.
+ Furthermore, we also note that scheduling only applies to correct nodes, and the adversary may execute arbitrarily, as discussed later. 
+ 
+ \paragraph{Achieving Liveness}
+-Classical consensus that works with asynchrony does not get stuck in a single phase of voting because the vote initiator always polls votes from all known participants and wait for $n - f$ responses.
++Classical consensus that works with asynchrony does not get stuck in a single phase of voting because the vote initiator always polls votes from all known participants and waits for $n - f$ responses.
+ %The consequence of these two assumptions is therefore that progress cannot be indefinitely delayed by the adversary since the correct nodes (whose number is sufficient for voting) will eventually deliver the required messages.
+ In our system, however, nodes operate via subsampling, hence it is possible for a single sample to select a majority of adversarial nodes, and therefore the node gets stuck waiting for the responses. To ensure liveness, a node should be able to wait with some timeout. Therefore, our protocols are synchronous in order to guarantee liveness. Lastly, it is worth noting that Nakamoto consensus is synchronous, in which the required difficulty of proof-of-work is dependent on the maximum network delay~\cite{PassSS17}. %Also, other protocols that rely on gossip [Citation here] are also essentially synchronous due to the synchronous nature of gossip protocols. \editinsert{RvR pointed this out, we need to carefully word it though.
+ 
+@@ -284,16 +295,15 @@ In short, the adversary is computationally bounded (it cannot forge digital sign
+ \paragraph{Sybil Attacks}
+ Consensus protocols provide their guarantees based on assumptions that only a fraction of participants are adversarial.
+ These bounds could be violated if the network is naively left open to arbitrary participants.
+-In particular, a Sybil attack~\cite{douceur2002sybil}, wherein a large number of identities are generated by an adversary, could be used to exceed the adversarial bound.
++In particular, a Sybil attack~\cite{douceur2002sybil}, wherein a large number of identities are generated by an adversary, could be used to exceed the bounds.
+ 
+ A long line of work, including PBFT~\cite{castro1999practical}, treats the Sybil problem separately from consensus, and rightfully so, as Sybil control mechanisms are distinct from the underlying, more complex agreement protocol\footnote{This is not to imply that every consensus protocol can be coupled/decoupled with every Sybil control mechanism.}.
+-Nakamoto consensus, for instance, uses proof-of-work~\cite{aspnes2005exposing} to limit Sybils, which requires miners to continuously stake a hardware investment.
+-Other protocols, discussed in Section~\ref{sec:related-work}, rely on proof-of-stake or proof-of-authority.
++In fact, to our knowledge, only Nakamoto-style consensus has ``baked-in'' Sybil prevention as part of its consensus, made possible by chained proof-of-work~\cite{aspnes2005exposing}, which requires miners to continuously stake a hardware investment.
++Other protocols, discussed in Section~\ref{sec:related-work}, rely on proof-of-stake (by economic argument) or proof-of-authority (by administrative argument that makes the system ``permissioned'').
+ The consensus protocols presented in this paper can adopt any
+-% established
+ Sybil control mechanism, although proof-of-stake is most aligned with their quiescent operation.
+ One can use an already established proof-of-stake based mechanism~\cite{GiladHMVZ17}.
+-The full design of a peer-to-peer payment system incorporating staking, unstaking and minting mechanism is beyond the scope of this paper, whose focus is on the core consensus protocol.
++The full deployment of an autonomous P2P payment system incorporating staking mechanism is beyond the scope of this paper, whose focus is on a novel design paradigm of the core consensus algorithm.
+ 
+ % Sybil control mechanisms are orthogonal and separate from the consensus protocols. All such protocols, excluding Nakamoto-style consensus protocols, require a mechanism for network identity establishment. In a real implementation of Avalanche, the Sybil problem would be solved through a staking mechanism. 
+ 
+@@ -321,7 +331,7 @@ We start with a non-BFT protocol called Slush and progressively build up to Snow
+ These protocols are single-decree consensus protocols of increasing robustness.
+ We provide full specifications for the protocols in this section, and defer the analysis to the next section, and present formal proofs in the appendix.
+ 
+-\subsection{Slush: Introducing Metastability}%\tronly{}{\vspace{-0.5em}}
++\subsection{Slush: Introducing Metastability}\tronly{}{}%\vspace{-0.5em}}
+ The core of our approach is a single-decree consensus protocol,
+ inspired by epidemic or gossip protocols.
+ % In this approach, a state in which all possible outcomes are equally
+@@ -386,16 +396,11 @@ Finally, the node decides the color it ended up with at time $m$.
+ Slush has a few properties of interest. 
+ First, it is almost \emph{memoryless}: a node retains no state between rounds other than its current color, and in particular maintains no history of interactions with other peers.
+ Second, unlike traditional consensus protocols that query every participant, every round involves sampling just a small, constant-sized slice of the network at random.
+-\tronly{Third, Slush makes progress under any network configuration (even fully bivalent state, i.e. 50/50 split between colors), since random perturbations in sampling will cause one color to gain a slight edge and repeated samplings afterwards will build upon and amplify that imbalance.}{}
++Third, Slush makes progress under any network configuration (even fully bivalent state, i.e. 50/50 split between colors), since random perturbations in sampling will cause one color to gain a slight edge and repeated samplings afterwards will build upon and amplify that imbalance.
+ Finally, if $m$ is chosen high enough, Slush ensures that all nodes will be colored identically with high probability (whp).
+ Each node has a constant, predictable communication overhead per round, and $m$ grows logarithmically with $n$.
+ 
+ \tronly{
+-%If Slush is deployed in a network with Byzantine nodes, the adversary can interfere with decisions.
+-%In particular, if the correct nodes develop a preference for one color, the adversary can attempt to flip nodes to the opposite so as to keep the network in balance.
+-%The Slush protocol lends itself to analysis but does not, by itself, provide a strong safety guarantee in the presence of Byzantine nodes, because the nodes lack state.
+-%We address this in our first BFT protocol.
+-% Ittay:
+ The Slush protocol does not provide a strong safety guarantee in the presence of Byzantine nodes.
+ In particular, if the correct nodes develop a preference for one color, a Byzantine adversary can attempt to flip nodes
+ to the opposite so as to keep the network in balance, preventing a decision.
+@@ -404,11 +409,11 @@ We address this in our first BFT protocol that introduces more state storage at
+ We next examine how to extend Slush to tolerate Byzantine behavior.
+ }
+ 
+-\subsection{Snowflake: BFT}%\tronly{}{\vspace{-0.5em}}
++\subsection{Snowflake: BFT}\tronly{}{}%\vspace{-0.5em}}
+ 
+ Snowflake augments Slush with a single counter that captures the strength of a node's conviction in its current color.
+ This per-node counter stores how many consecutive samples of the network by that node have all yielded the same color.
+-A node accepts the current color when its counter exceeds $\beta$, another security parameter.
++A node accepts the current color when its counter reaches $\beta$, another security parameter.
+ Figure~\ref{fig:snowflake-loop} shows the amended protocol, which includes
+ the following modifications:
+ 
+@@ -438,9 +443,9 @@ the following modifications:
+                 \State $\codemaj \assign \codetrue$
+                 \If{$\codecolor' \neq \codecolor$}
+                     \State $\codecolor \assign \codecolor'$, $\codecount \assign 1$
+-                \Else
+-                    \IIf {$\texttt{++}\codecount > \beta$} \Call{accept}{$\codecolor$}
++                \Else\hspace{1ex}$\codecount\texttt{++}$
+                 \EndIf
++                \IIf {$\codecount \ge \beta$} \Call{accept}{$\codecolor'$}
+             \EndIf
+             \EndFor
+             \IIf{$\codemaj = \codefalse$} $\codecount \assign 0$
+@@ -450,14 +455,7 @@ the following modifications:
+ \end{algorithmic}
+ \end{figure}
+ 
+-When the protocol is correctly parameterized for a given threshold of Byzantine nodes and a desired $\varepsilon$-guarantee, it can ensure both safety (P1) and liveness (P2, P3).
+-As we later show, there exists an irreversible state after which a decision is inevitable. Correct nodes begin to commit past the irreversible state to adopt the same color, whp. For additional intuition, which we do not expand in this paper, there also exists a phase-shift point, where the Byzantine nodes lose ability to keep network in a bivalent state.
+-%there exists a phase-shift point after which correct nodes are more likely to tend towards a decision than a bivalent state.
+-%Further, there exists a point-of-no-return after which a decision is inevitable.
+-%The Byzantine nodes lose control past the phase shift, and the correct nodes begin to commit past the point-of-no-return, to adopt the same color, whp.
+-
+-\tronly{
+-\begin{figure}
++\begin{figure}[t]
+     \small
+ \begin{algorithmic}[1]
+     \Procedure{snowballLoop}{$u, \codecolor_0 \in \{\texttt{R}, \texttt{B}, \bot\}$}
+@@ -477,9 +475,9 @@ As we later show, there exists an irreversible state after which a decision is i
+                 \EndIf
+                 \If{$\codecolor' \neq \codelastcol$}
+                     \State$\codelastcol \assign \codecolor'$, $\codecount \assign 1$
+-                \Else
+-                    \IIf {$\texttt{++}\codecount > \beta$} \Call{accept}{$\codecolor$}
++                \Else\hspace{1ex}$\codecount\texttt{++}$
+                 \EndIf
++                \IIf {$\codecount \ge \beta$} \Call{accept}{$\codecolor'$}
+             \EndIf
+             \EndFor
+             \IIf{$\codemaj = \codefalse$} $\codecount \assign 0$
+@@ -488,9 +486,16 @@ As we later show, there exists an irreversible state after which a decision is i
+     \captionof{figure}{Snowball.}\label{fig:snowball-loop}
+ \end{algorithmic}
+ \end{figure}
+-}{}
+ 
+-\subsection{Snowball: Adding Confidence}%\tronly{}{\vspace{-0.5em}}
++
++When the protocol is correctly parameterized for a given threshold of Byzantine nodes and a desired $\varepsilon$-guarantee, it can ensure both safety (P1) and liveness (P2, P3).
++As we later show, there exists an irreversible state after which a decision is inevitable. Correct nodes begin to commit past the irreversible state to adopt the same color, whp. For additional intuition, which we do not expand in this paper, there also exists a phase-shift point, where the Byzantine nodes lose ability to keep network in a bivalent state.
++%there exists a phase-shift point after which correct nodes are more likely to tend towards a decision than a bivalent state.
++%Further, there exists a point-of-no-return after which a decision is inevitable.
++%The Byzantine nodes lose control past the phase shift, and the correct nodes begin to commit past the point-of-no-return, to adopt the same color, whp.
++
++
++\subsection{Snowball: Adding Confidence}\tronly{}{}%\vspace{-0.5em}}
+ 
+ Snowflake's notion of state is ephemeral: the counter gets reset with every color flip.
+ % While, theoretically, the protocol is able to make strong guarantees with
+@@ -540,10 +545,14 @@ More specifically, the core extractable insight of our analysis is in identifyin
+ \subsection{Safety}
+ 
+ \paragraph{Slush} 
+-Unless explicitly stated, we assume that $\mathcal{L}(u) = \mathcal{N}$ for all $u \in \mathcal{N}$. 
+-We model the dynamics of the system through a continuous-time process where two states are absorbing, namely the all-red or all-blue state\footnote{Note that, in reality, we do not require that all nodes be the same color in order to ensure that we decide on that color, only $n-\alpha-1$. This is only a simplification in our description.}. Let $\{X_{t \geq 0}\}$ be the random variable that describes the state of the system at time $t$, where $X_0 = \{0, \dots, c\}$.
++We assume that
++%$\mathcal{L}(u) = \mathcal{N}$ for all $u \in \mathcal{N}$.
++all nodes share the same $\mathcal{N}$, and in
++Appendix~\ref{sec:full-analysis-churn}, we sketch how to relax the requirement of the membership knowledge.
++We model the dynamics of the system through a continuous-time process where two states are absorbing, namely the all-red or all-blue state. Let $\{X_{t \geq 0}\}$ be the random variable that describes the state of the system at time $t$, where $X_0 \in \{0, \dots, c\}$.
+ We begin by immediately discussing the most important result of the safety dynamics of our processes: the \emph{reversibility} probabilities of the \textbf{Slush} process. All the other formal results in this paper are, informally speaking, intuitive derivations and augmentations of this result. 
+ 
++%\vspace{-1ex}
+ \begin{theorem}
+ Let the configuration of the system at time $t$ be $\mathcal{S}_t = n/2 + \delta$, meaning that the network has drifted to $2\delta$ more blue nodes than red nodes ($\delta = 0$ means that red and blue are equal). Let $\xi_\delta$ be the probability of absorption to the all-red state (minority). Then, for all $0 \leq \delta \leq n/2$, we have 
+ \begin{equation}
+@@ -557,6 +566,8 @@ Let the configuration of the system at time $t$ be $\mathcal{S}_t = n/2 + \delta
+ \begin{proof}
+ This bound follows from the Hoeffding-derived tail bounds of the hypergeometric distribution by Chvatal~\cite{chvatal1979tail}. 
+ \end{proof}
++
++%\vspace{-1ex}
+ We note that Chvatal's bounds are introduced for simplicity of exposition and are extremely weak.  
+ We leave the full closed-form expression in Theorem~\ref{theorem:slush_prob_convergence_minority} to the appendix, which is also significantly stronger than the Chvatal bound. 
+ Nonetheless, using the loose Chvatal bound, we make the key observation that as the drift $\delta$ increases, given fixed $\alpha$ and $k$, the probability of moving towards the minority value decreases \emph{exponentially fast} (in fact, even faster, since there is a quadratic term in the inverse exponent). Additionally, the same result holds for increasing $\alpha$ given a fixed $k$. 
+@@ -564,13 +575,13 @@ Nonetheless, using the loose Chvatal bound, we make the key observation that as
+ The outcomes of this theorem demonstrate a key property: once the network loses full bivalency (i.e. $\delta > 0$), it tends to topple and converge rapidly towards the majority color, unable to revert back to the minority with significant probability. This is the fundamental property exploited by our protocols, and what makes them secure despite only sampling a small, constant-sized set of the network. The core result that follows for the safety guarantees in Snowflake is in finding regions (given specific parameter choices) where the reversibility holds with no higher than $\varepsilon$ probability even under adversarial presence. 
+ 
+ \paragraph{Snowflake} 
+-For Snowflake, we relax the assumption that all nodes are correct and assume that some fraction of nodes are adversarial. In Slush, once the network gains significant majority support for one proposal (e.g., the color blue), it becomes unlikely for a minority proposal (e.g., the color red) to ever become decided in the future (irreversibility). Furthermore, in Slush nodes simply have to execute the protocol for a deterministic number of rounds, $m$, which is known ahead of protocol execution. When introducing adversarial nodes with arbitrary strategies, however, nodes cannot simply execute the protocol for a deterministic number of rounds, since the adversary may nondeterministically affect the value of $m$. Instead, correct nodes must implement a mechanism to \emph{explicitly} detect that irreversibility has been reached. To that end, in Snowflake, every correct node implements a decision function, $\mathcal{D}(u, \mathcal{S}_t, blue) \rightarrow \{0, 1\}$, which is a random variable that outputs $1$ if node $u$ detects that the network has reached an irreversibility state at time $t$ for blue. The decision mechanism is probabilistic, meaning that it can fail, although it is designed to do so with negligible probability. We now sketch the proof of Snowflake.
++For Snowflake, we assume that some fraction of nodes are adversarial. In Slush, once the network gains significant majority support for one proposal (e.g., the color blue), it becomes unlikely for a minority proposal (e.g., the color red) to ever become decided in the future (irreversibility). Furthermore, in Slush nodes simply have to execute the protocol for a deterministic number of rounds, $m$, which is known ahead of protocol execution. When introducing adversarial nodes with arbitrary strategies, however, nodes cannot simply execute the protocol for a deterministic number of rounds, since the adversary may nondeterministically affect the value of $m$. Instead, correct nodes must implement a mechanism to explicitly detect that irreversibility has been reached. To that end, in Snowflake, every correct node implements a decision function, $\mathcal{D}(u, \mathcal{S}_t, blue) \rightarrow \{0, 1\}$, which is a random variable that outputs $1$ if node $u$ detects that the network has reached an irreversibility state at time $t$ for blue. The decision mechanism is probabilistic, meaning that it can fail, although it is designed to do so with negligible probability. We now sketch the proof of Snowflake.
+ 
+ %\vspace{0.5em}
+-\noindent \emph{Proof Sketch}. We define safety failure to be the event wherein any two correct nodes $u$ and $v$ decide on blue and red, i.e. $\mathcal{D}(u, \mathcal{S}_t, blue) \rightarrow 1$ and $\mathcal{D}(v, \mathcal{S}_{t'}, red) \rightarrow 1$, for any two times $t$ and $t'$. We again model the system as a continuous time random process. The state space is defined the same way as in Slush. However, we note some critical subtleties. First, unlike in Slush, where it is clear that, once nodes are the same color, a decision has been made, this is no longer the case for Snowflake. In fact, even if all correct nodes accept a color, it is entirely possible for a correct node to switch again. Second, we also have to consider the decision mechanism $\mathcal{D}(*)$. To analyze, we obviate the need to keep track of all possible network configurations under all possible adversarial strategies and assume that a node $u$ first decides on blue. Then, conditioned on the state of the network upon $u$ deciding, we calculate the probability that another node $v$ decides red, which is a function of both the probability that the network reverts towards a minority blue state and that $v$ decides at that precise state.
++\noindent \emph{Proof Sketch}. We define safety failure to be the event wherein any two correct nodes $u$ and $v$ decide on blue and red, i.e. $\mathcal{D}(u, \mathcal{S}_t, blue) \rightarrow 1$ and $\mathcal{D}(v, \mathcal{S}_{t'}, red) \rightarrow 1$, for any two times $t$ and $t'$. We again model the system as a continuous time random process. The state space is defined the same way as in Slush. However, we note some critical subtleties. First, even if all correct nodes accept a color, the Byzantine nodes may revert. Second, we also have to consider the decision mechanism $\mathcal{D}(*)$. To analyze, we obviate the need to keep track of all network configurations under all adversarial strategies and assume that a node $u$ first decides on blue. Then, conditioned on the state of the network upon $u$ deciding, we calculate the probability that another node $v$ decides red, which is a function of both the probability that the network reverts towards a minority blue state and that $v$ decides at that state. 
+ We show that under appropriate choices of $k$, $\alpha$, and $\beta$, we can construct highly secure instances of Snowflake (i.e. safety failure with probability $\leq \varepsilon$) when the network reaches some bias of $\delta$, as shown in Figure~\ref{fig:states_feasible_solutions}. A concrete example is provided in Figure~\ref{fig:fandepsilon}.
+ 
+-\vspace{-1ex}
++%\vspace{-1ex}
+ \begin{figure}[h]
+ \begin{center}
+ \input{figures/analysis2}
+@@ -584,21 +595,15 @@ We show that under appropriate choices of $k$, $\alpha$, and $\beta$, we can con
+ % Unsurprisingly, there is an inherent tension between safety and liveness, but suitable parameters can be found that are practical.
+ % Larger values of $k$ obtain higher levels of security for correct nodes, at the expense of slower convergence. 
+ 
++%\vspace{-5ex}
+ \paragraph{Snowball}
+-Snowball is an improvement over Snowflake, where random perturbations in network samples are reduced by introducing a limited form of history, which we refer to as confidence. The fundamental takeaway is that the history enables Snowball to provide stronger security against safety failures than Snowflake.
++Snowball is an improvement in security over Snowflake, where random perturbations in network samples are reduced by introducing a limited form of history, which we refer to as confidence. 
+ % Modeling Snowball with a Markov chain is difficult because of a state space explosion problem. In particular, it is not sufficient to simply keep track of color preferences of each correct node, the analysis must also maintain information about their confidence. 
+ 
+ %\vspace{0.5em}
+-\noindent \emph{Proof Sketch}. We structure the model via a game of balls and urns, where each urn represents one of the correct nodes, and the ball counts correspond to confidences in either color. 
+-Using this model, the analysis applies martingale concentration inequalities to prove that once the system has reached the irreversibility state, then the growth of the confidence of the majority decided color will perpetually grow and drift further away from those of the minority color, effectively rendering reversibility less likely over time. If the drifts ever revert, then reversibility analysis becomes identical to that of Snowflake. Since now the adversary must overcome the confidence drifts, as well as the irreversibility dynamics, the security of Snowball is strictly stronger than that of Snowflake. 
++\noindent \emph{Proof Sketch}. We apply martingale concentration inequalities to prove that once the system has reached the irreversibility state, then the growth of the confidence of the majority decided color will perpetually grow and drift further away from those of the minority color, effectively rendering reversibility less likely over time. If the drifts ever revert, then reversibility analysis becomes identical to that of Snowflake.  
+ 
+-\subsection{Liveness}%\tronly{}{\vspace{-0.5em}}
+-% \tronly{
+-% \noindent\textbf{Slush.}
+-% Slush is a non-BFT protocol, which terminates whp within a finite number of rounds.
+-% }{}
+-
+-% The liveness guarantees of our protocols are nontrivial, since the time to reach a decision can vary greatly based on several factors, including whether or not the issued transaction is virtuous, the number of adversarial nodes, the initialization of the system parameters, and -- for conflicting transactions -- the presence of a mechanism to initialize the network to a \emph{mostly} univalent state. Therefore, the liveness guarantees of our protocols induce rich distributions that are worthy of extensive analysis in various scenarios. However, for brevity, we provide some key insights, and leave some more discussion to the Appendix. Unfortunately, due to space restrictions, we further restrict the analysis to the accompanying theory paper. 
++\subsection{Liveness}\tronly{}{}%\vspace{-0.5em}}
+ 
+ We assume that the observed adversarial presence $0 \leq f' \leq n(k - \alpha - \psi)/k \leq f$, where we refer to $\psi$ as the buffer zone. 
+ The bigger $\psi$, the quicker the ability of the decision mechanism to finalize a value. 
+@@ -608,26 +613,22 @@ Assuming that $\psi$ is strictly positive, termination is strictly finite under
+ 
+ \noindent\emph{Proof Sketch.} Using the construction of the system to prove irreversibility, we characterize the distribution of the average time spent (sojourn times) at each state before the system terminates execution by absorption at either absorbing state. The termination time is then a union of these times. 
+ 
+-For non-conflicting transactions, since the adversary is unable to forge a conflict, the time to decision is simply the mixing time of the network starting from a configuration where every correct node is uninitialized. 
+-
+-\noindent\emph{Proof Sketch.} Mixing times for gossip is well characterized to be as $\Oh{\log{n}}$, and this result holds for all our protocols. 
+-
++For non-conflicting transactions, since the adversary is unable to forge a conflict, the time to decision is simply the mixing time , which is $\Oh{\log{n}}$.
+ Liveness guarantees under a fully bivalent network configuration reduce to an optimal convergence time of $\Oh{\log{n}}$ rounds if the adversary is at most $\Oh{\sqrt{n}}$, for $\alpha = \floor{k/2} + 1$. We leave additional detains to Lemma~\ref{lemma:centrallimit}.
+ % This result is independently supported by Ben-Or~\cite{ben1983another} and Doerr et al~\cite{doerr2011stabilizing}. 
+ When the adversary surpasses $\Oh{\sqrt{n}}$ nodes, the worst-case number of rounds increases polynomially, and as $f$ approaches $n/2$ it approaches exponential convergence rates.
+ 
+ \noindent\emph{Proof Sketch.} We modify Theorem~\ref{theorem:mean-convergence-time} to include the adversary, which reverts any imbalances in the network by keeping network fully bivalent. 
+ 
++%\vspace{-1ex}
+ \paragraph{Multi-Value Consensus}
+ Our binary consensus protocol could support multi-value consensus by running logarithmic binary instances, one for each bit of the proposed value. However, such theoretical reduction might not be efficient in practice. Instead, we could directly incorporate multi-values as multi-colors in the protocol, where safety analysis could still be generalized.
+ 
+-As for liveness, we sketch a leaderless initialization mechanism, which in expectation uses $\Oh{\log{n}}$ rounds under the assumption that the network is synchronized. Every node operates in three phases: in the first phase, it gossips and collects proposals for $\Oh{\log{n}}$ rounds, where each round lasts for the maximum message delay; in the second phase, each node stops collecting proposals, and instead gossips all new values for an additional $\Oh{\log{n}}$ rounds; in the third phase, each node samples the proposals it knows of locally, checking for values that have an $\alpha$ majority, ordered deterministically, such as by hash values. Finally, a node selects the first value by the order as its initial state when it starts the subsequent consensus protocol. In a cryptocurrency setting, the deterministic ordering function would incorporate fees paid out for every new proposal, which means that the adversary is financially limited
+-in its ability to launch a fairness attack against the initialization.
++For liveness, we sketch a leaderless initialization mechanism, which in expectation uses $\Oh{\log{n}}$ rounds under the assumption that the network is synchronized in the Appendix~\ref{sec:sync-heuristic}. 
+ While the design of initialization mechanisms is interesting, note that it is not necessary for a decentralized payment system, as we show in Section~\ref{sec:implementation}.
+ %We leave additional research into the initialization mechanisms to future work. 
+ %However, we finally note that when building a decentralized payment system, an initialization mechanism is not necessary, as we show in the implementation of Avalanche in Section~\ref{sec:implementation}.
+-
+-Finally, we discuss churn and view discrepancies in the appendix.
++Finally, in the Appendix~\ref{sec:full-analysis-churn}, we discuss churn and view discrepancies.
+ 
+ % \subsection{Additional Insights}
+ % Two interesting insights arise from the way our protocols are designed and used.
+@@ -659,12 +660,12 @@ Finally, we discuss churn and view discrepancies in the appendix.
+ % For the case of virtuous transactions, Snowflake and Snowball are both guaranteed to terminate after $O(kn\log n)$ messages.
+ % This follows from the well-known results related to epidemic algorithms\cite{demers1987epidemic}, and is confirmed by Table~\ref{table:growth_worst_case} in Appendix~\ref{sec:full-analysis}.
+ 
+-\section{Peer-to-Peer Payment System}%\tronly{}{\vspace{-0.5em}}
++\section{Peer-to-Peer Payment System}\tronly{}{}%\vspace{-0.5em}}
+ \label{sec:implementation}
+ 
+ %\label{sec:evaluation}
+ 
+-We have implemented a bare-bones payment system, Avalanche, which supports Bitcoin transactions. In this section, we describe the design and sketch how the implementation can support the value transfer primitive at the center of cryptocurrencies.
++Using Snowball consensus, we have implemented a bare-bones payment system, Avalanche, which supports Bitcoin transactions. In this section, we describe the design and sketch how the implementation can support the value transfer primitive at the center of cryptocurrencies.
+ Deploying a full cryptocurrency involves bootstrapping, minting, staking, unstaking,
+ and inflation control. While we have solutions for these issues, their full
+ discussion is beyond the scope of this paper, whose focus is centered on the
+@@ -678,7 +679,7 @@ novel Snow consensus protocol family.
+ %First, instead of a single replicated state machine (RSM) model, where the system determines a sequence of totally-ordered transactions $T_0, T_1, T_2, \ldots$ issued by any client, we adopt a \emph{parallel consensus model}, where each client interacts independently with its own RSMs and optionally transfers ownership of its RSM to another client. The system establishes only a partial order between dependent transactions.
+ %Second,
+ In a cryptocurrency setting, cryptographic signatures enforce that only a key owner is able to create a transaction that spends a particular coin. Since correct clients follow the protocol as prescribed and never double spend coins, in Avalanche, they are guaranteed both safety and liveness for their \emph{virtuous} transactions. In contrast, liveness is not guaranteed for \emph{rogue} transactions, submitted by Byzantine clients, which conflict with one another. Such decisions may stall in the network, but have no safety impact on virtuous transactions.
+-We show that this is a sensible tradeoff, and that resulting system is sufficient for building complex payment systems.
++We show that this is a sensible tradeoff, and that the resulting system is sufficient for building complex payment systems.
+ 
+ \input{avalanche}
+ 
+@@ -858,9 +859,9 @@ transactions can be batched together per query.
+ We implement some optimizations to help the system scale.
+ First, we use \emph{lazy updates} to the DAG, because the recursive definition for confidence may otherwise require a costly DAG traversal.
+ We maintain the current $d(T)$ value for each active vertex on the DAG, and update it only when a descendant vertex gets a chit.
+-Since the search path can be pruned at accepted vertices, the cost for an update is constant if the rejected vertices have limited number of descendants and the undecided region of
++Since the search path can be pruned at accepted vertices, the cost for an update is constant if the rejected vertices have a limited number of descendants and the undecided region of
+ the DAG stays at constant size.
+-Second, the conflict set could be very large in practice, because a rogue client can generate a large volume of conflicting transactions.
++Second, the conflict set could be large in practice, because a rogue client can generate a large volume of conflicting transactions.
+ Instead of keeping a container data structure for each conflict set, we create a mapping from each UTXO to the preferred transaction that stands as the representative for the entire conflict set.
+ This enables a node to quickly determine future conflicts, and the appropriate response to queries.
+ Finally, we speed up the query process by terminating early as soon as the $\alpha$ threshold is met, without waiting for $k$ responses.
+@@ -868,6 +869,7 @@ Finally, we speed up the query process by terminating early as soon as the $\alp
+ %The safety guarantees of Snowball can be mapped to those of Avalanche, which is a concrete instantiation of Snowball using a directed acyclic graph to amortize cost. 
+ %We note that the structure of the Avalanche DAG itself does not correspond to votes, which is a subtle difference between other consensus protocols that make usage of a DAG. The DAG is merely a performance optimization, and is itself entirely orthogonal to the consensus process.
+ 
++%\vspace{-4ex}
+ \paragraph{DAG} Compared to Snowball, Avalanche introduces a DAG structure that entangles the fate of unrelated conflict sets, each of which is a single-decree instance.
+ This entanglement embodies a tension: attaching a virtuous transaction to undecided parents helps propel transactions towards a decision, while it puts transactions at risk of suffering liveness failures when parents turn out to be rogue.
+ We can resolve this tension and provide a liveness guarantee with the aid of two mechanisms.
+@@ -877,13 +879,15 @@ A secondary mechanism ensures that virtuous transactions with decided ancestry w
+ With these two mechanisms in place, it is easy to see that, at worst, Avalanche will degenerate into separate instances of Snowball, and thus provide the same liveness guarantee for virtuous transactions.
+ 
+ Unlike other cryptocurrencies~\cite{IOTA} that use graph vertices
+-directly as votes, Avalanche only uses DAG for the purpose of batching queries
++directly as votes, Avalanche only uses a DAG for the purpose of batching queries
+ in the underlying Snowball instances.
+ Because confidence is built by collected chits, and not by just the presence of
+ a vertex, simply flooding the network with vertices attached to the rejected
+ side of a subgraph will not subvert the protocol.
+ 
++%\vspace{-3ex}
+ \subsection{Communication Complexity}
++%\vspace{-1ex}
+ Let the DAG induced by Avalanche have an expected branching factor of $p$, corresponding to the width of the DAG, and determined by the parent selection algorithm.
+ Given the $\beta_1$ and $\beta_2$ decision threshold, a transaction that has just reached the point of decision will have an associated progeny $\mathcal{Y}$.
+ Let $m$ be the expected depth of $\mathcal{Y}$.
+@@ -893,29 +897,23 @@ Only $pm$ recent transactions would lack the progeny required for a decision.
+ For each node, each query requires $k$ samples, and therefore the total message cost per transaction is in expectation $(pky) / (p(y - m)) = ky/(y-m)$.
+ Since $m$ is a constant determined by the undecided region of the DAG as the system constantly makes progress, message complexity per node is $O(k)$, while the total complexity is $O(kn)$.
+ 
+-\section{Evaluation}%\tronly{}{\vspace{-0.5em}}
++\section{Evaluation}\tronly{}{}%\vspace{-0.5em}}
+ \label{sec:evaluation}
+ \input{sections/evaluation}
+ 
+-\section{Related Work}%\tronly{}{\vspace{-0.5em}}
++\section{Related Work}\tronly{}{}%\vspace{-0.5em}}
+ \label{sec:related-work}
+ \input{sections/related-work}
+ 
+-\section{Conclusion}%\tronly{}{\vspace{-0.5em}}
++\section{Conclusion}\tronly{}{}%\vspace{-0.5em}}
+ \label{sec:conclusions}
+-% This paper introduced a novel family of consensus protocols, coupled with the appropriate mathematical tools for analyzing them.
+-% Unlike classical or Nakamoto-style consensus, these protocols are highly efficient and robust. They scale well, achieve high throughput and low latency, work without precise membership knowledge, as well as degrade gracefully under catastrophic adversarial attacks, beyond current bounds.
+-
+-% This work opens up new avenues of research. Chief among these is relaxing the synchrony assumption in this paper to accommodate asynchrony. We believe that the protocols and analysis techniques established in this paper will form the foundation for new venues of research.
+-% %and provide a strong safety guarantee,
+-% %though they achieve these properties by not guaranteeing liveness for conflicting transactions.
+-% %We have illustrated how they can be used to implement a Bitcoin-like payment system, that achieves 3400 tps in a geo-replicated setting.
+-
+ This paper introduced a novel family of consensus protocols, coupled with the appropriate mathematical tools for analyzing them.
+-These protocols are highly efficient and robust, combining the best features of classical and Nakamoto consensus.
++\tronly{These protocols are highly efficient and robust, combining the best features of classical and Nakamoto consensus.}
+ They scale well, achieve high throughput and quick finality, work without precise membership knowledge, and degrade gracefully under catastrophic adversarial attacks.
+ 
+-There is much work to do to improve this line of research. One such improvement could be the introduction of an adversarial network scheduler. Another improvement would be to characterize the system's guarantees under an adversary whose powers are realistically limited, whereupon performance would improve even further. Finally, more sophisticated initialization mechanisms would bear fruitful in improving liveness of multi-value consensus.
++There is much work to do to improve this line of research. \tronly{
++One such improvement could be the introduction of an adversarial network scheduler.
++Another}{One} improvement would be to characterize the system's guarantees under an adversary whose powers are realistically limited, whereupon performance would improve even further. \tronly{Finally, more}{More} sophisticated initialization mechanisms would bear fruitful in improving liveness of multi-value consensus.
+ Overall, we hope that the protocols and analysis techniques presented here add to the arsenal of the distributed system developers and provide a foundation for new lightweight and scalable mechanisms.
+ 
+ %\section*{Acknowledgments}\tronly{}{\vspace{-0.5em}}
+@@ -942,7 +940,7 @@ Without loss of generality, we focus our attention on counts of $\mathtt{B}$, i.
+ We let the random variable $\mathcal{H}(\mathcal{N}, x, k) \rightarrow \{0, \dots, k\}$ denote the resulting counts of $\mathtt{B}$ in the sample (unless otherwise stated), where $x$ is the total count of $\mathtt{B}$ in the population. The probability that the query achieves the required threshold of $\alpha$ or more votes is given by:
+ \begin{equation}
+ \small
+-P(\mathcal{H}(\mathcal{N}, x, k) \geq \alpha) = \sum_{j = \alpha}^{k} {x \choose j} {n - x \choose k - j}/{n \choose k}
++P(\mathcal{H}(\mathcal{N}, x, k) \geq \alpha) = \left.\sum_{j = \alpha}^{k} {x \choose j} {n - x \choose k - j} \middle/ {n \choose k}\right.
+ \label{eq:hypergeometric}
+ \end{equation}
+ For ease of notation, we overload $\mathcal{H}(*)$ by implicitly referring to $P(\mathcal{H}(\mathcal{N}, x, k) \geq \alpha)$ as $\mathcal{H}(\mathcal{N}, x, k, \alpha)$. 
+@@ -975,7 +973,7 @@ P(X_t \geq X_0 + \psi) \leq e^{-\psi^2 / 2\sum_{i = 1}^{t} c_t^2}
+ 
+ \subsection{Slush}%\tronly{}{\vspace{-0.5em}}
+ %\label{sec:analysis}
+-Slush operates in a non-Byzantine setting; that is, $f = 0, c = n$.
++Slush operates in a non-Byzantine setting; that is, $f = 0$, $c = n$.
+ In this section, we will characterize the irreversibility properties of Slush (which appear in Snowflake and Snowball), as well as the precise converge rate distribution. The distribution of of both safety and liveness of Slush translate well to the Byzantine setting.
+ 
+ % \begin{figure}
+@@ -1133,6 +1131,7 @@ Starting from any non-absorbing, transient state, there is a non-zero probabilit
+ \end{proof}
+ 
+ \subsection{Snowflake}%\tronly{}{\vspace{-0.5em}}
++\label{subsection:appendix_snowflake}
+ In Snowflake, the sampled set of nodes includes Byzantine nodes.
+ We introduce the decision function $\mathcal{D}(*)$, which is constructed by having each node also keep track of the total number of consecutive times it has sampled a majority of the same color ($\beta$). 
+ Finally, we introduce a function called $\mathcal{A}(\mathcal{S}_t)$, the adversarial strategy, that takes as parameters the entire configuration of the network at time $t$, as well as the next set of nodes chosen by the scheduler to execute, and as a side-effect, modifies the set of nodes $\mathcal{B}$ to some arbitrary configuration of colors.
+@@ -1166,25 +1165,22 @@ The results follows from central limit theorem, wherein for $\alpha = \floor{k/2
+ 
+ \subsection{Snowball}%\tronly{}{\vspace{-0.5em}}
+ We make the following observation: if the confidences between red and blue are equal, then the adversary has the same identical leverage in the irreversibility of the system as in Snowflake, regardless of network configuration. In fact, Snowflake can be viewed as Snowball but where drifts in confidences never exceed one. The same analysis applies to Snowball as in Snowflake, with the additional requirement of bounding the long-term behavior of the confidences in the network. To that end, analysis follows using martingale concentration inequalities, in particular the one introduced in Equation~\ref{eq:submartingale}. Snowball can be viewed as a two-urn system, where each urn is a sub-martingale. The guarantees that can be extracted hereon are that the confidences of the majority committed value (in our frame of reference is always blue), grow always more than those of the minority value, with high probability, drifting away as $t \rightarrow t_{max}$. 
+-\subsection{Safe Early Commitment}\tronly{}{\vspace{-0.5em}}
+-\tronly{
++\subsection{Safe Early Commitment}%\tronly{}{\vspace{-0.5em}}
+ As we reasoned previously, each conflict set in Avalanche can be viewed as an instance of Snowball, where each progeny instance iteratively votes for the entire path of the ancestry.
+ This feature provides various benefits; however, it also can lead to some virtuous transactions that depend on a rogue transaction to suffer the fate of the latter.
+ %has the drawback that it can entangle the fate of some unfortunate virtuous transactions with the fate of rogue ones.
+ In particular, rogue transactions can interject in-between virtuous transactions and reduce the ability of the virtuous transactions to ever reach the required $\textsc{isAccepted}$ predicate.
+-}{}
+ As a thought experiment, suppose that a transaction $T_i$ names a set of parent transactions that are all decided, as per local view.
+ If $T_i$ is sampled over a large enough set of successful queries without discovering any conflicts, then, since by assumption the entire ancestry of $T_i$ is decided, it must be the case (probabilistically) that we have achieved irreversibility.
+ 
+-To then statistically measure the assuredness that $T_i$ has been accepted by a large percentage of correct nodes without any conflicts, we make use of a one-way birth process, where a birth occurs when a new correct node discovers the conflict of $T_i$. \tronly{Necessarily, deaths cannot exist in this model, because a conflicting transaction cannot be unseen once a correct node discovers it. 
++To then statistically measure the assuredness that $T_i$ has been accepted by a large percentage of correct nodes without any conflicts, we make use of a one-way birth process, where a birth occurs when a new correct node discovers the conflict of $T_i$. Necessarily, deaths cannot exist in this model, because a conflicting transaction cannot be unseen once a correct node discovers it. 
+ % Let $t = 0$ be the time when $T_j$, which conflicts with $T_i$, is introduced to a single correct node $u$.
+ % Let $s_x$, for $x = 1$ to $c$, be the state where the number of correct nodes that know about $T_j$ is $x$, and let $p(s_x)$ be the probability of birth at state $s_x$. Then, we have:
+ Our births are as follows:
+ \begin{equation}
+     \lambda_i = \frac{c - i}{c} \left(1 - \frac{{n - i \choose k}}{{n \choose k}}\right)
+ \end{equation}
+-Solving for the expected time to reach the final birth state provides a lower bound to the $\beta_1$ parameter in the $\textsc{isAccepted}$ fast-decision branch.}{We leave details to the tech report.} The table below shows an example of the analysis for $n = 2000$, $\alpha = 0.8$, and various $k$, where $\varepsilon \ll 10^{-9}$, and where $\beta$ is the minimum required value before deciding.
+-\tronly{}{\vspace{-2ex}}
++Solving for the expected time to reach the final birth state provides a lower bound to the $\beta_1$ parameter in the $\textsc{isAccepted}$ fast-decision branch. The table below shows an example of the analysis for $n = 2000$, $\alpha = 0.8$, and various $k$, where $\varepsilon \ll 10^{-9}$, and where $\beta$ is the minimum required value before deciding.
+ \begin{table}[h!]
+     \small
+ 	\centering
+@@ -1194,7 +1190,6 @@ Solving for the expected time to reach the final birth state provides a lower bo
+ 	\end{tabular}
+ 	\label{table:fast-path-beta}
+ \end{table}
+-\tronly{}{\vspace{-2ex}}
+ % \begin{figure}
+ %     \includegraphics[width=\linewidth]{figures/fast-path-beta.pdf}
+ %     \captionof{figure}{An example of $\beta$ solutions for different $k$, with $n = 2000, \alpha = 0.8$.}
+@@ -1202,28 +1197,70 @@ Solving for the expected time to reach the final birth state provides a lower bo
+ % \end{figure}
+ \noindent Overall, a very small number of iterations are sufficient for the safe early commitment predicate. This supports the choice of $\beta$ in our evaluation.
+ 
+-\subsection{Churn and View Updates}\label{sec:full-analysis-churn}
+-\tronly{Any realistic system needs to accommodate the departure and arrival of nodes.}{}
+-%Up to now, we simplified our analysis by assuming a precise knowledge of network membership, i.e $\mathcal{L}(u) = \mathcal{N}$.
+-We now demonstrate that Avalanche nodes \tronly{can admit a well-characterized amount of churn,
+-by showing how to pick parameters such that Avalanche nodes}{} can differ in their view of the network and still safely make decisions.
++\subsection{Initialization Heuristic}
++\label{sec:sync-heuristic}
++To improve liveness, we can use strong synchrony assumptions. The heuristic works as follows. Every node operates in two phases: in the first phase, it gossips and collects proposals for $\Oh{\log{n}}$ rounds, where each round lasts for the maximum message delay, which ensures the proposal from a correct node will propagate to almost all other correct nodes; in the second phase, each node stops collecting proposals, and gossips the existing proposals for an additional $\Oh{\log{n}}$ rounds so that every correct node ends up with approximately the same set of proposals. Finally, each node samples for the proposals it knows of locally, checking for those that have an $\alpha$ majority, ordered deterministically, such as by hash values. It then selects the first value by the order as its initial state when it starts the actual consensus protocol.
++In a cryptocurrency setting, the deterministic ordering function would incorporate fees paid out for every new proposal, which means that the adversary is financially limited in its ability to launch a fairness attack against the initialization.
+ 
+-Consider a network whose operation is divided into epochs of length $\tau$, and a view update from epoch $t$ to $t+1$ during which $\gamma$ nodes join the network and $\bar \gamma$ nodes depart.
+-Under our static construction, the state space $\mathcal{S}_t$ of the network had a key parameter $\Delta^{t}$ at time $t$, induced by $c^{t}, f^{t}, n^{t}$ and the chosen security parameters.
+-This can, at worst, impact the network by adding $\gamma$ nodes of color $\mathtt{B}$, and remove $\bar \gamma$ nodes of color $\mathtt{R}$.
+-At time $t+1$, $n^{t+1} = n^{t} + \gamma - {\bar \gamma}$, while $f^{t+1}$ and $c^{t+1}$ will be modified by an amount $\leq \gamma - {\bar \gamma}$, and thus induce a new $\Delta^{t+1}$ for the chosen security parameters.
+-This new $\Delta^{t+1}$ has to be chosen such that the probability of reversibility from state $c^{t+1}/2 + \Delta^{t+1} - \gamma$ is $\leq \varepsilon$, which ensures that the system will converge under the previous pessimal assumptions. The system designer can easily do this by picking an upper bound on $\gamma, \bar \gamma$.
++\subsection{Churn and View Discrepancy}\label{sec:full-analysis-churn}
+ 
+-The final step in assuring the correctness of a view change is to account for a mix of nodes that straddle the $\tau$ boundary. We would like the network to avoid an unsafe state no matter which nodes are using the old and the new views.
+-The easiest way to do this is to determine $\Delta^t$ and $\Delta^{t+1}$ for desired bounds on $\gamma, \bar \gamma$, and then to use the conservative value $\Delta^{t+1}$ during epoch $t$. In essence, this ensures that no commitments are made in configuration $\mathcal{S}_t$ unless they conservatively fulfill the safety criteria in state space $\mathcal{S}_{t+1}$. As a result, there is no possibility of a node deciding red at time $t$, the network going through an epoch change and finding itself to the left of the new irreversibility state $\Delta^{t+1}$.
++Realistic systems need to accommodate the departure and arrival of nodes.
++Up to now, we simplified our analysis by assuming a precise knowledge of network membership, i.e. $\mathcal{L}(u) = \mathcal{N}$.
++We now demonstrate that correct nodes can admit a well-characterized amount of churn, by showing how to pick parameters such that Avalanche nodes can differ in their view of the network and still safely make decisions.
+ 
+-This approach trades off some of the feasibility space, to add the ability to accommodate $\gamma, \bar \gamma$ node churn per epoch.
+-\tronly{
+-Overall, if $\tau$ is in excess of the time required for a decision (on the order of minutes to hours), and nodes are loosely synchronized,
+-they can add or drop up to $\gamma, \bar \gamma$ nodes in each epoch using the conservative process described above. }{}
+-% Due to space reasons,
+-We leave the precise method of entering and exiting the network by staking and unstaking to a subsequent paper, and instead
+-rely on a membership oracle that acts as a sequencer and $\gamma$-rate-limiter, using technologies like Fireflies~\cite{JohansenRVJ15}.
++{\color{black} 
++
++To characterize churn we use a generalized set intersection construction that allows us to make arguments about worst-case network view splits. Before formalizing it, we provide the intuition: suppose we split the network into two entirely independent, but fully connected, subsets. Clearly, the Byzantine adversary wins with probability one since it can send two conflicting transactions to the two independent networks respectively, and they would finalize the transactions immediately. This represents the worst case view split. 
++\begin{figure}
++\centering
++\includegraphics[width=0.8\linewidth]{figures/network_view.pdf}
++\caption{Changes in network view based on $S_d$'s size. All prior proofs up to now represent the variant where $S_a = S_b = \emptyset$. With the new construction, the probability of safety violation is simply a direct application of the prior sets of proofs under the new subsets.}
++\label{fig:network_view}
++\end{figure}
++We can generalize this to arbitrary network splits, which can even be applied recursively in each subset. The proofs of safety then are a matter of characterizing the probability of red and blue committing into the two (possibly independent) subsets.
++
++Suppose we divide the set of correct nodes into three subsets, $S_a$, $S_d$, $S_b$. We overload $\mathcal{L}(S_{*})$ to represent the views of any node within the input set. The view of all nodes in $S_a$ is $\mathcal{L}(S_a) = S_a \cup S_d \cup \mathcal{B}$, the view of all nodes in $S_b$ is $\mathcal{L}(S_b) = S_b \cup S_d \cup \mathcal{B}$, and the view of $S_d$ is $\mathcal{N}$. We assume the worst case, which means that adversarial nodes are common to all subsets. When $S_d = \emptyset$, this represents a division of the network into two equal subsets where $|S_a| = |S_b| = n/2$~\footnote{$|S_a|$ and $|S_b|$ do not have to be equal, we assume so as a demonstration.}. If $S_d$ is all correct nodes, then $|S_a| = |S_b| = n$. This construction is visually demonstrated in Figure~\ref{fig:network_view}. 
++
++\begin{lemma}
++Let $\tau \in \mathbb{Z}^{+}$. Let $|S_d| = n - \tau$, and thus $|S_{\{a, b\}}| = \tau/2$. There exists some maximal size of $\tau$ such that probability of any two nodes $u, v \in S_a,\ S_b,\ S_d$ finalizing equivocating transactions is less than $\epsilon$. 
++\end{lemma}
++\begin{proof}
++We assume that the adversary has full control of the network view splits, meaning that they choose in full how to create $S_a,\ S_b,\ S_d$. To prove safety, we simply reuse the same exact construction as in Subsection~\ref{subsection:appendix_snowflake}, but we replace the original set $\mathcal{N}$ with a new set of interest, namely $S_a \cup S_d \cup \mathcal{B}$ (i.e., we exclude $S_b$)~\footnote{Sets are symmetric in this example.}. To thus find the maximal $\tau$, we simply replace $u_i$ and $\lambda_i$ with 
++\begin{equation}
++    \begin{cases}
++        \bar \mu_i = i\ \mathcal{H}(S_a \cup S_d \cup \mathcal{B}, c-(\tau/2)-i, k, \alpha), & \text{for } i \rightarrow i - 1 \\
++        \lambda_i = (c-i)\ \mathcal{H}(S_a \cup S_d \cup \mathcal{B}, i, k, \alpha), & \text{for } j \rightarrow i + 1 \\
++    \end{cases}
++\end{equation}
++where
++\begin{equation}
++\begin{split}
++P(\mathcal{H}&(S_a \cup S_d \cup \mathcal{B}, x, k) \geq \alpha)\\
++&= \left.\sum_{j = \alpha}^{k} {x \choose j}{c-(\tau/2)-x \choose k-j}\middle/{c - (\tau/2) \choose k}\right.\\
++\end{split}
++\end{equation}
++and apply the same construction as in Subsection~\ref{subsection:appendix_snowflake}. As $\tau$ increases, it is clear that $S_a$ (and conversely, $S_b$), become more independent and less reliant on the values proposed by members in $S_d$, thus incrementing the ability of the adversaries. 
++\end{proof}
++
++
++}
++
++
++% Consider a network whose operation is divided into epochs of length $\tau$, and a view update from epoch $t$ to $t+1$ during which $\gamma$ nodes join the network and $\bar \gamma$ nodes depart.
++% Under our static construction, the state space $\mathcal{S}_t$ of the network had a key parameter $\Delta^{t}$ at time $t$, induced by $c^{t}, f^{t}, n^{t}$ and the chosen security parameters.
++% Churn can, at worst, impact the network by adding $\gamma$ nodes of color $\mathtt{B}$, and remove $\bar \gamma$ nodes of color $\mathtt{R}$.
++% At time $t+1$, $n^{t+1} = n^{t} + \gamma - {\bar \gamma}$, while $f^{t+1}$ and $c^{t+1}$ will be modified by an amount $\leq \gamma - {\bar \gamma}$, and thus induce a new $\Delta^{t+1}$ for the chosen security parameters.
++% This new $\Delta^{t+1}$ has to be chosen such that the probability of reversibility from state $c^{t+1}/2 + \Delta^{t+1} - \gamma$ is $\leq \varepsilon$, which ensures that the system will converge under the previous pessimal assumptions. The system designer can easily do this by picking an upper bound on $\gamma, \bar \gamma$.
++
++% The final step in assuring the correctness of a view change is to account for a mix of nodes that straddle the $\tau$ boundary. We would like the network to avoid an unsafe state no matter which nodes are using the old and the new views.
++% The easiest way to do this is to determine $\Delta^t$ and $\Delta^{t+1}$ for desired bounds on $\gamma, \bar \gamma$, and then to use the conservative value $\Delta^{t+1}$ during epoch $t$. In essence, this ensures that no commitments are made in configuration $\mathcal{S}_t$ unless they conservatively fulfill the safety criteria in state space $\mathcal{S}_{t+1}$. As a result, there is no possibility of a node deciding red at time $t$, the network going through an epoch change and finding itself to the left of the new irreversibility state $\Delta^{t+1}$.
++
++% This approach trades off some of the feasibility space, to add the ability to accommodate $\gamma, \bar \gamma$ node churn per epoch.
++% Overall, if $\tau$ is in excess of the time required for a decision (on the order of minutes to hours), and nodes are loosely synchronized,
++% they can add or drop up to $\gamma, \bar \gamma$ nodes in each epoch using the conservative process described above.
++% % Due to space reasons,
++% We leave the precise method of entering and exiting the network by staking and unstaking to a subsequent paper, and instead
++% rely on a membership oracle that acts as a sequencer and $\gamma$-rate-limiter, using technologies like Fireflies~\cite{JohansenRVJ15}.
+ % and Ethereum~\cite{wood2014ethereum}.
+ \end{appendices}
+ \end{document}

@@ -1,0 +1,34 @@
+- Section 3.1: perhaps rename “Safety Analysis of Slush”
+- lemma 3 seems awkwardly worded, with \phi’ being unbounded.  Also, it seems unlikely unless “whp” is added.
+- pg 7: targetstate —> target state
+	- Kevin: Done.
+- pg 7: and we iteratively solve —> we iteratively solve
+	- Kevin: Done.
+- Figure 9: what’s \eps?  Shouldn’t we know this?
+	- Kevin: \epsilon is discussed previously in the paper.
+- Figures 10 and 11 are out of order wrt text
+- pg 8: Finally, —> remove
+	- Kevin: Done
+- Section 3.1: take home message is unclear. Add last paragraph
+- Section 3.2: perhaps rename “Safety Analysis of Snowflake”
+- pg 8: color(u.cnt) —> color (u.cnt)
+- pg 9: term “irreversible” used before it’s defined
+- pg 9: “one crucial condition”: what condition are you referring to?
+- pg 9: for some upper bound \phi: \phi is the number of steps, not an upper bound
+- pg 9: that then models —> that models
+- Theorem 6: proof needs more explanation.  What do you mean by differential?
+- Figure 13 caption: Snowflake/Snowball —> Snowflake and Snowball
+- pg 9: “For the system to guarantee safety, …”: why?
+- pg 9: That is, we need to ensure that …: I have no clue where Eq. 14 comes from or what it means
+- pg 9: I don’t understand the paragraph that follows either.  Is IsAccepted still defined the same way?
+- Section 3.2: in the end, it’s not clear how the analysis relates to the adversarial game defined in the section.
+- Section 3.3: perhaps rename “Safety Analysis of Snowball”
+- it would be good to know why we analyzed Snowflake, which is, we’re going to show that if Snowflake is safe, then so is Snowball
+- pg 10: definition of “prefers” doesn’t say anything about the situation where a node has equal confidence in both colors
+- pg 10: how do Byzantine nodes in Snowball do a “setup” that cause some correct nodes to accept R.  Why “some” and not just “one”?
+- pg 10: why is it that if a correct node accepts R, then s_{c/2+\Delta} correct nodes “vote” for R?  Why s_{c/2+\Delta} and not c/2+\Delta?  What does it mean to vote exactly?
+- pg 11: is “commit point” same as “phase shift point”?  Is “at commitment” the same as well?
+- pg 11: prove (R1): what’s R1?
+- Theorem 7: I can’t follow the proof
+- Section 3.4: perhaps rename “Safety Analysis of Avalanche”
+- pg 12: I don’t know where the right hand side of Eq. 22 came from

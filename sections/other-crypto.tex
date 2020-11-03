@@ -1,0 +1,50 @@
+\subsection{Snowball vs. Blockchain}
+Informally speaking, Nakamoto consensus achieved by the Blockchain
+algorithm, is a process where the whole system synchronizes their replicated
+log by creating a large time delay upon each generation of a block. The
+Blockchain system is leaderless because there is no notion of elected leader
+that could control the content of multiple slots on the log. However, the peer who is lucky enough
+to come up with the block containing a proper nonce will take over the
+ownership of the slot, and thus becomes a conceptual temporary ``leader''
+only for the slot.  This analogy to traditional BFT reveals the
+fundamental inefficiency in Nakamoto consensus, where each commonly accepted
+block can be viewed as the outcome of a one-time leader election, the creator
+of the block loses leadership immediately after establishment of the block.
+
+There have been work on improving the performance by explicitly stating and
+extending the leadership to several slots, such as Bitcoin-NG and Thunderella.
+But this makes the protocol leader-based, and may suffer from the issues of
+having a single leader in an Internet-scale network environment.
+
+On the other hand, Nakamoto consensus was originally used for Bitcoin, a
+peer-to-peer electronic cash system. So each block usually contains hundreds or
+thousands of transactions that are mutually compatible (no double spending of
+money), and there exists another separated logic, UTXO (Unspent Transaction
+Output) graph that is made of all transactions to represent the actual state of
+the cash system. On a UTXO graph, a transaction has multiple inputs and
+outputs. A valid transaction will provide with signature proofs for all the
+inputs that correspond and consume some outputs from some transactions prior in
+history, and then offer some dangling unspent outputs which could be taken as
+inputs in the future by subsequent transactions. The whole UTXO graph is valid
+only if there does not exist two or more transactions that take the same input,
+which is usually called a ``double spend''. With that being said,
+Nakamoto consensus provides with more power than that is required for
+maintaining a double-spend-free UTXO graph, because Blockchain ensures all transactions are
+\emph{linearly} ordered, while a valid UTXO graph used for ledger does not
+require such linear ordering. For example, suppose there are two transactions
+A, B that both have only one input taken from one of the two outputs from
+transaction C. So using Blockchain, eventually only a specific linear ordering
+of A, B and C will be accepted, which might be unnecessary because both C, A, B
+and C, B, A are valid orderings as A and B are independent. The only
+necessary dependencies are all exactly captured by UTXO graph itself.
+
+This leads to two possible paths of research: to fully utilize the ability
+of keeping a linear log as in state machine replication so Nakamoto consensus is
+not wasted, or to construct another weaker consensus that only resolves double
+spends, not capable of keeping a linear log but just fits the need for an
+electronic cash system. One well-known system for the first approach is
+Ethereum, a decentralized application platform that makes use of the linear log
+to certify executions and interactions of smart contract logic. The second approach motivates us
+to Snowball.
+
+
