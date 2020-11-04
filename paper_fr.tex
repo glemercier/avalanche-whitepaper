@@ -101,7 +101,8 @@
 \settimeformat{hhmmsstime}
 \mmddyyyydate
 \title{
-\Large\bf Scalable and Probabilistic Leaderless BFT Consensus through Metastability}
+%O \Large\bf Scalable and Probabilistic Leaderless BFT Consensus through Metastability}
+\Large\bf Consensus BFT sans dirigeant, extensible et probabiliste, par métastabilité}
 \author{%
 \tronly{%
 Team~Rocket,
@@ -125,8 +126,10 @@ Anonymous Submission 134
 \maketitle
 \tronly{%
 \blfootnote{%
-\textsuperscript{*}\emph{Blasts off at the speed of light!} --- Team Rocket\\
-An earlier version of this paper published on May 16th 2018, IPFS, was titled \emph{Snowflake to Avalanche: A Novel Metastable Consensus Protocol Family for Cryptocurrencies}.
+%O \textsuperscript{*}\emph{Blasts off at the speed of light!} --- Team Rocket\\
+\textsuperscript{*}\emph{À la vitesse de la lumière !} --- Team Rocket\\
+%O An earlier version of this paper published on May 16th 2018, IPFS, was titled \emph{Snowflake to Avalanche: A Novel Metastable Consensus Protocol Family for Cryptocurrencies}.
+Une version antérieure de cet article, publié le 16 mai 2018, IPFS, était intitulée \emph{Snowflake to Avalanche: A Novel Metastable Consensus Protocol Family for Cryptocurrencies}.
 
 %Proof of Team Rocket: \verb|SHA256("avalanche ted yin kevin sekniqi robbert van |\\
 %\verb|renesse emin gun sirer\n") = 0x 8a5d 2d32 e68b c500 36e4 |\\
@@ -135,10 +138,14 @@ An earlier version of this paper published on May 16th 2018, IPFS, was titled \e
 }{}
 
 \begin{abstract}
-This paper introduces a family of leaderless Byzantine fault tolerance protocols, built around a metastable mechanism via network subsampling.
-These protocols provide a strong probabilistic safety guarantee in the presence of Byzantine adversaries while their concurrent and leaderless nature enables them to achieve high throughput and scalability.
-Unlike blockchains that rely on proof-of-work, they are quiescent and green.
-Unlike traditional consensus protocols where one or more nodes typically process linear bits in the number of total nodes per decision, no node processes more than logarithmic bits. It does not require accurate knowledge of all participants and exposes new possible tradeoffs and improvements in safety and liveness for building consensus protocols.
+%O This paper introduces a family of leaderless Byzantine fault tolerance protocols, built around a metastable mechanism via network subsampling.
+Cet article présente une famille de protocoles à tolérance de faute byzantine sans dirigeant, bâtis autour d'un mécanisme métastable via sous-échantillonnage réseau.
+%O These protocols provide a strong probabilistic safety guarantee in the presence of Byzantine adversaries while their concurrent and leaderless nature enables them to achieve high throughput and scalability.
+Ces protocoles fournissent une forte garantie de sûreté probabiliste en présence d'adversaires byzantins, tandis que leur nature simultanée et sans dirigeant leur permet d'être performants et extensibles.
+%O Unlike blockchains that rely on proof-of-work, they are quiescent and green.
+Contrairement aux blockchains fondées sur la preuve de travail (\emph{proof-of-work}), ils sont économes et écologiques.
+%O Unlike traditional consensus protocols where one or more nodes typically process linear bits in the number of total nodes per decision, no node processes more than logarithmic bits. It does not require accurate knowledge of all participants and exposes new possible tradeoffs and improvements in safety and liveness for building consensus protocols.
+Contrairement aux protocoles de consensus traditionnels où un ou plusieurs nœuds traitent typiquement des bits de manière linéaire dans les nombres de nœuds totaux par décisiono, aucun nœud ne les traite plus que de manière logarithmique. HOULA
 %Finally, unlike traditional consensus protocols and similar to longest-chain protocols, our protocols provide increase in both liveness and safety guarantees when the observed adversarial presence decreases below the maximal expected bound. 
 
 %where $k$ is dependent on the security requirements of the system.
@@ -149,64 +156,100 @@ Unlike traditional consensus protocols where one or more nodes typically process
 % $O(kn)$
 % for some security parameter $k \ll n$. \Jon{This sentence led me to assuem that the two ``best'' protocols were both going to be important; that there would be a reason to use the $O(kn\log n)$ version despite its poorer aymptotics. But when I got to later pages, I see you're only discussing Avalanche after all; the other algorithms are purely steps on the pedagogical garden path, right? Maybe remove the reference to the intermediate steps from the abstract?} 
 
-The paper describes the Snow protocol family, analyzes its guarantees, and describes how it can be used to construct the core of an internet-scale electronic payment system called Avalanche, which is evaluated in a large scale deployment.
-Experiments demonstrate that the system can achieve high throughput (3400 tps), provide low confirmation latency (1.35 sec), and scale well compared to existing systems that deliver similar functionality. For our implementation and setup, the bottleneck of the system is in transaction verification.
+%O The paper describes the Snow protocol family, analyzes its guarantees, and describes how it can be used to construct the core of an internet-scale electronic payment system called Avalanche, which is evaluated in a large scale deployment.
+Cet article décrit la famille de protocoles Snow, analyse ses garanties et décrit la manière dont il peut être utilisé pour construire le cœur d'un système de paiement électronique à l'échelle de l'internet appelé Avalanche, qui est évalué lors d'un déploiement à grande échelle.
+%O Experiments demonstrate that the system can achieve high throughput (3400 tps), provide low confirmation latency (1.35 sec), and scale well compared to existing systems that deliver similar functionality. For our implementation and setup, the bottleneck of the system is in transaction verification.
+Les expériences démontrent que le système peut atteindre un haut début (3400 tps), fournir une faible latence de confirmation (1,35 s) et correctement passer à l'échelle par rapport à d'autres systèmes offrant des fonctionnalités similaires. Le goulet d'étranglement du système dans l'implémentation et la configuration retenue est la vérification des transations.
 \end{abstract}
 
 \section{Introduction}
 
-Achieving agreement among a set of distributed hosts lies at the core of countless applications, ranging from Internet-scale services that serve billions of people~\cite{Burrows06,HuntKJR10} to cryptocurrencies worth billions of dollars~\cite{marketcapcryptocurrency}.
-To date, there have been two main families of solutions to this problem.
-Traditional consensus protocols %, exemplified by PBFT~\cite{castro1999practical},
-rely on all-to-all communication to ensure that all correct nodes reach the same decisions with absolute certainty.
-Because they usually require quadratic communication overhead and accurate knowledge of membership, they have been difficult to scale
-to large numbers of participants.
-On the other hand, Nakamoto consensus protocols~\cite{nakamoto2008bitcoin,GarayKL15, PassSS17, SompolinskyZ15, SompolinskyLZ16, SompolinskyZ18, BentovHMN17, EyalGSR16,Kokoris-KogiasJ16,PassS16a, PassS18} have become popular with the rise of Bitcoin.
-These protocols provide a probabilistic safety guarantee: Nakamoto consensus decisions may revert with some probability $\varepsilon$.
-A protocol parameter allows this probability to be rendered arbitrarily small, enabling high-value financial systems to be constructed on this foundation.
-This family is a natural fit for open, permissionless settings where any node can join the system at any time.
-Yet, these protocols are costly, wasteful, and limited in performance.
-By construction, they cannot quiesce: their security relies on constant participation by miners, even when there are no decisions to be made.
-Bitcoin currently consumes around 63.49 TWh/year~\cite{bitcoinpower}, about twice as all of Denmark~\cite{denmarkpower}.
-Moreover, these protocols suffer from an inherent scalability bottleneck that is difficult to overcome through simple reparameterization~\cite{CromanDEGJKMSSS16}. % \Jon{I wanted the paper to expand on this point, but I missed it.}
-
-This paper introduces a new family of consensus protocols called Snow.
-Inspired by gossip algorithms, this family gains its properties through a deliberately metastable mechanism.
-Specifically, the system operates by repeatedly sampling the network at random, and steering correct nodes towards a common outcome.
-Analysis shows that this metastable mechanism is powerful: it can move a large network to an irreversible state quickly, where the irreversibility implies that a sufficiently large portion of the network has accepted a proposal and a conflicting proposal will not be accepted with any higher than negligible ($\varepsilon$) probability. 
+%O Achieving agreement among a set of distributed hosts lies at the core of countless applications, ranging from Internet-scale services that serve billions of people~\cite{Burrows06,HuntKJR10} to cryptocurrencies worth billions of dollars~\cite{marketcapcryptocurrency}.
+L'accord parmi un ensemble d'hôtes distribués se trouve au cœur d'innombrables applications allant de services à l'échelle de l'Internet servant des milliards de gens~\cite{Burrows06,HuntKJR10} à des cryptomonnaies valant des milliards de dollars~\cite{marketcapcryptocurrency}.
+%O To date, there have been two main families of solutions to this problem.
+À ce jour, il existe deux familles principales de solutions à ce problème.
+%O Traditional consensus protocols %, exemplified by PBFT~\cite{castro1999practical},
+Les protocoles de consensus traditionnels
+%O rely on all-to-all communication to ensure that all correct nodes reach the same decisions with absolute certainty.
+sont fondés sur une communication entre chaque pair pour s'assurer que tous les nœuds correct arrivent aux mêmes décisions avec une certitude absolue.
+%Because they usually require quadratic communication overhead and accurate knowledge of membership, they have been difficult to scale
+Comme ils impliquent en général un nombre de communication exponentiel et une connaissance exacte des participants, il s'est avéré difficile de l'étendre
+%O to large numbers of participants.
+à de nombreux participants.
+%O On the other hand, Nakamoto consensus protocols~\cite{nakamoto2008bitcoin,GarayKL15, PassSS17, SompolinskyZ15, SompolinskyLZ16, SompolinskyZ18, BentovHMN17, EyalGSR16,Kokoris-KogiasJ16,PassS16a, PassS18} have become popular with the rise of Bitcoin.
+D'un autre côté, les protocoles de consensus Nakamoto~\cite{nakamoto2008bitcoin,GarayKL15, PassSS17, SompolinskyZ15, SompolinskyLZ16, SompolinskyZ18, BentovHMN17, EyalGSR16,Kokoris-KogiasJ16,PassS16a, PassS18} ont été popularisés par Bitcoin.
+%O These protocols provide a probabilistic safety guarantee: Nakamoto consensus decisions may revert with some probability $\varepsilon$.
+Ces protocoles fournissent une garantie de sûreté probabiliste : les décisions par consensus Nakamoto peuvent s'inverser avec une certaine probabilité $\varepsilon$.
+%O A protocol parameter allows this probability to be rendered arbitrarily small, enabling high-value financial systems to be constructed on this foundation.
+Un paramètre du protocole permet d'abaisser à volonté cette probabilité, ce qui permet de bâtir des systèmes financiers de grande valeur sur ces fondations.
+%O This family is a natural fit for open, permissionless settings where any node can join the system at any time.
+Cette famille est faite pour des configurations ouvertes et en libre accès où tout nœud peut rejoindre le système à tout moment.
+%O Yet, these protocols are costly, wasteful, and limited in performance.
+Cependant ces protocoles sont coûteux, gaspilleurs et limités en performance.
+%O By construction, they cannot quiesce: their security relies on constant participation by miners, even when there are no decisions to be made.
+Par construction, ils sont tenus de fonctionner même à vide : leur sécurité se base sur une participation constante des mineurs, même quand aucune décision ne doit être prise.
+%O Bitcoin currently consumes around 63.49 TWh/year~\cite{bitcoinpower}, about twice as all of Denmark~\cite{denmarkpower}.
+Bitcoin consomme actuellement autour de 63.49 TWh/an~\cite{bitcoinpower}, environ deux fois l'énergie pour le Danemark~\cite{denmarkpower}.
+%O Moreover, these protocols suffer from an inherent scalability bottleneck that is difficult to overcome through simple reparameterization~\cite{CromanDEGJKMSSS16}. % \Jon{I wanted the paper to expand on this point, but I missed it.}
+De plus, ces protocoles souffrent d'un goulet d'étranglement intrinsèque pour le passage à l'échelle, qui est difficile à dépasser par la simple reparamétrisation~\cite{CromanDEGJKMSSS16}.
+%O This paper introduces a new family of consensus protocols called Snow.
+Cet article présente une nouvelle famille de protocoles de consensus appelés Snow.
+%O Inspired by gossip algorithms, this family gains its properties through a deliberately metastable mechanism.
+Inspirée par les algorithmes de \emph{gossip} ou bavardage, cette famille possède des propriétés grâce à un mécanisme délibérément métastable.
+%O Specifically, the system operates by repeatedly sampling the network at random, and steering correct nodes towards a common outcome.
+En particulier, le système opère en échantillonnant répétitivement le réseau au hasard, et en dirigeant les nœuds corrects vers un résultat commun.
+%O Analysis shows that this metastable mechanism is powerful: it can move a large network to an irreversible state quickly, where the irreversibility implies that a sufficiently large portion of the network has accepted a proposal and a conflicting proposal will not be accepted with any higher than negligible ($\varepsilon$) probability. 
+L'analyse montre que ce mécanisme métastable est puissant : il peut rapidement changer l'état d'un vaste réseau de manière irréversible, où l'irréversibilité implique qu'une part suffisamment importante du réseau a accepté une proposition et qu'une proposition différente ne sera acceptée qu'avec une probabilité au maximum négligeable.
 %{\color{red} We should clarify this.  The current statement is too strong.}
 % though it is not always guaranteed to do so.
 % \Jon{Not universal in that some applications require a hard guarantee?}
 
-Similar to Nakamoto consensus, the Snow protocol family provides a probabilistic safety guarantee, using a tunable security parameter that can render the possibility of a consensus failure arbitrarily small.
-Unlike Nakamoto consensus, the protocols are green, quiescent and efficient; they do not rely on proof-of-work~\cite{DworkN92} and do not consume energy when there are no decisions to be made.
-The efficiency of the protocols stems partly from removing the leader bottleneck: each node requires $\Oh{1}$ communication overhead per round and $\Oh{\log{n}}$ rounds in expectation, whereas classical consensus protocols have one or more nodes that require $\Oh{n}$ communication per round (phase).
-Further, the Snow family tolerates discrepancies in knowledge of membership, as we discuss later. In contrast, classical consensus protocols require the full and accurate knowledge of $n$ as its safety foundation.
+%O Similar to Nakamoto consensus, the Snow protocol family provides a probabilistic safety guarantee, using a tunable security parameter that can render the possibility of a consensus failure arbitrarily small.
+De même que le consensus Nakamoto, la famille des protocoles Snow fournissent une garantie de sûreté probabiliste, grâce à un paramètre des sécurité réglable qui peut amenuiser à volonter la possibilité d'un échec du consensus.
+%O Unlike Nakamoto consensus, the protocols are green, quiescent and efficient; they do not rely on proof-of-work~\cite{DworkN92} and do not consume energy when there are no decisions to be made.
+Contrairement au consensus Nakamoto, ces protocoles sont écologiques, économes et efficients ; ils ne dépendent pas d'une preuve de travail\cite{DworkN92} et ne consomment pas d'énergie quand il n'y a pas de décision à prendre.
+%0 The efficiency of the protocols stems partly from removing the leader bottleneck: each node requires $\Oh{1}$ communication overhead per round and $\Oh{\log{n}}$ rounds in expectation, whereas classical consensus protocols have one or more nodes that require $\Oh{n}$ communication per round (phase).
+L'efficacité des protocoles provient en partie de l'élimination du goulet d'étranglement des dirigeants : chaque nœud ne demande qu'un nombre de communications correspondant à $\Oh{1}$ par tour et une prévision de $\Oh{\log{n}}$ tours, alors que, dans les protocoles de consensus classique, un ou plusieurs nœuds requièrent $\Oh{n}$ communications par tour.
+%O Further, the Snow family tolerates discrepancies in knowledge of membership, as we discuss later. In contrast, classical consensus protocols require the full and accurate knowledge of $n$ as its safety foundation.
+De plus, la famille Snow tolère des incohérences dans la connaissance des participants, comme nous le verrons plus loin. Par contraste, les protocoles de consensus classiques exigent une connaisssance complète et exacte de $n$ comme fondation de la sûreté.
 
-Snow's subsampled voting mechanism has two additional properties that improve on previous approaches for consensus. 
-Whereas the safety of quorum-based approaches breaks down immediately when the predetermined threshold $f$ is exceeded,
-Snow's probabilistic safety guarantee degrades smoothly when Byzantine participants exceed $f$.
-This makes it easier to pick the critical threshold $f$.
-It also exposes new tradeoffs between safety and liveness: the Snow family is more efficient when the fraction of Byzantine nodes is small, and it can be parameterized to tolerate more than a third of the Byzantine
-nodes by trading off liveness.
+%O Snow's subsampled voting mechanism has two additional properties that improve on previous approaches for consensus. 
+Le mécanisme de vote sous-échantillonné possède deux propriété supplémentaires supérieures par rapport aux approches antérieures du consensus.
+%O Whereas the safety of quorum-based approaches breaks down immediately when the predetermined threshold $f$ is exceeded,
+%O Snow's probabilistic safety guarantee degrades smoothly when Byzantine participants exceed $f$.
+Alors que la sûreté des approches basées sur un quorum s'effondre immédiatement quand le seuil prédéterminé $f$ est dépassé,
+la garantie de sûreté probabiliste de Snow se dégrade progressivement quand les participants byzantins dépassent $f$.
+%O This makes it easier to pick the critical threshold $f$.
+Cela facilite le choix du seuil critique $f$.
+%O It also exposes new tradeoffs between safety and liveness: the Snow family is more efficient when the fraction of Byzantine nodes is small, and it can be parameterized to tolerate more than a third of the Byzantine
+%O nodes by trading off liveness.
+Cela expose également de nouveaux compromis entre sûreté et vitalité : la famille Snow est plus efficace quand la fraction de nœuds byzantins est petite, et cela peut être paramétré pour tolérer plus d'un tiers de nœuds byzantins en sacrifiant la vitalité.
 
-To demonstrate the potential of this protocol family, we illustrate a practical
-peer-to-peer payment system, Avalanche. In effect, Avalanche executes multiple Snowball (one from the Snow family) instances with the aid of a Directed Acyclic Graph (DAG). The DAG serves to piggyback multiple instances, reducing the cost from $\Oh{\log{n}}$ to $\Oh{1}$ per node and streamlining the path where there are no conflicting transactions.
+%O To demonstrate the potential of this protocol family, we illustrate a practical
+%O peer-to-peer payment system, Avalanche. In effect, Avalanche executes multiple Snowball (one from the Snow family) instances with the aid of a Directed Acyclic Graph (DAG). The DAG serves to piggyback multiple instances, reducing the cost from $\Oh{\log{n}}$ to $\Oh{1}$ per node and streamlining the path where there are no conflicting transactions.
+Pour démontrer le potentiel de cette famille de protocoles, nous l'illustrons par un système pratique de paiement pair à pair, Avalanche. Dans les faits, Avalanche exécute plusieurs instances de Snowball (l'un des protocoles de la famille Snow) avec l'aide d'un graphe orienté acyclique (\emph{Directed Acyclic Graph} ou DAG). Le DAG sert à empiler plusieurs instances en réduisant le coût de $\Oh{\log{n}}$ à $\Oh{1}$ par nœud et en optimisant le chemin où il n'existe pas de transaction contradictoire.
 %This combination of the best features of traditional and Nakamoto consensus involves one significant tradeoff: liveness for \editchange{equivocating proposals}. %conflicting transactions.
 %
 %\editchange{Specifically, the consensus protocol from the Snowball family does not guarantee liveness in all cases. It does, however, guarantee logarithmic expected rounds for termination given a propoer initialization heuristic (Section~\ref{sec:liveness}). It also guarantees fast termination when the proposed value is unanimous. As the core part of Avalanche, it guarantees liveness only for \emph{virtuous} transactions, i.e.\ those issued by correct clients and thus guaranteed not to conflict with other transactions.}
 
-Overall, the main contribution of this paper is to introduce a brand new family
-of consensus protocols, based on randomized sampling and metastable decision.
-The next section provides the model, goals and necessary assumptions for the new protocols.
-Section~\ref{sec:protocol} gives intuition behind the protocols, followed by their full specification,
+%O Overall, the main contribution of this paper is to introduce a brand new family
+%O of consensus protocols, based on randomized sampling and metastable decision.
+En résumé, la principale contribution de cet article consiste à présenter une nouvelle famille de protocoles de consensus fondés sur un échantillonnage aléatoire et des décisions métastables.
+%O The next section provides the model, goals and necessary assumptions for the new protocols.
+La section suivante fournit le modèle, les buts et les suppositions nécessaires pour les nouveaux protocoles.
+%O Section~\ref{sec:protocol} gives intuition behind the protocols, followed by their full specification,
+La section~\ref{sec:protocol} donne l'intuition derrière les protocoles, suivis de leurs spécifications complètes,
 %Section~\ref{sec:attack} briefly discusses typical attack vectors and their possible defense,
-Section~\ref{sec:analysis} provides methodology used
-by our formal analysis of safety and liveness in Appendix~\ref{sec:full-analysis},
+%O Section~\ref{sec:analysis} provides methodology used
+%O by our formal analysis of safety and liveness in Appendix~\ref{sec:full-analysis},
+La section~\ref{sec:analysis} fournit la méthodologie employée par notre analyse formelle de sûreté et de vitalité en Appendix~\ref{sec:full-analysis},
 %Section~\ref{sec:implementation} describes a Bitcoin-like payment system,  Section~\ref{sec:evaluation} evaluates the system,
-Section~\ref{sec:implementation} describes Avalanche, a Bitcoin-like payment system,
-Section~\ref{sec:evaluation} evaluates Avalanche,
-Section~\ref{sec:related-work} presents related work, and finally, Section~\ref{sec:conclusions} summarizes our contributions.
+%O Section~\ref{sec:implementation} describes Avalanche, a Bitcoin-like payment system,
+La section~\ref{sec:implementation} décrit Avalanche, un système de paiement similaire à Bitcoin,
+%O Section~\ref{sec:evaluation} evaluates Avalanche,
+La section~\ref{sec:evaluation} évalue Avalanche,
+%O Section~\ref{sec:related-work} presents related work, and finally, Section~\ref{sec:conclusions} summarizes our contributions.
+La section~\ref{sec:related-work} présente les travaux en relation, et, finalement, la section~\ref{sec:conclusions} résume nos contributions.
 
 \section{Model and Goals}
 \label{sec:model_and_goals}
