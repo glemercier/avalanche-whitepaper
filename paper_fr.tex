@@ -311,7 +311,7 @@ La figure~\ref{fig:fandepsilon} montre comment la portion ($f/n$) de participant
 %O This bounded guarantee is similar to various protocols such as Ben-Or~\cite{ben1983another} and longest-chain protocols.
 Cette garantie de limite est similaire à celle de divers protocoles comme Ben-Or~\cite{ben1983another} et les protocoles de chaîne la plus longue.
 %O In particular, for Nakamoto consensus, the number of required blocks for a transaction increases exponentially with the number of adversarial nodes, with an asymptote at $f = n/2$ wherein the number is infinite.
-En particulier, pour le consensus Nakamoto, le nombre de blocs requis pour une transaction augmente exponentiellement avec le nombre de nœuds malveillants, avec une asymptote à $f = n/2$ où le nombre est infini. % wut?
+En particulier, pour le consensus Nakamoto, le nombre de blocs requis pour une transaction augmente exponentiellement avec le nombre de nœuds antagonistes (\emph{adversarial}), avec une asymptote à $f = n/2$ où le nombre est infini. % wut?
 %O In other words, the time required for finality approaches $\infty$ as $f$ approaches $n/2$\tronly{ (Figure~\ref{fig:livenessproperties}).}{.}
 En d'autres termes, le temps nécessaire à la finalité approche $\infty$ quand $f$ approche $n/2$\tronly{ (Figure~\ref{fig:livenessproperties}).}{.}
 %O Furthermore, the required number of rounds is calculable ahead of time, as to allow the system designer to tune liveness at the expense of safety. Lastly, unlike traditional consensus protocols and similar to Nakamoto, our protocols benefit from lower adversarial presence, as discussed in property P3 below.
@@ -326,35 +326,53 @@ De plus, le nombre requis de tours est calculable à l'avance, ce qui permet au 
 \end{figure}
 }
 
-\emph{Formal Guarantees}: Let the system be parameterized for an $\varepsilon$ safety failure probability under a maximum expected $f$ number of adversarial nodes. Let $\Oh{\log n} < t_{max} < \infty$ be the upper bound of the execution of the protocols. The Snow protocols then provide the following guarantees:
+%O \emph{Formal Guarantees}: Let the system be parameterized for an $\varepsilon$ safety failure probability under a maximum expected $f$ number of adversarial nodes. Let $\Oh{\log n} < t_{max} < \infty$ be the upper bound of the execution of the protocols. The Snow protocols then provide the following guarantees:
+\emph{Garantie formelle} : Soit un paramétrage du système pour une probabilité de défaillance de la sûreté $\varepsilon$ pour un nombre maximal attendu $f$ de nœuds antagonistes. Soit $\Oh{\log n} < t_{max} < \infty$ la limite supérieure de l'exécution du protocole. Les protocoles Snow fournissent alors les garanties suivantes\,:
 \begin{compactitem}
 % RVR: this property is unnecessary because the liveness property already ensures non-triviality
 %    \item \textbf{Non-triviality}: To ensure that the protocol carries out real work, decisions must include values proposed by external clients;
 
-    \item \textbf{P1. Safety.} When decisions are made by any two correct nodes, they decide on conflicting transactions with negligible probability ($\leq \varepsilon$).
+%O     \item \textbf{P1. Safety.} When decisions are made by any two correct nodes, they decide on conflicting transactions with negligible probability ($\leq \varepsilon$).
+     \item \textbf{P1. Sûreté.} Quand les décisions sont prises par deux nœuds corrects, ils décident des transactions contradictoires avec une probabilité négligeable ($\leq \varepsilon$).
     % \item \textbf{P2. Liveness.} Transactions will be accepted by every correct node in $\Oh{\log n}$ rounds if either the observed Byzantine presence $f'$, where $f' < f$, is sufficiently small, or the network is initialized in a univalent state.
-    \item \textbf{P2. Liveness (Upper Bound).} Snow protocols terminate with a strictly positive probability within $t_{max}$ rounds.  
-    \item \textbf{P3. Liveness (Strong Form).} If $f \leq \Oh{\sqrt{n}}$, then the Snow protocols terminate with high probability ($\geq 1 - \varepsilon$) in $\Oh{\log{n}}$ rounds. 
+%O     \item \textbf{P2. Liveness (Upper Bound).} Snow protocols terminate with a strictly positive probability within $t_{max}$ rounds.  
+     \item \textbf{P2. Vitalité (limite supérieure).} Les protocoles Snow se terminent avec une probabilité strictement positive en au plus $t_{max}$ tours.
+%O     \item \textbf{P3. Liveness (Strong Form).} If $f \leq \Oh{\sqrt{n}}$, then the Snow protocols terminate with high probability ($\geq 1 - \varepsilon$) in $\Oh{\log{n}}$ rounds. 
+     \item \textbf{P3. Vitalité (forme forte).} Si $f \leq \Oh{\sqrt{n}}$, alors les protocoles Snow se terminent avec une forte probabilité ($\geq 1 - \varepsilon$) en $\Oh{\log{n}}$ tours.
 \end{compactitem}
 % Instead of unconditional agreement, our approach guarantees that safety will be upheld with probability $1-\varepsilon$, where the choice of the security parameter $\varepsilon$ is under the control of the system designer and applications.
 
-\paragraph{Network} 
-In the standard definition of asynchrony~\cite{ben1983another}, message transmission time is finite, but the distribution is unspecified (and thus the delivery time can be unbounded for some messages). This implies that the scheduling of message transmission itself could behave arbitrarily, and potentially even maliciously (with full asynchrony).
-We use a modified version of this model, which is well-accepted~\cite{banerjee2014epidemic, ganesh2005effect, draief2006thresholds, keeling2011modeling, liggett1997stochastic} in the analysis of epidemic networks and gossip-based stochastic systems. In particular, we fix the distribution of message delay to that of the exponential distribution.
-We note that, just like in the standard asynchronous model, there is a strictly non-zero probability that any correct node may execute its next local round only after an arbitrarily large amount of time has passed.
-Furthermore, we also note that scheduling only applies to correct nodes, and the adversary may execute arbitrarily, as discussed later. 
+%O \paragraph{Network} 
+\paragraph{Réseau} 
+%O In the standard definition of asynchrony~\cite{ben1983another}, message transmission time is finite, but the distribution is unspecified (and thus the delivery time can be unbounded for some messages). This implies that the scheduling of message transmission itself could behave arbitrarily, and potentially even maliciously (with full asynchrony).
+Dans la définition standard de l'asynchronie~\cite{ben1983another}, le temps de transmission des messages est fini, mais la distribution n'est pas spécifiée (donc le temps de délivrance peut être sans limite pour certains messages). Cela implique que l'échelonnement de la transmission des messages lui-même peut être quelconque, voire potentiellement malveillant (pour une complète asynchronie).
+%O We use a modified version of this model, which is well-accepted~\cite{banerjee2014epidemic, ganesh2005effect, draief2006thresholds, keeling2011modeling, liggett1997stochastic} in the analysis of epidemic networks and gossip-based stochastic systems. In particular, we fix the distribution of message delay to that of the exponential distribution.
+Nous employons one version modifiée de ce modèle, lequel est bien accepté~\cite{banerjee2014epidemic, ganesh2005effect, draief2006thresholds, keeling2011modeling, liggett1997stochastic} dans l'analyse des réseaux épidémiques et des systèmes stochastiques à base de \emph{gossip}. En particulier, nous fixons la distribution des délais de messages à celle de la distibution exponentielle.
+%O We note that, just like in the standard asynchronous model, there is a strictly non-zero probability that any correct node may execute its next local round only after an arbitrarily large amount of time has passed.
+Nous notons que, tout comme dans le modèle asynchrone standard, il existe un probabilité strictement non-nulle que tout nœud correct ne peut exécuter son prochain tour local qu'après qu'un laps de temps arbitrairement long a passé.
+%O Furthermore, we also note that scheduling only applies to correct nodes, and the adversary may execute arbitrarily, as discussed later. 
+De plus, nous notons également que l'échelonnement ne s'applique qu'aux nœuds corrects, et que l'adversaire peut exécuter arbitrairement, comme nous le verrons plus loin. % HOULA
 
-\paragraph{Achieving Liveness}
-Classical consensus that works with asynchrony does not get stuck in a single phase of voting because the vote initiator always polls votes from all known participants and waits for $n - f$ responses.
+%O \paragraph{Achieving Liveness}
+\paragraph{Atteinte de la vitalité} % HOULA
+%O Classical consensus that works with asynchrony does not get stuck in a single phase of voting because the vote initiator always polls votes from all known participants and waits for $n - f$ responses.
+Les consensus classiques qui fonctionnent en asynchronie ne restent pas bloqués lors d'une phase de vote car l'initiateur du vote interroge toujours tous les participants connus et attend $n - f$ réponses.
 %The consequence of these two assumptions is therefore that progress cannot be indefinitely delayed by the adversary since the correct nodes (whose number is sufficient for voting) will eventually deliver the required messages.
-In our system, however, nodes operate via subsampling, hence it is possible for a single sample to select a majority of adversarial nodes, and therefore the node gets stuck waiting for the responses. To ensure liveness, a node should be able to wait with some timeout. Therefore, our protocols are synchronous in order to guarantee liveness. Lastly, it is worth noting that Nakamoto consensus is synchronous, in which the required difficulty of proof-of-work is dependent on the maximum network delay~\cite{PassSS17}. %Also, other protocols that rely on gossip [Citation here] are also essentially synchronous due to the synchronous nature of gossip protocols. \editinsert{RvR pointed this out, we need to carefully word it though.
+%O In our system, however, nodes operate via subsampling, hence it is possible for a single sample to select a majority of adversarial nodes, and therefore the node gets stuck waiting for the responses. To ensure liveness, a node should be able to wait with some timeout. Therefore, our protocols are synchronous in order to guarantee liveness. Lastly, it is worth noting that Nakamoto consensus is synchronous, in which the required difficulty of proof-of-work is dependent on the maximum network delay~\cite{PassSS17}. %Also, other protocols that rely on gossip [Citation here] are also essentially synchronous due to the synchronous nature of gossip protocols. \editinsert{RvR pointed this out, we need to carefully word it though.
+Dans notre système, cependant, les nœuds opèrent par sous-échantillonnage, d'où la possibilité pour un seul échantillon qu'une majorité de nœuds antagonistes soit sélectionner, ce qui contraint le nœud à attendre en vain une réponse. Pour s'assurer de la vitalité, un nœud doit pouvoir poser une limite à l'attente. Enfin, il faut noter que le consensus Nakamoto est synchrone et que la difficulté requise à la preuve de travail dépend du délai maximum du réseau~\cite{PassSS17}. 
 
-\paragraph{Adversary}
-The adversarial nodes execute under their own internal scheduler, which is unbounded in speed, meaning that all adversarial nodes can execute at any infinitesimally small point in time, unlike correct nodes. 
-The adversary can view the state of every honest node at all times and can instantly modify the state of all adversarial nodes. 
-It cannot, however, schedule or modify communication between correct nodes.
-Finally, we make zero assumptions about the behavior of the adversary, meaning that it can choose any execution strategy of its liking.
-In short, the adversary is computationally bounded (it cannot forge digital signatures) but otherwise is point-to-point informationally unbounded (knows all state) and round-adaptive (can modify its strategy at any time). 
+%O \paragraph{Achieving Liveness}
+\paragraph{Adversaire}
+%O The adversarial nodes execute under their own internal scheduler, which is unbounded in speed, meaning that all adversarial nodes can execute at any infinitesimally small point in time, unlike correct nodes. 
+Les nœuds antagonistes s'exécutent avec un ordonnanceur interne qui leur est propre, non limité en vitesse, ce qui signifie que tout nœud antagoniste peut s'exécuter à un moment précis infiniment petit, au contraire des nœuds corrects.
+%O The adversary can view the state of every honest node at all times and can instantly modify the state of all adversarial nodes. 
+L'adversaire peut voir l'état de chaque nœud honnête à tout moment et peut instantanément modifier l'état de tout nœud antagoniste.
+%O It cannot, however, schedule or modify communication between correct nodes.
+Il ne peut, cependant, ordonnancer ou modifier la communication entre les nœuds corrects.
+%O Finally, we make zero assumptions about the behavior of the adversary, meaning that it can choose any execution strategy of its liking.
+Enfin, nous ne faisons aucune hypothèse sur le comportement de l'adversaire, ce qui signifie qu'il peut choisir la stratégie d'exécution qui lui convient.
+%O In short, the adversary is computationally bounded (it cannot forge digital signatures) but otherwise is point-to-point informationally unbounded (knows all state) and round-adaptive (can modify its strategy at any time). 
+En résumé, l'adversaire est limité en puissance informatique (il ne peut pas forger des signatures numériques) mais, hormis cela, il n'est pas limité en matière informationnelle (connaît tout de l'état) et il est adaptatif en matière de tours (peut modifier sa stratégie à tout moment).
 
 \paragraph{Sybil Attacks}
 Consensus protocols provide their guarantees based on assumptions that only a fraction of participants are adversarial.
