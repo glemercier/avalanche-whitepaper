@@ -433,31 +433,41 @@ We start with a non-BFT protocol called Slush and progressively build up to Snow
 These protocols are single-decree consensus protocols of increasing robustness.
 We provide full specifications for the protocols in this section, and defer the analysis to the next section, and present formal proofs in the appendix.
 
-\subsection{Slush: Introducing Metastability}
-The core of our approach is a single-decree consensus protocol,
-inspired by epidemic or gossip protocols.
-% In this approach, a state in which all possible outcomes are equally
-% probable is metastable and disturbances are likely to cause the
-% protocol to converge to one of multiple stable states.
-% We will call such consensus protocols metastable themselves.
-%We can model a preference for a decision as a kind of infection: a node catches a disease, and converts other nodes to carry the same disease in epidemic fashion.
-%If a threshold of its interactions are with other infected hosts, it flips its color to the competing agent and joins their ranks.
-%
-The simplest protocol, Slush, is the foundation of this family, shown in Figure~\ref{fig:slush-loop}.
-Slush is \emph{not} tolerant to Byzantine faults, only crash-faults (CFT), but serves as an illustration for the BFT protocols that follow.
-For ease of exposition, we will describe the operation of Slush using a decision between two conflicting colors, red and blue.
-% , though the technique generalizes to any number of competing proposed values.
-% Slush operates as follows.
+%0 \subsection{Slush: Introducing Metastability}
+\subsection{Slush: A propos de métastabililté}
 
-In Slush, a node starts out initially in an uncolored state.
-Upon receiving a transaction from a client, an uncolored node updates its own color to the one carried in the transaction and initiates a query.
-To perform a query, a node picks a small, constant sized ($k$) sample of the network uniformly at random, and sends a query message.
-Upon receiving a query, an uncolored node adopts the color in the query, responds with that color, and initiates its own query, whereas a colored node simply responds with its current color.
-% If $k$ responses are not received within a time bound, the node picks an additional sample from the remaining nodes uniformly at random and queries them until it collects all responses.
-Once the querying node collects $k$ responses, it checks if a fraction $\ge\alpha$ are for the same color, where $\alpha > \floor{k/2}$ is a protocol parameter.
-If the $\alpha$ threshold is met and the sampled color differs from the node's own color, the node flips to that color.
-It then goes back to the query step, and initiates a subsequent round of query, for a total of $m$ rounds.
-Finally, the node decides the color it ended up with at time $m$.
+%O The core of our approach is a single-decree consensus protocol,
+%O inspired by epidemic or gossip protocols.
+%O The simplest protocol, Slush, is the foundation of this family, shown in Figure~\ref{fig:slush-loop}.
+%O Slush is \emph{not} tolerant to Byzantine faults, only crash-faults (CFT), but serves as an illustration for the BFT protocols that follow.
+%O For ease of exposition, we will describe the operation of Slush using a decision between two conflicting colors, red and blue.
+
+Le principe de notre approche est un protocole de consensus à décision simple inspiré des protocoles dits "épidémiques"
+ou "gossip". Le protocole le plus simple, Slush, est la fondation de cette famille, comme le montre la
+Figure~\ref{fig:slush-loop}. Slush \emph{n'est pas} tolérant aux fautes byzantines, seulement aux fautes par défaut
+de fonctionnement (CFT), mais sert à mettre en avant les autres protocoles tolérants aux fautes byzantines qui vont
+suivre. Dans un souci de simplicité de présentation, nous décrirons le fonctionnement de Slush en le comparant
+à une décision à prendre entre deux couleurs incompatibles, le rouge et le bleu.
+
+%O In Slush, a node starts out initially in an uncolored state.
+%O Upon receiving a transaction from a client, an uncolored node updates its own color to the one carried in the transaction and initiates a query.
+%O To perform a query, a node picks a small, constant sized ($k$) sample of the network uniformly at random, and sends a query message.
+%O Upon receiving a query, an uncolored node adopts the color in the query, responds with that color, and initiates its own query, whereas a colored node simply responds with its current color.
+%O Once the querying node collects $k$ responses, it checks if a fraction $\ge\alpha$ are for the same color, where $\alpha > \floor{k/2}$ is a protocol parameter.
+%O If the $\alpha$ threshold is met and the sampled color differs from the node's own color, the node flips to that color.
+%O It then goes back to the query step, and initiates a subsequent round of query, for a total of $m$ rounds.
+%O Finally, the node decides the color it ended up with at time $m$.
+
+Avec Slush, un noeud démarre dans un état de couleur neutre. Après réception d'une transaction envoyée par un client,
+un node de couleur neutre adopte la couleur définie dans la transaction et initie une requête. Pour lancer une
+requête, le noeud choisit un échantillon réduit et de taille constante ($k$) de noeuds appartenant au réseau suivant
+une distribution uniformément aléatoire puis initie sa propre requête, tandis qu'un noeud déja coloré répond
+simplement avec sa couleur actuelle. Une fois que le noeud qui fait la requête récupère $k$ réponses, il vérifie si
+une proportion $\ge\alpha$ de l'échantillon retourne la même couleur, $\alpha > \floor{k/2}$ étant un paramètre
+du protocole. Si le seuil $\alpha$ est dépassé et que la couleur dominante revenant de l'échantillon sollicité est
+différente de la couleur propre du node à l'origine de la requête, ce node adopte cette nouvelle couleur. Il revient
+ensuite à l'étape de génération de la requête et lance un nouveau tour de requête jusqu'à un total de $m$ tours.
+En définitive, le node décide de sa couleur finale à l'instant $m$.
 
 \algnewcommand{\IIf}[1]{\State\algorithmicif\ #1\ \algorithmicthen}
 \algnewcommand{\EndIIf}{\unskip\ \algorithmicend\ \algorithmicif}
@@ -471,44 +481,63 @@ Finally, the node decides the color it ended up with at time $m$.
 \begin{algorithmic}[1]
     \Procedure{onQuery}{$v, \codecolor'$}
         \IIf{$\codecolor = \bot$} $\codecolor \assign \codecolor'$
-        \State\Call{respond}{$v, \codecolor$}
+        \State\Call{répondre}{$v, \codecolor$}
     \EndProcedure
     \Procedure{slushLoop}{$u, \codecolor_0 \in \{\texttt{R}, \texttt{B}, \bot\}$}
-        \State $\codecolor \assign \codecolor_0$ \textrm{// initialize with a color}
+        \State $\codecolor \assign \codecolor_0$ \textrm{// initialise avec une couleur}
         \For{$r \in \{1\ldots m\}$}
-            \State \textrm{// if $\bot$, skip until \textsc{onQuery} sets the color}
+            \State \textrm{// Si $\bot$, réitère jusqu'à ce que \textsc{onQuery} applique la couleur}
             \If{$\codecolor = \bot$}
                 \Continue
             \EndIf
-            \State \textrm{// randomly sample from the known nodes}
-            \State $\mathcal{K} \assign \Call{sample}{\mathcal{N}\backslash u, k}$
-            \State $P \assign \texttt{[}\Call{query}{v, \codecolor}\quad\textbf{for}\ v \in \mathcal{K}\texttt{]}$
+            \State \textrm{// échantillonne aléatoirement parmi les noeuds connus}
+            \State $\mathcal{K} \assign \Call{échantillon}{\mathcal{N}\backslash u, k}$
+            \State $P \assign \texttt{[}\Call{requête}{v, \codecolor}\quad\textbf{pour}\ v \in \mathcal{K}\texttt{]}$
             \For{$\codecolor' \in \{\texttt{R}, \texttt{B}\}$}
-                \If{$P.\Call{count}{\codecolor'} \ge \alpha$}
+                \If{$P.\Call{nombre}{\codecolor'} \ge \alpha$}
                     \State $\codecolor \assign \codecolor'$
                 \EndIf
             \EndFor
         \EndFor
-        \State \Call{accept}{$\codecolor$}
+        \State \Call{accepte}{$\codecolor$}
     \EndProcedure
-    \captionof{figure}{Slush protocol. Timeouts elided for readability.}\label{fig:slush-loop}
+    \captionof{figure}{Protocole Slush. Les temps d'expiration sont omis dans un souci de lisibilité.}\label{fig:slush-loop}
 \end{algorithmic}
 \end{figure}
- 
-Slush has a few properties of interest. 
-First, it is almost \emph{memoryless}: a node retains no state between rounds other than its current color, and in particular maintains no history of interactions with other peers.
-Second, unlike traditional consensus protocols that query every participant, every round involves sampling just a small, constant-sized slice of the network at random.
-Third, Slush makes progress under any network configuration (even fully bivalent state, i.e. 50/50 split between colors), since random perturbations in sampling will cause one color to gain a slight edge and repeated samplings afterwards will build upon and amplify that imbalance.
-Finally, if $m$ is chosen high enough, Slush ensures that all nodes will be colored identically with high probability (whp).
-Each node has a constant, predictable communication overhead per round, and $m$ grows logarithmically with $n$.
+
+%O Slush has a few properties of interest.
+%O First, it is almost \emph{memoryless}: a node retains no state between rounds other than its current color, and in particular maintains no history of interactions with other peers.
+%O Second, unlike traditional consensus protocols that query every participant, every round involves sampling just a small, constant-sized slice of the network at random.
+%O Third, Slush makes progress under any network configuration (even fully bivalent state, i.e. 50/50 split between colors), since random perturbations in sampling will cause one color to gain a slight edge and repeated samplings afterwards will build upon and amplify that imbalance.
+%O Finally, if $m$ is chosen high enough, Slush ensures that all nodes will be colored identically with high probability (whp).
+%O Each node has a constant, predictable communication overhead per round, and $m$ grows logarithmically with $n$.
+
+Slush a quelques propriétés intéréssantes. Premièrement, il n'a quasiment \emph{pas besoin de mémoire}: un noeud ne
+stocke aucun état intermédiaire entre chaque tour autre que sa couleur actuelle, et plus particulièrement ne stocke
+aucun historique de ses interactions avec les autres noeuds. Deuxièmement, contrairement aux protocoles de consensus
+traditionnels qui sollicitent tous les participants, chaque tour n'implique qu'un échantillon du réseau réduit et de
+taille constante choisi aléatoirement. Troisièmement, Slush progresse quelque soit la configuration du réseau (même
+depuis un état entièrement bivalent, ex: partage 50/50 entre les deux couleurs) vu que des perturbations aléatoires
+sur l'échantillonnage auront pour conséquence de fournir un léger avantage à l'une des deux couleurs qui sera ensuite
+amplifié au fur et à mesure des échantillonnages.
+Finalement si $m$ est choisi pour être suffisamment élevé, Slush s'assure que tous les noeuds convergeront vers la
+même couleur avec une haute probabilité. Chaque noeud nécéssite un temps de communication par tour constant et
+prévisible, et $m$ croît de manière logarithmique suivant $n$.
 
 \tronly{
-The Slush protocol does not provide a strong safety guarantee in the presence of Byzantine nodes.
-In particular, if the correct nodes develop a preference for one color, a Byzantine adversary can attempt to flip nodes
-to the opposite so as to keep the network in balance, preventing a decision.
-We address this in our first BFT protocol that introduces more state storage at the nodes.
+%O The Slush protocol does not provide a strong safety guarantee in the presence of Byzantine nodes.
+%O In particular, if the correct nodes develop a preference for one color, a Byzantine adversary can attempt to flip nodes
+%O to the opposite so as to keep the network in balance, preventing a decision.
+%O We address this in our first BFT protocol that introduces more state storage at the nodes.
+
+Le protocole Slush ne fournit pas de fortes garanties quant à la sûreté de fonctionnement en la présence de noeuds
+byzantins. En particulier si les noeuds légitimes développent une préférence pour une certaine couleur, un adversaire
+byzantin pourra inverser la couleur des noeuds afin de maintenir le système à l'équilibre, incapable de prendre une
+décision. Nous adressons ce problème dans notre premier protocole tolérant aux fautes byzantines qui introduit un
+meilleur suivi de l'état au niveau des nodes.
 }{
-We next examine how to extend Slush to tolerate Byzantine behavior.
+%O We next examine how to extend Slush to tolerate Byzantine behavior.
+Nous examinons ensuite comment améliorer Slush pour être tolérant au problème des généraux byzantins.
 }
 
 \subsection{Snowflake: BFT}
