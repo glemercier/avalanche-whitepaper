@@ -227,7 +227,7 @@ Cela expose également de nouveaux compromis entre sûreté et vitalité : la fa
 
 %O To demonstrate the potential of this protocol family, we illustrate a practical
 %O peer-to-peer payment system, Avalanche. In effect, Avalanche executes multiple Snowball (one from the Snow family) instances with the aid of a Directed Acyclic Graph (DAG). The DAG serves to piggyback multiple instances, reducing the cost from $\Oh{\log{n}}$ to $\Oh{1}$ per node and streamlining the path where there are no conflicting transactions.
-Pour démontrer le potentiel de cette famille de protocoles, nous l'illustrons par un système pratique de paiement pair à pair, Avalanche. Dans les faits, Avalanche exécute plusieurs instances de Snowball (l'un des protocoles de la famille Snow) avec l'aide d'un graphe orienté acyclique (\emph{Directed Acyclic Graph} ou DAG). Le DAG sert à empiler plusieurs instances en réduisant le coût de $\Oh{\log{n}}$ à $\Oh{1}$ par nœud et en optimisant le chemin où il n'existe pas de transaction contradictoire.
+Pour démontrer le potentiel de cette famille de protocoles, nous l'illustrons par un système pratique de paiement pair à pair, Avalanche. Dans les faits, Avalanche exécute plusieurs instances de Snowball (l'un des protocoles de la famille Snow) avec l'aide d'un graphe orienté acyclique (\emph{Directed Acyclic Graph} ou DAG). Le DAG sert à empiler plusieurs instances en réduisant le coût de $\Oh{\log{n}}$ à $\Oh{1}$ par nœud et en optimisant le chemin où il n'existe pas de transactions contradictoires.
 %This combination of the best features of traditional and Nakamoto consensus involves one significant tradeoff: liveness for \editchange{equivocating proposals}. %conflicting transactions.
 %
 %\editchange{Specifically, the consensus protocol from the Snowball family does not guarantee liveness in all cases. It does, however, guarantee logarithmic expected rounds for termination given a propoer initialization heuristic (Section~\ref{sec:liveness}). It also guarantees fast termination when the proposed value is unanimous. As the core part of Avalanche, it guarantees liveness only for \emph{virtuous} transactions, i.e.\ those issued by correct clients and thus guaranteed not to conflict with other transactions.}
@@ -284,9 +284,9 @@ La section~\ref{sec:related-work} présente les travaux en relation, et, finalem
 % transitions are defined by a totally ordered list of accepted transactions.
 
 %O \paragraph{Safety} Unlike classical consensus protocols, and similar to longest-chain-based consensus protocols such as Nakamoto consensus~\cite{nakamoto2008bitcoin}, we adopt an $\varepsilon$-safety guarantee that is probabilistic. 
-\paragraph{Sûreté} À l'inverse des protocoles de consensus classiques, et de même que les protocoles de consensus fondés sur la chaîne la plus longue~\cite{nakamoto2008bitcoin}, nous adoptions une garantie de sûreté-$\varepsilon$ qui est probabiliste.
+\paragraph{Sûreté} À l'inverse des protocoles de consensus classiques, et à l'instar des protocoles de consensus fondés sur la chaîne la plus longue~\cite{nakamoto2008bitcoin}, nous adoptons une garantie de sûreté-$\varepsilon$ qui est probabiliste.
 %O In practice, this probabilistic guarantee is as strong as traditional safety guarantees, since appropriately small choices of $\varepsilon$ can render consensus failure negligible, lower than the probability of hardware failure due to random events.
-En pratique, cette garantie probabiliste est aussi forte que les garantie de sûreté traditionnelles, puisque le choix d'un petit $\varepsilon$ peut rendre la défaillance du consensus négligeable, inférieurs à la probabilité d'une panne matérielle due à des événements imprévisibles.
+En pratique, cette garantie probabiliste est aussi forte que les garantie de sûreté traditionnelles puisque le choix d'un petit $\varepsilon$ peut rendre la défaillance du consensus négligeable, inférieurs à la probabilité d'une panne matérielle due à des événements imprévisibles.
 %OFigure~\ref{fig:fandepsilon} shows how the portion ($f/n$) of misbehaving participants (or computation power) affects the probability of system safety failure (decision of two conflicting proposals), given a choice of finality.
 La figure~\ref{fig:fandepsilon} montre comment la portion ($f/n$) de participants (ou de puissance informatique) problématique affecte la probabilité d'une défaillance de la sûreté du système (décision de deux propositions incompatibles), selon un choix de finalité.
 % The maximum tolerated Byzantine presence $f$, is dependent on the choice of $\varepsilon$. Similar to Nakamoto consensus, given an observed Byzantine presence $f'$, where $f' \leq f$, the safety failure probability of our protocols maintains the property that $\varepsilon' \leq \varepsilon$. On the other hand, for classical consensus protocols, the failure probability is simply zero for all $f' \leq f$, and almost sure (i.e. one) for $f' > f$.
@@ -307,15 +307,15 @@ La figure~\ref{fig:fandepsilon} montre comment la portion ($f/n$) de participant
 }{}
 
 %O \paragraph{Liveness} All our protocols provide a non-zero probability guarantee of termination within a bounded amount of time. 
-\paragraph{Vitalité} Tous nos protocoles fournissent une garantie de probabilité supérieure à zéro de terminaison dans un laps de temps donné.
+\paragraph{Vitalité} Tous nos protocoles fournissent une garantie de probabilité de terminaison dans un laps de temps donné supérieure à zéro.
 %O This bounded guarantee is similar to various protocols such as Ben-Or~\cite{ben1983another} and longest-chain protocols.
 Cette garantie de limite est similaire à celle de divers protocoles comme Ben-Or~\cite{ben1983another} et les protocoles de chaîne la plus longue.
 %O In particular, for Nakamoto consensus, the number of required blocks for a transaction increases exponentially with the number of adversarial nodes, with an asymptote at $f = n/2$ wherein the number is infinite.
-En particulier, pour le consensus Nakamoto, le nombre de blocs requis pour une transaction augmente exponentiellement avec le nombre de nœuds antagonistes (\emph{adversarial}), avec une asymptote à $f = n/2$ où le nombre est infini. % wut?
+En particulier, pour le consensus Nakamoto, le nombre de blocs requis pour une transaction augmente exponentiellement avec le nombre de nœuds antagonistes, avec une asymptote à $f = n/2$ où le nombre est infini. % wut?
 %O In other words, the time required for finality approaches $\infty$ as $f$ approaches $n/2$\tronly{ (Figure~\ref{fig:livenessproperties}).}{.}
 En d'autres termes, le temps nécessaire à la finalité approche $\infty$ quand $f$ approche $n/2$\tronly{ (Figure~\ref{fig:livenessproperties}).}{.}
 %O Furthermore, the required number of rounds is calculable ahead of time, as to allow the system designer to tune liveness at the expense of safety. Lastly, unlike traditional consensus protocols and similar to Nakamoto, our protocols benefit from lower adversarial presence, as discussed in property P3 below.
-De plus, le nombre requis de tours est calculable à l'avance, ce qui permet au concepteur du système de réglere la vitalité aux dépens de la sûreté. Enfin, contrairement aux protocoles de consensus traditionnels et semblablement à Nakamoto, nos protocoles bénéficient d'une moindre présence antagoniste, comme le détaille la propriété P3 ci-dessous.
+De plus, le nombre requis de tours est calculable à l'avance, ce qui permet au concepteur du système de régler la vitalité aux dépens de la sûreté. Enfin, contrairement aux protocoles de consensus traditionnels et similairement à Nakamoto, nos protocoles bénéficient d'une moindre présence antagoniste, comme le détaille la propriété P3 ci-dessous.
 
 \tronly{%
 \begin{figure}[h!]
@@ -347,22 +347,22 @@ De plus, le nombre requis de tours est calculable à l'avance, ce qui permet au 
 %O In the standard definition of asynchrony~\cite{ben1983another}, message transmission time is finite, but the distribution is unspecified (and thus the delivery time can be unbounded for some messages). This implies that the scheduling of message transmission itself could behave arbitrarily, and potentially even maliciously (with full asynchrony).
 Dans la définition standard de l'asynchronie~\cite{ben1983another}, le temps de transmission des messages est fini, mais la distribution n'est pas spécifiée (donc le temps de délivrance peut être sans limite pour certains messages). Cela implique que l'échelonnement de la transmission des messages lui-même peut être quelconque, voire potentiellement malveillant (pour une complète asynchronie).
 %O We use a modified version of this model, which is well-accepted~\cite{banerjee2014epidemic, ganesh2005effect, draief2006thresholds, keeling2011modeling, liggett1997stochastic} in the analysis of epidemic networks and gossip-based stochastic systems. In particular, we fix the distribution of message delay to that of the exponential distribution.
-Nous employons one version modifiée de ce modèle, lequel est bien accepté~\cite{banerjee2014epidemic, ganesh2005effect, draief2006thresholds, keeling2011modeling, liggett1997stochastic} dans l'analyse des réseaux épidémiques et des systèmes stochastiques à base de \emph{gossip}. En particulier, nous fixons la distribution des délais de messages à celle de la distibution exponentielle.
+Nous employons une version modifiée de ce modèle, lequel est bien accepté~\cite{banerjee2014epidemic, ganesh2005effect, draief2006thresholds, keeling2011modeling, liggett1997stochastic} dans l'analyse des réseaux épidémiques et des systèmes stochastiques à base de \emph{gossip}. En particulier, nous fixons la distribution des délais de messages à celle de la distribution exponentielle.
 %O We note that, just like in the standard asynchronous model, there is a strictly non-zero probability that any correct node may execute its next local round only after an arbitrarily large amount of time has passed.
-Nous notons que, tout comme dans le modèle asynchrone standard, il existe un probabilité strictement non-nulle que tout nœud correct ne peut exécuter son prochain tour local qu'après qu'un laps de temps arbitrairement long a passé.
+Nous notons que, tout comme dans le modèle asynchrone standard, il existe une probabilité strictement non-nulle que tout nœud correct ne peut exécuter son prochain tour local qu'après qu'un laps de temps arbitrairement long a passé.
 %O Furthermore, we also note that scheduling only applies to correct nodes, and the adversary may execute arbitrarily, as discussed later. 
-De plus, nous notons également que l'échelonnement ne s'applique qu'aux nœuds corrects, et que l'adversaire peut exécuter arbitrairement, comme nous le verrons plus loin. % HOULA
+De plus, nous notons également que l'échelonnement ne s'applique qu'aux nœuds corrects, et que l'adversaire peut s'exécuter arbitrairement, comme nous le verrons plus loin.
 
 %O \paragraph{Achieving Liveness}
-\paragraph{Atteinte de la vitalité} % HOULA
+\paragraph{Obtention de la vitalité} % HOULA
 %O Classical consensus that works with asynchrony does not get stuck in a single phase of voting because the vote initiator always polls votes from all known participants and waits for $n - f$ responses.
 Les consensus classiques qui fonctionnent en asynchronie ne restent pas bloqués lors d'une phase de vote car l'initiateur du vote interroge toujours tous les participants connus et attend $n - f$ réponses.
 %The consequence of these two assumptions is therefore that progress cannot be indefinitely delayed by the adversary since the correct nodes (whose number is sufficient for voting) will eventually deliver the required messages.
 %O In our system, however, nodes operate via subsampling, hence it is possible for a single sample to select a majority of adversarial nodes, and therefore the node gets stuck waiting for the responses. To ensure liveness, a node should be able to wait with some timeout. Therefore, our protocols are synchronous in order to guarantee liveness. Lastly, it is worth noting that Nakamoto consensus is synchronous, in which the required difficulty of proof-of-work is dependent on the maximum network delay~\cite{PassSS17}. %Also, other protocols that rely on gossip [Citation here] are also essentially synchronous due to the synchronous nature of gossip protocols. \editinsert{RvR pointed this out, we need to carefully word it though.
-Dans notre système, cependant, les nœuds opèrent par sous-échantillonnage, d'où la possibilité pour un seul échantillon qu'une majorité de nœuds antagonistes soit sélectionner, ce qui contraint le nœud à attendre en vain une réponse. Pour s'assurer de la vitalité, un nœud doit pouvoir poser une limite à l'attente. Enfin, il faut noter que le consensus Nakamoto est synchrone et que la difficulté requise à la preuve de travail dépend du délai maximum du réseau~\cite{PassSS17}. 
+Dans notre système, cependant, les nœuds opèrent par sous-échantillonnage, d'où la possibilité pour un seul échantillon qu'une majorité de nœuds antagonistes soit sélectionné, ce qui contraint le nœud à attendre en vain une réponse. Pour s'assurer de la vitalité, un nœud doit pouvoir poser une limite à l'attente. Enfin, il faut noter que le consensus Nakamoto est synchrone et que la difficulté requise pour la preuve de travail dépend du délai maximum du réseau~\cite{PassSS17}. 
 
-%O \paragraph{Achieving Liveness}
-\paragraph{Adversaire}
+%O \paragraph{Adversary}
+\paragraph{Adversité} % HOULA : Adversaire ? Adversaires ? Adversatif ?
 %O The adversarial nodes execute under their own internal scheduler, which is unbounded in speed, meaning that all adversarial nodes can execute at any infinitesimally small point in time, unlike correct nodes. 
 Les nœuds antagonistes s'exécutent avec un ordonnanceur interne qui leur est propre, non limité en vitesse, ce qui signifie que tout nœud antagoniste peut s'exécuter à un moment précis infiniment petit, au contraire des nœuds corrects.
 %O The adversary can view the state of every honest node at all times and can instantly modify the state of all adversarial nodes. 
@@ -372,38 +372,58 @@ Il ne peut, cependant, ordonnancer ou modifier la communication entre les nœuds
 %O Finally, we make zero assumptions about the behavior of the adversary, meaning that it can choose any execution strategy of its liking.
 Enfin, nous ne faisons aucune hypothèse sur le comportement de l'adversaire, ce qui signifie qu'il peut choisir la stratégie d'exécution qui lui convient.
 %O In short, the adversary is computationally bounded (it cannot forge digital signatures) but otherwise is point-to-point informationally unbounded (knows all state) and round-adaptive (can modify its strategy at any time). 
-En résumé, l'adversaire est limité en puissance informatique (il ne peut pas forger des signatures numériques) mais, hormis cela, il n'est pas limité en matière informationnelle (connaît tout de l'état) et il est adaptatif en matière de tours (peut modifier sa stratégie à tout moment).
+En résumé, l'adversaire est limité en puissance informatique (il ne peut pas forger des signatures numériques) mais, hormis cela, il n'est pas limité en matière informationnelle (il connaît tout de l'état) et il est adaptatif en matière de tours (il peut modifier sa stratégie à tout moment).
 
-\paragraph{Sybil Attacks}
-Consensus protocols provide their guarantees based on assumptions that only a fraction of participants are adversarial.
-These bounds could be violated if the network is naively left open to arbitrary participants.
-In particular, a Sybil attack~\cite{douceur2002sybil}, wherein a large number of identities are generated by an adversary, could be used to exceed the bounds.
+\paragraph{Attaques Sybil}
+%O Consensus protocols provide their guarantees based on assumptions that only a fraction of participants are adversarial.
+Les protocoles de consensus fournissent leurs garanties fondées sur la supposition que seule une fraction des participants sont malveillants.
+%O These bounds could be violated if the network is naively left open to arbitrary participants.
+Ces limites peuvent être violées si le réseau est naïvement laissé ouvert à des participants quelconques.
+%O In particular, a Sybil attack~\cite{douceur2002sybil}, wherein a large number of identities are generated by an adversary, could be used to exceed the bounds.
+En particulier, une attaque Sybil~\cite{douceur2002sybil}, où un grand nombre d'identités sont générées par un adversaire, peut être employée pour dépasser ces limites.
 
-A long line of work, including PBFT~\cite{castro1999practical}, treats the Sybil problem separately from consensus, and rightfully so, as Sybil control mechanisms are distinct from the underlying, more complex agreement protocol\footnote{This is not to imply that every consensus protocol can be coupled/decoupled with every Sybil control mechanism.}.
-In fact, to our knowledge, only Nakamoto-style consensus has ``baked-in'' Sybil prevention as part of its consensus, made possible by chained proof-of-work~\cite{aspnes2005exposing}, which requires miners to continuously stake a hardware investment.
-Other protocols, discussed in Section~\ref{sec:related-work}, rely on proof-of-stake (by economic argument) or proof-of-authority (by administrative argument that makes the system ``permissioned'').
-The consensus protocols presented in this paper can adopt any
-Sybil control mechanism, although proof-of-stake is most aligned with their quiescent operation.
-One can use an already established proof-of-stake based mechanism~\cite{GiladHMVZ17}.
-The full deployment of an autonomous P2P payment system incorporating staking mechanism is beyond the scope of this paper, whose focus is on a novel design paradigm of the core consensus algorithm.
+%O A long line of work, including PBFT~\cite{castro1999practical}, treats the Sybil problem separately from consensus, and rightfully so, as Sybil control mechanisms are distinct from the underlying, more complex agreement protocol\footnote{This is not to imply that every consensus protocol can be coupled/decoupled with every Sybil control mechanism.}.
+Une longue suite de travaux, comme PBFT~\cite{castro1999practical}, sépare le problème de Sybil de celui du consensus, à juste titre puisque les mécanismes de contrôle de Sybil sont distincts du protocole d'accord plus complexe sous-jacent\footnote{Cela n'implique pas que tout protocole de consensus puisse être couplé/découplé de tout mécanisme de contrôle de Sybil}.
+%O In fact, to our knowledge, only Nakamoto-style consensus has ``baked-in'' Sybil prevention as part of its consensus, made possible by chained proof-of-work~\cite{aspnes2005exposing}, which requires miners to continuously stake a hardware investment.
+En fait, à notre connaissance, le consensus Nakamoto est le seul à avoir intégré la protection anti-Sybil dans son consensus, chose rendue possible par la preuve de travail chaînée~\cite{aspnes2005exposing} qui demande aux mineurs de continuellement mettre en jeu un investissement matériel.
+%O Other protocols, discussed in Section~\ref{sec:related-work}, rely on proof-of-stake (by economic argument) or proof-of-authority (by administrative argument that makes the system ``permissioned'').
+D'autres protocoles, dont il est question en section~\ref{sec:related-work}, se basent sur la preuve d'enjeu (\emph{proof of stake} ou PoS, par un argument économique) ou preuve d'autorité (\emph{proof of authority} ou PoA, par un argument administratif) qui rend le système \guillemotleft\,permissionné\,\guillemotright.
+%O The consensus protocols presented in this paper can adopt any
+%O Sybil control mechanism, although proof-of-stake is most aligned with their quiescent operation.
+Les protocoles de consensus présentés dans cet article peuvent adopter n'importe quel mécanisme de contrôle de Sybil, bien que la preuve d'enjeu soit la plus en ligne avec le caractère économe de leur opération.
+%O One can use an already established proof-of-stake based mechanism~\cite{GiladHMVZ17}.
+On peut utiliser un mécanisme en preuve d'enjeu déjà établi.
+%O The full deployment of an autonomous P2P payment system incorporating staking mechanism is beyond the scope of this paper, whose focus is on a novel design paradigm of the core consensus algorithm.
+Le déploiement complet d'un système de paiement autonome en P2P incorporant des mécanismes d'enjeu dépasse le cadre de cet article, dont l'objet est un nouveau paradigme de conception de l'algorithme de consensus.
 
 % Sybil control mechanisms are orthogonal and separate from the consensus protocols. All such protocols, excluding Nakamoto-style consensus protocols, require a mechanism for network identity establishment. In a real implementation of Avalanche, the Sybil problem would be solved through a staking mechanism. 
 
-\paragraph{Flooding Attacks}
-Flooding/spam attacks are a problem for any distributed system. 
-Without a protection mechanism, an attacker can generate large numbers of transactions and flood protocol data structures, consuming storage.
+%O \paragraph{Flooding Attacks}
+\paragraph{Attaques par inondation}
+%O Flooding/spam attacks are a problem for any distributed system. 
+Les attaques par inondation (\emph{flooding}) et spam représentent un problème pour tout système distribué.
+%O Without a protection mechanism, an attacker can generate large numbers of transactions and flood protocol data structures, consuming storage.
+Sans mécanisme de protection, un attaquant peut générer un grand nombre de transactions et inonder les structures de données du protocole, consommant ainsi des ressources de stockage.
 % Although there is no proper, protocol-level methodology to prevent such an attack, there are very effective heuristics that we can employ.
-There are a multitude of techniques to deter such attacks, including network-layer protection, proof-of-authority, local proof-of-work and economic mechanisms. 
-In Avalanche, we use transaction fees, making such attacks costly even if the attacker is sending money back to addresses under its control.
+%O There are a multitude of techniques to deter such attacks, including network-layer protection, proof-of-authority, local proof-of-work and economic mechanisms. 
+Il existe une multitude de techniques pour repousser ces attaques comme la protection de la couche réseau, la preuve d'autorité, la preuve de travail local et des mécanismes économiques.
+%O In Avalanche, we use transaction fees, making such attacks costly even if the attacker is sending money back to addresses under its control.
+Dans Avalanche, nous utilisons les frais de transaction, rendant ainsi ces attaques coûteuses même si l'attaquant renvoie l'argent aux adresses qu'il contrôle.
 
 
 
-\paragraph{Additional Assumptions}
-We do not assume that all members of the network are known to all participants, but rather may temporarily have some discrepancies in network view.
-We quantify the bounds on the discrepancy in Appendix~\ref{sec:full-analysis-churn}.
-We assume a safe bootstrapping mechanism, similar to that of Bitcoin, that enables a node to connect with sufficiently many correct nodes to acquire a statistically unbiased view of the network.
-We do not assume a PKI\@.
-Finally, we make standard cryptographic assumptions related to digital signatures and hash functions.
+%O \paragraph{Additional Assumptions}
+\paragraph{Hypothèses supplémentaires}
+%O We do not assume that all members of the network are known to all participants, but rather may temporarily have some discrepancies in network view.
+Nous ne supposons pas que tous les membres du réseau sont connus de tous les participants, car la vue du réseau qu'ont ces derniers peut souffrir d'incohérences temporaires.
+%O We quantify the bounds on the discrepancy in Appendix~\ref{sec:full-analysis-churn}.
+Nous quantifions les limites en Annexe~\ref{sec:full-analysis-churn}.
+%O We assume a safe bootstrapping mechanism, similar to that of Bitcoin, that enables a node to connect with sufficiently many correct nodes to acquire a statistically unbiased view of the network.
+Nous supposons un mécanisme de démarrage initial sûr, similaire à celui de Bitcoin, qui permet à un nœud de se connecter à suffisamment de nœuds corrects pour acquérir une vue statistiquement non biaisée du réseau.
+%O We do not assume a PKI\@.
+Nous ne prévoyons pas une PKI\@.
+%O Finally, we make standard cryptographic assumptions related to digital signatures and hash functions.
+Enfin, nous nous reposons sur les hypothèses standard en matière de cryptographie dans le domaine des signatures numériques et des fonctions de hachage.
 %\editinsert{TODO: Talk about synchrony assumption, and justify it by mentioning Bitcoin.}
 %\editinsert{TODO: Talk about we don't address Sybil attack, and justify it by mentioning Algorand (we also use Algorand as a comparison in Evaluation, so it will totally make sense here.}
 
