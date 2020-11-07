@@ -1,0 +1,169 @@
+\label{section:background}
+\tronly{
+Bitcoin~\cite{nakamoto2008bitcoin} is a cryptocurrency that uses a blockchain based on
+proof-of-work (PoW) to maintain a ledger of UTXO transactions. 
+While techniques based on proof-of-work~\cite{DworkN92, aspnes2005exposing}, and even cryptocurrencies with minting based on proof-of-work~\cite{vishnumurthy2003karma,rivest1997payword}, have been explored before, Bitcoin was the first to incorporate PoW into its consensus process.
+Unlike more traditional BFT protocols, Bitcoin has a probabilistic safety guarantee
+and assumes honest majority computational power rather than a known
+membership, which in turn has enabled an internet-scale permissionless protocol. While permissionless and resilient to adversaries,
+Bitcoin suffers from low throughput (\textasciitilde{}3 tps) and
+high latency (\textasciitilde{}5.6 hours for a network with 20\% Byzantine presence and $2^{-32}$ security guarantee).  Furthermore, PoW requires a substantial amount of computational power that is consumed only for the purpose of maintaining
+safety.
+
+% PoW family
+Countless cryptocurrencies use PoW~\cite{DworkN92, aspnes2005exposing} to maintain a distributed ledger. 
+Like Bitcoin, they suffer from inherent scalability bottlenecks. 
+Several proposals for protocols exist that try to
+better utilize the effort made by PoW.
+Bitcoin-NG~\cite{EyalGSR16} and the permissionless version of
+Thunderella~\cite{PassS18} use Nakamoto-like consensus to elect a leader that
+dictates writing of the replicated log for a relatively long time so as to
+provide higher throughput. Moreover, Thunderella provides an
+optimistic bound that, with 3/4 honest computational power and an honest
+elected leader, allows transactions to be confirmed rapidly.
+ByzCoin~\cite{Kokoris-KogiasJ16} periodically selects a small set of
+participants and then runs a PBFT-like protocol within the selected nodes.
+%It achieves a throughput of 942 tps with about 35 second latency.
+
+% Byzantine Agreement family
+Protocols based on Byzantine agreement~\cite{PeaseSL80, LamportSP82} typically make use of
+quorums and require precise knowledge of membership.
+PBFT~\cite{castro1999practical, CL02}, a well-known representative, requires a quadratic number of message exchanges in order to
+reach agreement. 
+%Some variants are able to scale to dozens of nodes~\cite{ClementWADM09, KotlaADCW09}.
+The Q/U protocol~\cite{abd2005fault} and HQ replication~\cite{cowling2006hq} use a quorum-based approach to optimize for contention-free cases of operation to achieve consensus in only a single round of communication. However, although these protocols improve on performance, they degrade very poorly under contention. Zyzzyva~\cite{KotlaADCW09} couples BFT with speculative execution to improve the failure-free operation case.
+%Aliph~\cite{guerraoui2010next} introduces a protocol with optimized performance under several, rather than just one, cases of execution. In contrast, Ardvark~\cite{ClementWADM09} sacrifices some performance to tolerate worst-case degradation, providing a more uniform execution profile. This work, in particular, sacrifices failure-free optimizations to provide consistent throughput even at high number of failures. 
+Past work in permissioned BFT systems typically requires at least $3f+1$ replicas. CheapBFT~\cite{kapitza2012cheapbft} leverages trusted hardware components to construct a protocol that uses $f+1$ replicas.
+
+Other work attempts to introduce new protocols under redefinitions and relaxations of the BFT model. 
+Large-scale BFT~\cite{rodrigues2007large} modifies PBFT to allow for arbitrary choice of number of replicas and failure threshold, providing a probabilistic guarantee of liveness for some failure ratio but protecting safety with high probability. 
+In another form of relaxation. Zeno~\cite{singh2009zeno} introduces a BFT state machine replication protocol that trades consistency for high availability. More specifically, Zeno guarantees eventual consistency rather than linearizability, meaning that participants can be inconsistent but eventually agree once the network stabilizes. By providing an even weaker consistency guarantee, namely fork-join-causal consistency, Depot~\cite{mahajan2011depot} describes a protocol that guarantees safety under $2f+1$ replicas. 
+
+NOW~\cite{guerraoui2013highly} uses sub-quorums to drive smaller instances of consensus. The insight of this paper is that small, logarithmic-sized quorums can be extracted from a potentially large set of nodes in the network, allowing smaller instances of consensus protocols to be run in parallel. 
+
+Snow White~\cite{cryptoeprint:2016:919} and
+Ouroboros~\cite{KiayiasRDO17} are some of the earliest provably secure PoS
+protocols.  Ouroboros uses a secure multiparty coin-flipping protocol to
+produce randomness for leader election. The follow-up protocol, Ouroboros
+Praos~\cite{DavidGKR18} provides safety in the presence of fully adaptive
+adversaries.
+HoneyBadger~\cite{MillerXCSS16} provides good liveness in a network with heterogeneous latencies. %and achieves over 819 tps with 5 minute latency on 104 nodes.
+
+Tendermint~\cite{buchman2016tendermint, 1807.04938} rotates the leader for each block
+and has been demonstrated with as many as 64 nodes. Ripple~\cite{schwartz2014ripple} has low latency by utilizing collectively-trusted
+sub-networks in a large network. The Ripple company provides a
+slow-changing default list of trusted nodes, which renders the system essentially centralized.
+HotStuff~\cite{hotstuff,hotstuffpodc} improves the communication cost from quadratic to linear and significantly simplifies the protocol specification, although the leader bottleneck still persists. Facebook uses HotStuff as the core consensus for its Libra project.
+% Ittai paper
+In the synchronous setting, inspired by HotStuff, Sync HotStuff~\cite{synchotstuff} achieves consensus in $2\Delta$ time with quadratic cost and unlike other lock-steped synchronous protocols, it operates as fast as network propagates.
+Stellar~\cite{mazieres2015stellar} uses Federated Byzantine Agreement in which \emph{quorum slices}
+enable heterogeneous trust for different nodes.  Safety is guaranteed when
+transactions can be transitively connected by trusted quorum slices.
+Algorand~\cite{GiladHMVZ17} uses a verifiable random function to select a
+committee of nodes that participate in a novel Byzantine consensus
+protocol.
+%It achieves over 874 tps with 50 second latency on
+%an emulated network of 2000 committee nodes (500K users in total) distributed among 20 cities. To prevent Sybil
+%attacks, it uses a mechanism like proof-of-stake that assigns weights to participants in committee selection based on the money in their accounts.
+
+Some protocols use a Directed Acyclic Graph (DAG) structure instead of a linear chain to achieve
+consensus~\cite{SompolinskyZ15,SompolinskyLZ16,SompolinskyZ18,BentovHMN17,baird2016hashgraph}.
+Instead of choosing the longest chain as in Bitcoin,
+GHOST~\cite{SompolinskyZ15} uses a more efficient chain selection rule that
+allows transactions not on the main chain to be taken into consideration, increasing efficiency.
+SPECTRE~\cite{SompolinskyLZ16} uses transactions on
+the DAG to vote recursively with PoW to achieve consensus, followed up by
+PHANTOM~\cite{SompolinskyZ18} that achieves a linear order among all blocks.
+Like PHANTOM, Conflux also finalizes a linear order of transactions by PoW
+in a DAG structure, with better resistance to liveness attack~\cite{confluxLLXLC18}.
+Avalanche
+is different in that the voting result is a one-time chit that is determined by
+a query without PoW, while the votes in PHANTOM or Conflux are purely determined by PoW in transaction structure.
+Similar to Thunderella, Meshcash~\cite{BentovHMN17} combines a slow PoW-based protocol with a fast consensus protocol that allows a high block rate regardless of network latency, offering fast confirmation time.
+Hashgraph~\cite{baird2016hashgraph} is a leader-less protocol that builds a DAG via randomized gossip.
+It requires full membership knowledge at all times, and, similar to the Ben-Or~\cite{ben1983another}, it requires exponential messages~\cite{aspnes2003randomized,CachinV17} in expectation.
+}{
+% PoW family
+Several proposals for protocols exist that try to
+better utilize the effort made by PoW.
+Bitcoin-NG~\cite{EyalGSR16} and the permissionless version of
+Thunderella~\cite{PassS18} use Nakamoto consensus to elect a leader that
+dictates writing of the replicated log for a relatively long time so as to
+provide higher throughput. Moreover, Thunderella provides an
+optimistic bound that, with 3/4 honest computational power and an honest
+elected leader, allows transactions to be confirmed rapidly.
+ByzCoin~\cite{Kokoris-KogiasJ16} periodically selects a small set of
+participants and then runs a PBFT-like protocol within the selected nodes. 
+%It achieves a throughput of 942 tps with about 35 second latency.
+
+% Byzantine Agreement family
+Protocols based on Byzantine agreement~\cite{PeaseSL80, LamportSP82} typically make use of
+quorums and require precise knowledge of membership.
+PBFT~\cite{castro1999practical, CL02}, a well-known representative, requires a quadratic number of message exchanges in order to
+reach agreement. Some variants are able to scale to dozens of nodes~\cite{ClementWADM09, KotlaADCW09}.
+% However, due to the quadratic message complexity, many variants based on PBFT also inherit this scalability issue.
+Snow White~\cite{cryptoeprint:2016:919} and
+Ouroboros~\cite{KiayiasRDO17} are some of the earliest provably secure PoS
+protocols.  Ouroboros uses a secure multiparty coin-flipping protocol to
+produce randomness for leader election. The follow-up protocol, Ouroboros
+Praos~\cite{DavidGKR18} provides safety in the presence of fully adaptive
+adversaries.
+HoneyBadger~\cite{MillerXCSS16} provides good liveness in a network with heterogeneous latencies. %and achieves over 819 tps with 5 minute latency on 104 nodes.
+Tendermint~\cite{buchman2016tendermint, 1807.04938} rotates the leader for each block
+and has been demonstrated with as many as 64 nodes. Ripple~\cite{schwartz2014ripple} has low latency by utilizing collectively-trusted
+sub-networks in a large network. The Ripple company provides a
+slow-changing default list of trusted nodes, which renders the system essentially centralized.
+HotStuff~\cite{hotstuff,hotstuffpodc} improves the communication cost from quadratic to linear and significantly simplifies the protocol specification, although the leader bottleneck still persists. Facebook uses HotStuff as the core consensus~\cite{librabft} for the Libra project.
+% Ittai paper
+In the synchronous setting, inspired by HotStuff, Sync HotStuff~\cite{synchotstuff} achieves consensus in $2\Delta$ time with quadratic cost and unlike other lock-steped synchronous protocols, it operates as fast as network propagates.
+Stellar~\cite{mazieres2015stellar} uses Federated Byzantine Agreement in which \emph{quorum slices}
+enable heterogeneous trust for different nodes.  Safety is guaranteed when
+transactions can be transitively connected by trusted quorum slices.
+
+Some protocols use a Directed Acyclic Graph (DAG) structure instead of a linear chain to achieve
+consensus~\cite{SompolinskyZ15,SompolinskyLZ16,SompolinskyZ18,BentovHMN17,baird2016hashgraph}.
+Instead of choosing the longest chain as in Bitcoin,
+GHOST~\cite{SompolinskyZ15} uses a more efficient chain selection rule that
+allows transactions not on the main chain to be taken into consideration, increasing efficiency.
+SPECTRE~\cite{SompolinskyLZ16} uses transactions on
+the DAG to vote recursively with PoW to achieve consensus, followed up by
+PHANTOM~\cite{SompolinskyZ18} that achieves a linear order among all blocks.
+Avalanche
+is different in that the voting result is a one-time chit that is determined by
+a query without PoW, while the votes in PHANTOM are purely determined by transaction structure.
+Similar to Thunderella, Meshcash~\cite{BentovHMN17} combines a slow PoW-based protocol with a fast consensus protocol that allows a high block rate regardless of network latency, offering fast confirmation time.
+Hashgraph~\cite{baird2016hashgraph} is a leader-less protocol that builds a DAG via randomized gossip. 
+It requires full membership knowledge at all times, and, similar to the Ben-Or~\cite{ben1983another}, it requires exponential messages~\cite{aspnes2003randomized,CachinV17} in expectation.
+}
+
+\begin{comment}
+Moreover, in Theorem 5.16, the author mentions if
+there is no supermajority virtual vote, all honest nodes will randomly choose
+their votes for the next round. Then with non-zero probability, they could
+choose the same vote.  The rounds are repeated until all honest nodes
+eventually reach the same vote by chance.  This means as the total number of
+nodes increases in Hashgraph, the probability of reaching the same vote in a
+single trial drops exponentially due to the random voting~\cite{CachinV17}.
+\end{comment}
+%The paper does not discuss how many rounds of voting are needed in expectation,
+%nor\ \ have we been able to obtain open-source code to evaluate Hashgraph.
+
+%\tronly{
+%Instead of voting blindly and relying on randomness
+%for each agreement, Avalanche creates a positive feedback where votes are
+%collected in a separate k-query process determined by current preference
+%established locally on each node over time.  We have demonstrated that
+%Avalanche is scalable to 2000 nodes distributed world-wide.
+%
+%The central component of Avalanche is a
+%repeated k-query, which serves both as a probabilistic
+%broadcast and as a basis for Byzantine agreement.
+%As an optimization, these repeated queries are linked
+%together via an artificial DAG structure that amortizes the repeated cost of
+%querying.  Avalanche does not require overlapping quorums and
+%achieves probabilistic consensus with
+%$O(kN)$ overall message complexity instead of quadratic
+%while allowing for a degree of network churn.
+%}
+
+% XXX ADD SAM TOUEG https://zoo.cs.yale.edu/classes/cs426/2017/bib/bracha85asynchronous.pdf
