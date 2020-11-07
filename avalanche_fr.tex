@@ -1,0 +1,254 @@
+\subsection{Avalanche: Adding a DAG}%\tronly{}{\vspace{-0.5em}}
+
+%O Avalanche consists of multiple single-decree Snowball instances instantiated as a multi-decree protocol that
+%O maintains a dynamic, append-only directed acyclic graph (DAG) of all known transactions.
+Avalanche consiste en plusieurs instance Snowball à décret unique instanciées en tant que protocole multi-décrets qui maintient un graphe orienté acyclique (\emph{Directed Acyclic Graph},  DAG) dynamique en ajout seul de toutes les transactions connues.
+%O The DAG has a single sink that is the \emph{genesis vertex}.
+Le DAG a un nœud terminal (\emph{sink}) unique qui est le \emph{genesis vertex}, le sommet genèse. % HOULA sink ? 
+%O Maintaining a DAG provides two significant benefits.
+L'emploi d'un DAG procure deux avantages :
+%O First, it improves efficiency, because a single vote on a DAG vertex implicitly votes for all tran
+%O sactions on the path to the genesis vertex.
+D'abord, il est plus efficient car un vote sur un sommet vote implicitement pour toutes les transactions sur le chemin vers le sommet genèse.
+%O Second, it also improves security, because the DAG intertwines the fate of transactions, similar to the Bitcoin blockchain.
+Ensuite, il améliore également la sécurité parce que le entrelace le sort des transactions, similaire en cela à la blockchain de Bitcoin.
+%O This renders past decisions difficult to undo without the approval of correct nodes.
+Cela rend les décisions passées difficiles à défaire sans l'approbation des nœuds corrects.
+
+
+% Avalanche's DAG embodies all the transactions that have been proposed to the system, where each transaction is represented as a vertex.
+% The DAG is rooted at a protocol-defined, well-known \emph{genesis} vertex.
+%O When a client creates a transaction, it names one or more \emph{parents}, which are included inseparably in the transaction and form the edges of the DAG\@.
+Quand un client crée une transaction, il nomme un ou plusieurs \emph{parents}, et ceux-ci sont inclus de façon inséparable dans la transaction et forment les bords du DAG\@.
+%O The parent-child relationships encoded in the DAG may, but do not need to, correspond to application-specific dependencies; for instance, a child transaction need not spend or have any relationship with the funds received in the parent transaction.
+Les relations parent-enfant codées dans le DAG peuvent, sans obligation, correspondre à des dépendances spécifiques aux applications ; par exemple, la transaction d'un enfant ne dépense pas nécessairement, ni n'a forcément de relation avec les fonds reçus lors de la transaction parent.
+% These additional relationships entangle the fate of previous decisions made by the system.
+%O We use the term \emph{ancestor set} to refer to all transactions reachable via parent edges back in history, and \emph{progeny} to refer to all children transactions and their offspring.
+Nous utilisons le terme \emph{ensemble ancêtre} pour nous référer à toutes les transactions accessibles par les arêtes parent historisées, et \emph{progéniture} pour nous référer à toutes les transactions enfant et leur descendance.
+
+%O The central challenge in the maintenance of the DAG is to choose among \emph{conflicting transactions}.
+Le principal défi de la maintenance du DAG est de choisir parmi des \emph{trasactions conflictuelles}.
+%O The notion of conflict is application-defined and transitive, forming an equivalence relation.
+La notion de conflit est définie par l'application et est transitive, formant une relation d'équivalence.
+%O In our cryptocurrency application, transactions that spend the same funds (\emph{double-spends}) conflict, and form a \emph{conflict set}
+
+%(Figure~\tronly{\ref{fig:dag-conflict-set}}{\ref{fig:dag-cd}})
+(shaded regions in Figure~\ref{fig:dag-cd}), out of which only a single one can be accepted.
+Note that the conflict set of a virtuous transaction is always a singleton.
+%Note that the graph structure of transactions that spend depend on each other, also known as the UTXO graph, is completely independent of the DAG that Avalanche maintains. As a result, any two vertices may be in conflict. Figure~\ref{fig:dag-conflicting-set} shows an example.
+ 
+%\tronly{
+%\begin{figure}\begin{center}
+%    \input{figures/dag-conflict-set.tex}
+%    \captionof{figure}{DAG vertices partitioned by conflict sets. At most one vertex in each shaded region will be accepted.}\label{fig:dag-conflict-set}
+%\end{center}
+%\end{figure}
+%}{}
+
+Avalanche instantiates a Snowball instance for each conflict set.
+Whereas Snowball uses repeated queries and multiple counters to capture the amount of confidence built in conflicting transactions (colors),
+Avalanche takes advantage of the DAG structure and uses a transaction's progeny.
+Specifically, when a transaction $T$ is queried, all transactions reachable from $T$ by following the DAG edges are implicitly part of the query.
+A node will only respond positively to the query if $T$ and its entire ancestry are currently the preferred option in their respective conflict sets.
+If more than a threshold of responders vote positively, the transaction is said to collect a \emph{chit}.
+Nodes then compute their \emph{confidence} as the total number of chits in the progeny of that transaction.
+They query a transaction just once and rely on new vertices and possible chits, added to the progeny, to build up their confidence.
+Ties are broken by an initial preference for first-seen transactions.
+Note that chits are decoupled from the DAG structure, making the protocol immune to attacks where
+the attacker generates large, padded subgraphs.
+
+\subsection{Avalanche: Specification}%\tronly{}{\vspace{-0.5em}}
+\label{subsection:specification}
+
+\newcommand{\codeedges}{\mathit{edges}}
+\newcommand{\codedata}{\mathit{data}}
+\begin{figure}
+\begin{center}
+\small
+\begin{algorithmic}[1]
+    \Procedure{init}{}
+        \State $\mathcal{T} \assign \emptyset$ \hspace{1ex}\textrm{// the set of known transactions}
+        \State $\mathcal{Q} \assign \emptyset$ \hspace{1ex}\textrm{// the set of queried transactions}
+    \EndProcedure
+    \Procedure{onGenerateTx}{$\codedata$}
+        \State $\codeedges \assign \{T' \gets T: T' \in \Call{parentSelection}{\mathcal{T}}\}$
+        \State $T \assign \Call{Tx}{\codedata, \codeedges}$
+        \State \Call{onReceiveTx}{$T$}
+    \EndProcedure
+    \Procedure{onReceiveTx}{$T$}
+        \If{$T \notin \mathcal{T}$}
+            \If{$\mathcal{P}_T = \emptyset$}
+                \State $\mathcal{P}_T \assign \{T\}$, $\mathcal{P}_T\mathit{.pref} \assign T$
+                \State $\mathcal{P}_T\mathit{.last} \assign T, \mathcal{P}_T\mathit{.cnt} \assign 0$
+            \Else$\ \mathcal{P}_T \assign \mathcal{P}_T \cup \{T\}$
+            \EndIf
+            \State $\mathcal{T} \assign \mathcal{T} \cup \{T\}$, $c_T \assign 0$.
+        \EndIf
+    \EndProcedure
+    \captionof{figure}{Avalanche: transaction generation.}\label{fig:gossipchain-ongen}
+\end{algorithmic}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\small
+\begin{algorithmic}[1]
+    \Procedure{avalancheLoop}{}
+        \While {\codetrue}
+            \State\textrm{find  $T$ that satisfies }%\vspace*{-.6\baselineskip}
+            $T \in \mathcal{T} \land T \notin \mathcal{Q}$
+            %\begin{align*}\hspace{2ex}
+            %    T \in \mathcal{T} &\land T \notin \mathcal{Q} \\
+            %            &\land (\forall T', T' \gets T: T' \in \mathcal{Q})
+            %\end{align*}
+            \State $\mathcal{K} \assign \Call{sample}{\mathcal{N}\backslash u, k}$
+            \State $P \assign \sum_{v \in \mathcal{K}}\Call{query}{v, T}$
+            \If{$P \ge \alpha$}
+                \State $c_T \assign 1$
+            \State\textrm{// update the preference for ancestors}
+            \For{$T' \in \mathcal{T} : T' \stackrel{*}{\gets} T$}
+                \If{$d(T') > d(\mathcal{P}_{T'}\mathit{.pref})$}
+                    \State $\mathcal{P}_{T'}\mathit{.pref} \assign T'$
+                \EndIf
+                \If{$T'\neq \mathcal{P}_{T'}\mathit{.last}$}
+                    \State $\mathcal{P}_{T'}\mathit{.last} \assign T'$, $\mathcal{P}_{T'}\mathit{.cnt} \assign 1$
+                \Else
+                    \State \texttt{++}$\mathcal{P}_{T'}\mathit{.cnt}$
+                \EndIf
+            \EndFor
+            \Else
+            \For{$T' \in \mathcal{T} : T' \stackrel{*}{\gets} T$}
+                    \State$\mathcal{P}_{T'}\mathit{.cnt} \assign 0$
+            \EndFor
+            \EndIf
+            \State\textrm{// otherwise, }$c_T$\textrm{ remains 0 forever}
+            \State $\mathcal{Q} \assign \mathcal{Q} \cup \{T\}$ \hspace {1ex} \textrm{// mark T as queried}
+        \EndWhile
+    \EndProcedure
+    \captionof{figure}{Avalanche: the main loop.}\label{fig:gossipchain-main}
+\end{algorithmic}
+\end{center}
+\end{figure}
+
+% TODO IMPORTANT The isPreferred must imply that T is queried, but current writing can be not queried. Also, do you do max over only queried transactions?
+\begin{figure}[t]
+\begin{center}
+\small
+\begin{algorithmic}[1]
+    \Function{isPreferred}{$T$}
+        %\State \Return $d(T) = \max_{T' \in \mathcal{P}_T} d(T')$
+        \State \Return $T = \mathcal{P}_T\mathit{.pref}$
+    \EndFunction
+    \Function{isStronglyPreferred}{$T$}
+        \State \Return $\forall T'\in\mathcal{T}, T' \stackrel{*}{\gets} T: \Call{isPreferred}{T'}$
+    \EndFunction
+    \Function{isAccepted}{$T$}
+        \State\Return
+            \vspace*{-.5\baselineskip}
+        \begin{align*}
+            (&(\forall T' \in \mathcal{T}, T' \gets T: \Call{isAccepted}{T'}) \\
+                &\land |\mathcal{P}_T| = 1 \land \mathcal{P}_T\mathit{.cnt} \ge \beta_1) \texttt{\hspace{.1in}// safe early commitment} \\
+            %& \left(\frac{d(T)}{d'} > \gamma \land d' \ge \beta_2\right)
+            \lor &(%\mathcal{P}_T\textrm{.pref} = \mathcal{P}_T\textrm{.last} \land
+            \mathcal{P}_T\mathit{.cnt} \ge \beta_2)\texttt{\hspace{.1in}// consecutive counter}
+        \end{align*}
+    \EndFunction
+    \Procedure{onQuery}{$j, T$}
+        \State \Call{onReceiveTx}{$T$}
+        \State \Call{respond}{$j, \textsc{isStronglyPreferred}(T)$}
+    \EndProcedure
+    \captionof{figure}{Avalanche: voting and decision primitives.}\label{fig:gossipchain-onquery}
+\end{algorithmic}
+\end{center}
+\end{figure}
+
+Each correct node $u$
+keeps track of all transactions it has learned about in set $\mathcal{T}_u$,
+partitioned into mutually exclusive conflict sets $\mathcal{P}_T$, $T \in \mathcal{T}_u$.
+% Transactions are determined to be conflicting based on a deterministic function known to every node.
+Since conflicts are transitive, if $T_i$ and $T_j$ are conflicting, then they belong to the same conflict set, i.e. $\mathcal{P}_{T_i} = \mathcal{P}_{T_j}$. This relation may sound counter-intuitive: conflicting transitions have the \emph{equivalence} relation, because they are equivocations spending the \emph{same} funds.
+%\Jon{By $=$ surely you mean $\neq$?}
+
+We write $T' \gets T$ if $T$ has a parent edge to transaction $T'$,
+The ``$\stackrel{*}{\gets}$''-relation is its reflexive transitive closure, indicating a path from $T$ to $T'$.
+DAGs built by different nodes are guaranteed to be compatible, though at any one time, the two nodes may not have a complete view of all vertices in the system.
+Specifically, if $T' \gets T$, then every node in the system that has $T$ will also have $T'$ and the same relation $T' \gets T$; and conversely, if $T' \cancel{\gets} T$, then no nodes will end up with $T' \gets T$.
+
+Each node $u$ can compute a confidence value, $d_u(T)$, from the progeny as follows:
+\[ d_u(T) = \sum_{T' \in \mathcal{T}_u, T \stackrel{*}{\gets} T'}c_{uT'}\]
+where $c_{uT'}$ stands for the chit value of $T'$ for node $u$. Each transaction initially has a chit value of $0$ before the node gets
+the query results. If the node collects a threshold of $\alpha$ yes-votes after the query, the value $c_{uT'}$ is set to 1, otherwise remains $0$ forever.
+Therefore, a chit value reflects the result from the one-time query of its associated transaction and becomes immutable afterwards, while $d(T)$ can increase as the DAG grows by collecting more chits in its progeny.
+Because $c_T \in \{0, 1\}$, confidence values are monotonic.
+%\Jon{the notation $c_{uT}$ shows up before it's definet. I guess it's the number of chits counted for $T$ by participant $u$?}
+
+In addition, node $u$ maintains its own local list of known nodes $\mathcal{N}_u \subseteq \mathcal{N}$ that comprise the system.
+For simplicity, we assume for now $\mathcal{N}_u = \mathcal{N}$, and elide subscript $u$ in contexts without ambiguity.
+%
+% TODO talk to ted and ask how to rephrase this. "the data structure" is unclear, and so is immutability
+% This is because a transaction is immutable in the sense that its identity is uniquely determined by both the application data and parent links it embodies.
+%Here, notation ``$T' \gets T$'' means $T'$ is one of $T$'s immediate parents, and
+%``$\stackrel{*}{\gets}$''-relation is the reflexive transitive closure of ``$\gets$''-relation; namely,
+%if $T' \stackrel{*}{\gets} T$, there exists a path from $T$ to $T'$. Specially, ``$T \stackrel{*}{\gets} T$''.
+
+Each node implements an event-driven state machine, centered around a query that serves both to solicit votes on each transaction and to notify other nodes of the existence of newly discovered transactions.
+In particular, when node $u$ discovers a transaction $T$ through a query, it starts a one-time query process by sampling $k$ random peers and sending a message to them, after $T$ is delivered via $\textsc{onReceiveTx}$.
+% determining the set of conflicting transactions $\mathcal{P}_T$,
+
+Node $u$ answers a query by checking whether each $T'$ such that $T' \stackrel{*}{\gets} T$ is currently preferred among competing transactions $\forall T'' \in \mathcal{P}_{T'}$.
+If every single ancestor $T'$ fulfills this criterion, the transaction is said to be \emph{strongly preferred}, and receives a yes-vote (1). A failure of this criterion at any $T'$ yields a no-vote (0).
+When $u$ accumulates $k$ responses, it checks whether there are $\alpha$ yes-votes for $T$, and if so grants the chit (chit value $c_T \assign 1$) for $T$.
+The above process will yield a labeling of the DAG with a chit value and associated confidence for each transaction~$T$.
+
+\begin{figure}
+\begin{center}
+    %\tronly{\input{figures/dag-cd}}{\input{figures/dag-cd-compact}}
+    \input{figures/dag-cd-compact}
+    \captionof{figure}{Example of $\langle \textrm{chit}, \textrm{confidence}\rangle$ values.  Darker boxes indicate transactions with higher confidence values. At most one transaction in each shaded region will be accepted.}
+    \label{fig:dag-cd}
+\end{center}
+\end{figure}
+
+Figure~\ref{fig:dag-cd} illustrates a sample DAG built by Avalanche.
+Similar to Snowball, sampling in Avalanche will create a positive feedback for the preference of a single transaction in its conflict set.
+For example, because $T_2$ has larger confidence than $T_3$, its descendants are more likely collect chits in the future compared to $T_3$.
+
+\tronly{Similar to Bitcoin, Avalanche leaves determining the acceptance point of a transaction to the application. An application supplies an \textsc{isAccepted} predicate that can take into account the value at risk in the transaction and the chances of a decision being reverted to determine when to decide.}{}
+
+Committing a transaction can be performed through a \emph{safe early commitment}. For virtuous transactions, $T$ is accepted when it is the only transaction in its conflict set and has a confidence not less than threshold $\beta_1$.
+As in Snowball, $T$ can also be accepted after a $\beta_2$ number of consecutive successful queries.
+If a virtuous transaction fails to get accepted due to a problem
+with parents, it could be accepted if reissued with different parents.
+Figure~\ref{fig:gossipchain-ongen} shows how Avalanche entangles transactions. Because transactions that consume and generate the same UTXO do not conflict with each other, any transaction can be reissued with different parents.
+
+\tronly{
+Figure~\ref{fig:gossipchain-main} illustrates the protocol main loop
+executed by each node.
+In each iteration, the node attempts to select a transaction $T$ that has not
+yet been queried.  If no such
+transaction exists, the loop will stall until a new transaction is
+added to $\mathcal{T}$.
+It then selects $k$ peers and queries those peers.
+If more than $\alpha$ of those peers return a positive response, the chit value is set to~1.
+After that, it updates the preferred transaction of each conflict set
+of the transactions in its ancestry.
+Next, $T$ is added to the set $\mathcal{Q}$
+so it will never be queried again by the node.
+The code that selects additional peers if some of the $k$ peers are
+unresponsive is omitted for simplicity.
+
+
+Figure~\ref{fig:gossipchain-onquery} shows what happens when a node
+receives a query for transaction $T$ from peer $j$.
+First it adds $T$ to $\mathcal{T}$, unless it already has it.
+Then it determines if $T$ is currently strongly preferred.
+If so, the node returns a positive response to peer $j$.
+Otherwise, it returns a negative response.
+Notice that in the pseudocode, we assume when a node knows $T$, it also
+recursively knows the entire ancestry of $T$. This can be achieved by
+postponing the delivery of $T$ until its entire ancestry is recursively
+fetched.
+In practice, an additional gossip process that disseminates
+transactions is used in parallel, but is not shown in pseudocode for simplicity.
+}{}

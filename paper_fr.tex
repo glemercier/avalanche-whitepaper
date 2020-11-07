@@ -227,7 +227,7 @@ Cela expose également de nouveaux compromis entre sûreté et vitalité : la fa
 
 %O To demonstrate the potential of this protocol family, we illustrate a practical
 %O peer-to-peer payment system, Avalanche. In effect, Avalanche executes multiple Snowball (one from the Snow family) instances with the aid of a Directed Acyclic Graph (DAG). The DAG serves to piggyback multiple instances, reducing the cost from $\Oh{\log{n}}$ to $\Oh{1}$ per node and streamlining the path where there are no conflicting transactions.
-Pour démontrer le potentiel de cette famille de protocoles, nous l'illustrons par un système pratique de paiement pair à pair, Avalanche. Dans les faits, Avalanche exécute plusieurs instances de Snowball (l'un des protocoles de la famille Snow) avec l'aide d'un graphe orienté acyclique (\emph{Directed Acyclic Graph} ou DAG). Le DAG sert à empiler plusieurs instances en réduisant le coût de $\Oh{\log{n}}$ à $\Oh{1}$ par nœud et en optimisant le chemin où il n'existe pas de transactions contradictoires.
+Pour démontrer le potentiel de cette famille de protocoles, nous l'illustrons par un système pratique de paiement pair à pair, Avalanche. Dans les faits, Avalanche exécute plusieurs instances de Snowball (l'un des protocoles de la famille Snow) avec l'aide d'un graphe orienté acyclique (\emph{Directed Acyclic Graph} ou DAG). Le DAG sert à empiler plusieurs instances en réduisant le coût de $\Oh{\log{n}}$ à $\Oh{1}$ par nœud et en optimisant le chemin où il n'existe pas de transactions conflictuelles.
 %This combination of the best features of traditional and Nakamoto consensus involves one significant tradeoff: liveness for \editchange{equivocating proposals}. %conflicting transactions.
 %
 %\editchange{Specifically, the consensus protocol from the Snowball family does not guarantee liveness in all cases. It does, however, guarantee logarithmic expected rounds for termination given a propoer initialization heuristic (Section~\ref{sec:liveness}). It also guarantees fast termination when the proposed value is unanimous. As the core part of Avalanche, it guarantees liveness only for \emph{virtuous} transactions, i.e.\ those issued by correct clients and thus guaranteed not to conflict with other transactions.}
@@ -333,7 +333,7 @@ De plus, le nombre requis de tours est calculable à l'avance, ce qui permet au 
 %    \item \textbf{Non-triviality}: To ensure that the protocol carries out real work, decisions must include values proposed by external clients;
 
 %O     \item \textbf{P1. Safety.} When decisions are made by any two correct nodes, they decide on conflicting transactions with negligible probability ($\leq \varepsilon$).
-     \item \textbf{P1. Sûreté.} Quand les décisions sont prises par deux nœuds corrects, ils décident des transactions contradictoires avec une probabilité négligeable ($\leq \varepsilon$).
+     \item \textbf{P1. Sûreté.} Quand les décisions sont prises par deux nœuds corrects, ils décident de transactions conflictuelles avec une probabilité négligeable ($\leq \varepsilon$).
     % \item \textbf{P2. Liveness.} Transactions will be accepted by every correct node in $\Oh{\log n}$ rounds if either the observed Byzantine presence $f'$, where $f' < f$, is sufficiently small, or the network is initialized in a univalent state.
 %O     \item \textbf{P2. Liveness (Upper Bound).} Snow protocols terminate with a strictly positive probability within $t_{max}$ rounds.  
      \item \textbf{P2. Vitalité (limite supérieure).} Les protocoles Snow se terminent avec une probabilité strictement positive en au plus $t_{max}$ tours.
@@ -789,11 +789,13 @@ Finally, in the Appendix~\ref{sec:full-analysis-churn}, we discuss churn and vie
 
 %\label{sec:evaluation}
 
-Using Snowball consensus, we have implemented a bare-bones payment system, Avalanche, which supports Bitcoin transactions. In this section, we describe the design and sketch how the implementation can support the value transfer primitive at the center of cryptocurrencies.
-Deploying a full cryptocurrency involves bootstrapping, minting, staking, unstaking,
-and inflation control. While we have solutions for these issues, their full
-discussion is beyond the scope of this paper, whose focus is centered on the
-novel Snow consensus protocol family.
+%O Using Snowball consensus, we have implemented a bare-bones payment system, Avalanche, which supports Bitcoin transactions. In this section, we describe the design and sketch how the implementation can support the value transfer primitive at the center of cryptocurrencies.
+Grâce au consensus Snowball, nous avons implémenté un système de paiement simpliste, Avalanche, qui supporte les transactions Bitcoin. Dans cette section, nous en décrivons la conception et schématison la manière donc l'implémentation peut supporter la primitive de transfert de valeur au centre des cryptomonnaies.
+%O Deploying a full cryptocurrency involves bootstrapping, minting, staking, unstaking,
+%O and inflation control. While we have solutions for these issues, their full
+%O discussion is beyond the scope of this paper, whose focus is centered on the
+%O novel Snow consensus protocol family.
+Le déploiement complet d'une cryptomonnaie implique l'initialisation, l'émission, le dépôt, le retrait et le contrôle de l'inflation. Nous disposons de solutions à ces problèmes mais leur description détaillée sort du cadre de cet article, dont l'objet est la nouvelle famille de consensus Snow. % HOULA staking unstaking
 %In this section,
 %we focus on how Avalanche can support the value transfer primitive at the center of cryptocurrencies.
 %\paragraph{XXX: the original implementation paragraph in Model}
@@ -802,10 +804,12 @@ novel Snow consensus protocol family.
 %On the other hand, we show later in Section~\ref{sec:implementation} our practical payment system, Avalanche, utilizes multiple Snowball instances to support standard Bitcoin-like transactions. %, by humbly cheating in two ways.
 %First, instead of a single replicated state machine (RSM) model, where the system determines a sequence of totally-ordered transactions $T_0, T_1, T_2, \ldots$ issued by any client, we adopt a \emph{parallel consensus model}, where each client interacts independently with its own RSMs and optionally transfers ownership of its RSM to another client. The system establishes only a partial order between dependent transactions.
 %Second,
-In a cryptocurrency setting, cryptographic signatures enforce that only a key owner is able to create a transaction that spends a particular coin. Since correct clients follow the protocol as prescribed and never double spend coins, in Avalanche, they are guaranteed both safety and liveness for their \emph{virtuous} transactions. In contrast, liveness is not guaranteed for \emph{rogue} transactions, submitted by Byzantine clients, which conflict with one another. Such decisions may stall in the network, but have no safety impact on virtuous transactions.
-We show that this is a sensible tradeoff, and that the resulting system is sufficient for building complex payment systems.
+%O In a cryptocurrency setting, cryptographic signatures enforce that only a key owner is able to create a transaction that spends a particular coin. Since correct clients follow the protocol as prescribed and never double spend coins, in Avalanche, they are guaranteed both safety and liveness for their \emph{virtuous} transactions. In contrast, liveness is not guaranteed for \emph{rogue} transactions, submitted by Byzantine clients, which conflict with one another. Such decisions may stall in the network, but have no safety impact on virtuous transactions.
+Dans une configuration de cryptomonnaie, les signatures cryptographiques imposent que seul le possesseur de la clef soit capable de créer une transaction dépensant un dépôt donné. Comme les clients corrects suivent le protocole tel qu'il est prescrit et ne peuvent pratiquer la double dépense, ils ont la garantie tant de sûreté de fonctionnement que de vitalité pour leurs transactions \emph{vertueuses}. Par contraste, la vitalité n'est pas garantie pour les transactions \emph{malveillantes} soumises par des clients byzantins, qui entrent mutuellement en conflit. Ces décisions peuvent arrêter le réseau mais n'ont pas d'impact sur les transactions vertueuses.
+%O We show that this is a sensible tradeoff, and that the resulting system is sufficient for building complex payment systems.
+Nous montrons que ce compromis est sensé et que le système qui en résulte suffit à bâtir des systèmes de paiement complexes.
 
-\input{avalanche}
+\input{avalanche_fr}
 
 \subsection{Multi-Input UTXO Transactions}
 In addition to the DAG structure in Avalanche, an \emph{unspent transaction output} (UTXO)~\cite{nakamoto2008bitcoin} graph that captures
