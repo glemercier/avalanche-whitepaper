@@ -542,17 +542,30 @@ Nous examinons ensuite comment améliorer Slush pour être tolérant au problèm
 
 \subsection{Snowflake: BFT}
 
-Snowflake augments Slush with a single counter that captures the strength of a node's conviction in its current color.
-This per-node counter stores how many consecutive samples of the network by that node have all yielded the same color.
-A node accepts the current color when its counter reaches $\beta$, another security parameter.
-Figure~\ref{fig:snowflake-loop} shows the amended protocol, which includes
-the following modifications:
+Snowflake améliore Slush en ajoutant un compteur unique qui capture la force de conviction d'un noeud dans sa couleur
+actuelle. Ce compteur associé à chaque noeud stocke le nombre d'échantillons du réseau consécutifs que le noeud a
+sollicité et qui ont retourné la même couleur. Un noeud accepte sa couleur actuelle lorsque son compteur atteint $\beta$,
+un autre paramètre de sécurité. La Figure~\ref{fig:snowflake-loop} montre le protocole amélioré qui inclue les
+modifications suivantes:
+
+%O Snowflake augments Slush with a single counter that captures the strength of a node's conviction in its current color.
+%O This per-node counter stores how many consecutive samples of the network by that node have all yielded the same color.
+%O A node accepts the current color when its counter reaches $\beta$, another security parameter.
+%O Figure~\ref{fig:snowflake-loop} shows the amended protocol, which includes
+%O the following modifications:
 
 \begin{compactenum}
-	\item Each node maintains a counter $\mathit{cnt}$;
-    \item Upon every color change, the node resets $\mathit{cnt}$ to 0;
-    \item Upon every successful query that yields $\ge \alpha$ responses for the same color as the node, the node increments $\mathit{cnt}$.
+	\item Chaque node maintient un compteur $\mathit{cnt}$;
+    \item A chaque changement de couleur, le compteur $\mathit{cnt}$ se réinitialise à 0;
+    \item Après chaque requête réussie qui retourne $\ge \alpha$ réponses en faveur de la même couleur que le noeud,
+      ce dernier incrémente $\mathit{cnt}$.
 \end{compactenum}
+
+%O \begin{compactenum}
+%O 	\item Each node maintains a counter $\mathit{cnt}$;
+%O     \item Upon every color change, the node resets $\mathit{cnt}$ to 0;
+%O     \item Upon every successful query that yields $\ge \alpha$ responses for the same color as the node, the node increments $\mathit{cnt}$.
+%O \end{compactenum}
 
 \newcommand{\codemaj}{\mathit{maj}}
 \newcommand{\codefalse}{\texttt{false}}
@@ -618,60 +631,98 @@ the following modifications:
 \end{algorithmic}
 \end{figure}
 
+Quand le protocole est correctement parametré pour un seuil donné de noeuds byzantins et un niveau de garantie
+$\varepsilon$, il peut garantir à la fois la sécurité de fonctionnement (P1) et la vitalité (P2, P3).
+Comme nous le démontrons plus loin, il existe un état irréversible à partir duquel une décision est inévitable. Les noeuds
+légitimes commencent à se positionner après cet état irréversible et adoptent la même couleur. Une intuition
+supplémentaire, que nous ne détaillons pas dans ce papier, introduit l'existence d'un point de changement de phase à
+partir duquel les nodes byzantins perdent toute capacité à maintenir le réseau dans un état bivalent.
 
-When the protocol is correctly parameterized for a given threshold of Byzantine nodes and a desired $\varepsilon$-guarantee, it can ensure both safety (P1) and liveness (P2, P3).
-As we later show, there exists an irreversible state after which a decision is inevitable. Correct nodes begin to commit past the irreversible state to adopt the same color, whp. For additional intuition, which we do not expand in this paper, there also exists a phase-shift point, where the Byzantine nodes lose ability to keep network in a bivalent state.
-%there exists a phase-shift point after which correct nodes are more likely to tend towards a decision than a bivalent state.
-%Further, there exists a point-of-no-return after which a decision is inevitable.
-%The Byzantine nodes lose control past the phase shift, and the correct nodes begin to commit past the point-of-no-return, to adopt the same color, whp.
+%O When the protocol is correctly parameterized for a given threshold of Byzantine nodes and a desired $\varepsilon$-guarantee, it can ensure both safety (P1) and liveness (P2, P3).
+%O As we later show, there exists an irreversible state after which a decision is inevitable. Correct nodes begin to commit past the irreversible state to adopt the same color, whp. For additional intuition, which we do not expand in this paper, there also exists a phase-shift point, where the Byzantine nodes lose ability to keep network in a bivalent state.
 
+%O \subsection{Snowball: Adding Confidence}
 
-\subsection{Snowball: Adding Confidence}
+\subsection{Snowball: Introduire la notion de confiance}
 
-Snowflake's notion of state is ephemeral: the counter gets reset with every color flip.
-% While, theoretically, the protocol is able to make strong guarantees with
-% minimal state, we will now improve the protocol to make it harder to
-% attack by incorporating a more permanent notion of belief.
-Snowball augments Snowflake with \emph{confidence counters} that capture the number of queries that have yielded a threshold result for their corresponding color (Figure ~\ref{fig:snowball-loop}).
-A node decides if it gets $\beta$ consecutive chits for a color. However, it only changes preference based on the total accrued confidence.
-The differences between Snowflake and Snowball are as follows:
+La notion d'état de Snowflake est éphémère: le compteur est réinitialisé à chaque changement de couleur.
+Snowball améliore Snowflake avec des \emph{compteurs de confiance} qui capturent le nombre de requêtes ayant retourné
+un résultat en faveur de la couleur du noeud au dessus d'un certain seuil (Figure ~\ref{fig:snowball-loop}).
+Un node prend une décision s'il obtient $\beta$ réponses consécutives en faveur d'une couleur. Cependant il change
+sa préférence uniquement sur la base de la confiance totale accumulée. Les différences entre Snowflake et Snowball
+sont:
+
 \begin{compactenum}
-    \item Upon every successful query, the node increments its confidence counter for that color.
-    \item A node switches colors when the confidence in its current color becomes lower than the confidence value of the new color.
+    \item Après chaque requête réussie, le noeud incrémente son compteur de confiance associé à la couleur retournée.
+    \item Un noeud change de couleur quand la confiance associée à sa couleur actuelle devient inférieure à la
+      valeur de la confiance associée à  la nouvelle couleur.
 \end{compactenum}
-% Snowball is not only harder to attack than Snowflake, but is more easily generalized to multi-decree protocols.
+
+%O Snowflake's notion of state is ephemeral: the counter gets reset with every color flip.
+%O Snowball augments Snowflake with \emph{confidence counters} that capture the number of queries that have yielded a threshold result for their corresponding color (Figure ~\ref{fig:snowball-loop}).
+%O A node decides if it gets $\beta$ consecutive chits for a color. However, it only changes preference based on the total accrued confidence.
+%O The differences between Snowflake and Snowball are as follows:
+%O \begin{compactenum}
+%O     \item Upon every successful query, the node increments its confidence counter for that color.
+%O     \item A node switches colors when the confidence in its current color becomes lower than the confidence value of the new color.
+%O \end{compactenum}
 
 
-\section{Analysis}
+\section{Analyse}
 \label{sec:analysis}
-Due to space limits, we move some core details to Appendix~\ref{sec:full-analysis}, where we show that under certain independent and distinct assumptions, the Snow family of consensus protocols provide safety (P1) and liveness (P2, P3) properties.
-In this section, we summarize our core results and provide some proof sketches.
+Pour des raisons de manque de place, nous déplaçons certains détails importants vers l'Annexe~\ref{sec:full-analysis},
+dans laquelle nous démontrons que sous certaines hypothèses distinctes et indépendantes, la famille de protocoles de
+consensus Snow possède des propriétés de sûreté de fonctionnement (P1) et de vitalité (P2, P3). Dans cette section,
+nous résumons nos résultats principaux en fournissant des ébauches de preuves.
 
-\paragraph{Notation} Let the network consist of a set of $n$ nodes (represented by set $\mathcal{N}$), where $c$ are correct nodes (represented by set $\mathcal{C}$) and $f$ are Byzantine nodes (represented by set $\mathcal{B}$). 
-Let $u, v \in \mathcal{C}$ refer to any two correct nodes in the network. Let $k, \alpha, \beta \in \mathbb{Z}^+$ be positive integers where $\alpha > \floor{k/2}$. From now on, $k$ will always refer to the network sample size, where $k \leq n$, and $\alpha$ will be the majority threshold required to consider the voting experiment a ``success''. In general, we will refer to $\mathcal{S}$ as the state (or configuration) of the network at any given time. 
+%O \section{Analysis}
+%O \label{sec:analysis}
+%O Due to space limits, we move some core details to Appendix~\ref{sec:full-analysis}, where we show that under certain independent and distinct assumptions, the Snow family of consensus protocols provide safety (P1) and liveness (P2, P3) properties.
+%O In this section, we summarize our core results and provide some proof sketches.
 
-\paragraph{Modelling Framework} To formally model our protocols, we use continuous-time Markov processes (CTMC). 
-The state space is enumerable (and finite), and state transitions occur in continuous time. 
-CTMCs naturally model our protocols since state transitions do not occur in epochs and in lockstep for every node (at the end of every time unit) but rather occur at any time and independently of each other. 
-% CMTCs can also trivially encapsulate synchronous time protocols through the underlying jump chain, whose probabilities of transitions can be extracted from the underlying generator. 
-% This modelling framework, in fact, is the primary way by which stochastic processes that describe systems of interacting particles (epidemic networks, biology, physics, etc) are analyzed. 
-% Analyzing the protocols introduced in this paper
-%differ from classical as well as Nakamoto consensus-style protocols. 
-%Even simple, non-linear dynamical systems often incur complicated analyses as they may not admit analytical solutions.
-% In particular, since the state of a node depends on randomly sampling other nodes, possibly inducing nondeterministic dependency cycles, analyzing all possible state executions is computationally infeasible. 
-% Here, we employ stochastic techniques used in the analysis of epidemic networks, which may also be of independent interest to the distributed systems community. 
-%Here, we employ 
-% requires complex stochastic techniques to reason about the state of the network in aggregate. 
+\paragraph{Notation} En considérant que le réseau consiste d'un ensemble de $n$ noeuds (représentés par l'ensemble
+$\mathcal{N}$), où $c$ sont des noeuds légitimes (représentés par l'ensemble $\mathcal{C}$) et $f$ sont les noeuds
+byzantins (représentés par l'ensemble $\mathcal{B}$). Soient $u, v \in \mathcal{C}$ des références à deux noeuds
+légitimes pris au hasard dans le réseau. Soient $k, \alpha, \beta \in \mathbb{Z}^+$ des entiers positifs où
+$\alpha > \floor{k/2}$. A partir de maintenant, $k$ fera toujours référence à la taille des déchantillons du réseau,
+où $k \leq n$, et $\alpha$ sera le seuil de majorité requis pour considérer l'expérience de vote comme ``réussie''.
+En général, nous définissons $\mathcal{S}$ comme étant l'état (ou la configuration) du réseau à tout moment.
 
-We focus on binary consensus, although the safety results generalize to more than two values. We can think of the network as a set of nodes either colored red or blue, and we will refer to this configuration at time $t$ as $\mathcal{S}_t$. 
-We model our protocols through a continuous-time process with two absorbing states, where either all nodes are red or all nodes are blue. 
-The state space $\mathcal{S}$ of the stochastic process is a condensed version of the full configuration space, where each state $\{0, \dots, n\}$ represents the total number of blue nodes in the system. 
-% At any time, a set of nodes either change their color, or increase their confidence in their latest color. 
-% The dynamics of the system resemble those of epidemic networks, where nodes update their state based on the state of their neighbors, using a function chosen over some probability distribution. 
-% It would be infeasible to keep track of all possible execution paths, since at every round, the possible number of branching executions is equal to the number of possible correct nodes times all possible $k$-sample choices of outcomes that the node may sample. Furthermore, the difficulty of this task is greatly amplified due to the Byzantine adversary, whose optimal attack strategy is chosen over an unknown function, possibly itself nondeterministic. 
+%O \paragraph{Notation} Let the network consist of a set of $n$ nodes (represented by set $\mathcal{N}$), where $c$ are correct nodes (represented by set $\mathcal{C}$) and $f$ are Byzantine nodes (represented by set $\mathcal{B}$).
+%O Let $u, v \in \mathcal{C}$ refer to any two correct nodes in the network. Let $k, \alpha, \beta \in \mathbb{Z}^+$ be positive integers where $\alpha > \floor{k/2}$. From now on, $k$ will always refer to the network sample size, where $k \leq n$, and $\alpha$ will be the majority threshold required to consider the voting experiment a ``success''. In general, we will refer to $\mathcal{S}$ as the state (or configuration) of the network at any given time.
+%O
 
-The simplification that allows us to analyze this system is to obviate the need to keep track of all of the execution paths, as well as all possible adversarial strategies, and rather focus entirely on a single state of interest, without regards to how we achieve this state. 
-More specifically, the core extractable insight of our analysis is in identifying the \textit{irreversibility} state of the system, the state upon which so many correct nodes have usurped either red or blue that reverting back to the minority color is highly unlikely. 
+\paragraph{Framework de modélisation} Afin de modéliser nos protocoles de manière formelle, nous utilisons des
+processus Markov à temps continu (CTMC). L'espace contenant les états est dénombrable (et fini), et les transitions
+entre états s'opèrent sur un espace de temps continu. Les CTMCs proposent une modélisation naturelle de nos protocoles
+sachant que les transitions entre états ne se font pas par étapes et en marche ordonnée pour chaque noeud (à la fin de
+chaque unité de temps) mais arrivent plutôt à n'importe quel moment et indépendamment des autres noeuds.
+
+Nous nous concentrons sur un consensus binaire, même si les résultats en term de sûreté de fonctionnement se
+généralisent sur plus de deux valeurs. Nous pouvons imaginer le réseau comme un ensemble de noeuds colorés soit en
+rouge soit en bleu, et nous ferons référence à cette configuration à l'instant $t$ comme étant $\mathcal{S}_t$.
+Nous modélisons nos protocoles à travers un processus à temps continu contenant deux états, dans lequel tous les noeuds
+sont rouges ou tous les noeuds sont bleus. L'espace $\mathcal{S}$ des états du processus stochastique est une version
+condensée de l'espace de configuration complet, où chaque état $\{0, \dots, n\}$ représente le nombre total de noeuds
+bleus dans le système.
+
+La simplification qui nous permet d'analyser ce système consiste à s'affranchir du besoin de garder un historique de
+tous les chemins d'exécution, ainsi que toutes les stratégies d'attaque possibles, et de se concentrer plutôt
+entièrement sur un unique état, sans considérer la manière d'arriver à cet état. Plus spécifiquement, l'idée principale
+à retenir de notre analyse est l'identification d'un état \textit{d'irréversibilité} du système, cet état à partir
+duquel un tel nombre de noeuds légitimes a adopté soit la couleur rouge soit la couleur bleue que la possibilité de
+revenir à la couleur minoritaire est très peu probable.
+
+%O \paragraph{Modelling Framework} To formally model our protocols, we use continuous-time Markov processes (CTMC).
+%O The state space is enumerable (and finite), and state transitions occur in continuous time.
+%O CTMCs naturally model our protocols since state transitions do not occur in epochs and in lockstep for every node (at the end of every time unit) but rather occur at any time and independently of each other.
+
+%O We focus on binary consensus, although the safety results generalize to more than two values. We can think of the network as a set of nodes either colored red or blue, and we will refer to this configuration at time $t$ as $\mathcal{S}_t$.
+%O We model our protocols through a continuous-time process with two absorbing states, where either all nodes are red or all nodes are blue.
+%O The state space $\mathcal{S}$ of the stochastic process is a condensed version of the full configuration space, where each state $\{0, \dots, n\}$ represents the total number of blue nodes in the system.
+
+%O The simplification that allows us to analyze this system is to obviate the need to keep track of all of the execution paths, as well as all possible adversarial strategies, and rather focus entirely on a single state of interest, without regards to how we achieve this state.
+%O More specifically, the core extractable insight of our analysis is in identifying the \textit{irreversibility} state of the system, the state upon which so many correct nodes have usurped either red or blue that reverting back to the minority color is highly unlikely.
 
 \subsection{Safety}
 
