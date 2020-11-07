@@ -428,10 +428,17 @@ Enfin, nous nous reposons sur les hypothèses standard en matière de cryptograp
 %\editinsert{TODO: Talk about we don't address Sybil attack, and justify it by mentioning Algorand (we also use Algorand as a comparison in Evaluation, so it will totally make sense here.}
 
 
-\section{Protocol Design}\label{sec:protocol}
-We start with a non-BFT protocol called Slush and progressively build up to Snowflake and Snowball, all based on the same common majority-based metastable voting mechanism.
-These protocols are single-decree consensus protocols of increasing robustness.
-We provide full specifications for the protocols in this section, and defer the analysis to the next section, and present formal proofs in the appendix.
+\section{Conception du Protocole}\label{sec:protocol}
+Nous partons d'un protocole non résistant au problème des généraux byzantins appelé Slush, en amenant
+progressivement Snowflake et Snowball, tous basés sur le même mécanisme métastable de vote basé sur une majorité.
+Ces derniers sont des protocoles de consensus à simple décret présentant plusieurs niveaux de robustesse. Nous
+détaillons les caractéristiques complètes de ces protocoles dans cette section, suivie de leur analyse en section
+suivante, les preuves formelles étant disponibles en annexe.
+
+%O \section{Protocol Design}\label{sec:protocol}
+%O We start with a non-BFT protocol called Slush and progressively build up to Snowflake and Snowball, all based on the same common majority-based metastable voting mechanism.
+%O These protocols are single-decree consensus protocols of increasing robustness.
+%O We provide full specifications for the protocols in this section, and defer the analysis to the next section, and present formal proofs in the appendix.
 
 %0 \subsection{Slush: Introducing Metastability}
 \subsection{Slush: A propos de métastabililté}
