@@ -731,18 +731,33 @@ revenir à la couleur minoritaire est très peu probable.
 %O The simplification that allows us to analyze this system is to obviate the need to keep track of all of the execution paths, as well as all possible adversarial strategies, and rather focus entirely on a single state of interest, without regards to how we achieve this state.
 %O More specifically, the core extractable insight of our analysis is in identifying the \textit{irreversibility} state of the system, the state upon which so many correct nodes have usurped either red or blue that reverting back to the minority color is highly unlikely.
 
-\subsection{Safety}
+\subsection{Sûreté de fonctionnement}
 
-\paragraph{Slush} 
-We assume that
-%$\mathcal{L}(u) = \mathcal{N}$ for all $u \in \mathcal{N}$.
-all nodes share the same $\mathcal{N}$, and in
-Appendix~\ref{sec:full-analysis-churn}, we sketch how to relax the requirement of the membership knowledge.
-We model the dynamics of the system through a continuous-time process where two states are absorbing, namely the all-red or all-blue state. Let $\{X_{t \geq 0}\}$ be the random variable that describes the state of the system at time $t$, where $X_0 \in \{0, \dots, c\}$.
-We begin by immediately discussing the most important result of the safety dynamics of our processes: the \emph{reversibility} probabilities of the \textbf{Slush} process. All the other formal results in this paper are, informally speaking, intuitive derivations and augmentations of this result. 
+%O \subsection{Safety}
+
+\paragraph{Slush}
+En partant du principe que tous les noeuds partagent le même $\mathcal{N}$, et en Annexe~\ref{sec:full-analysis-churn},
+nous expliquons comment relâcher le besoin pour les noeuds d'avoir connaissance de leur appartenance. Nous modélisons
+les dynamiques du système à travers un processus à temps continu contenant deux états, tous les noeuds rouges ou tous
+les noeuds bleus. Prenons $\{X_{t \geq 0}\}$ la variable aléatoire qui décrit l'état du système à l'instant $t$, où
+$X_0 \in \{0, \dots, c\}$.
+Nous commençons par détailler le résultat le plus important des dynamiques de sûreté de fonctionnement de notre
+processus: les probabilités de \emph{réversibilité} du processus \textbf{Slush}. Tous les autres résultats formels de
+ce papier sont, en simplifiant, des dérivations et améliorations intuitives de ce résultat.
+
+%0 \paragraph{Slush}
+%0 We assume that
+%0 %$\mathcal{L}(u) = \mathcal{N}$ for all $u \in \mathcal{N}$.
+%0 all nodes share the same $\mathcal{N}$, and in
+%0 Appendix~\ref{sec:full-analysis-churn}, we sketch how to relax the requirement of the membership knowledge.
+%0 We model the dynamics of the system through a continuous-time process where two states are absorbing, namely the all-red or all-blue state. Let $\{X_{t \geq 0}\}$ be the random variable that describes the state of the system at time $t$, where $X_0 \in \{0, \dots, c\}$.
+%0 We begin by immediately discussing the most important result of the safety dynamics of our processes: the \emph{reversibility} probabilities of the \textbf{Slush} process. All the other formal results in this paper are, informally speaking, intuitive derivations and augmentations of this result.
 
 \begin{theorem}
-Let the configuration of the system at time $t$ be $\mathcal{S}_t = n/2 + \delta$, meaning that the network has drifted to $2\delta$ more blue nodes than red nodes ($\delta = 0$ means that red and blue are equal). Let $\xi_\delta$ be the probability of absorption to the all-red state (minority). Then, for all $0 \leq \delta \leq n/2$, we have 
+Prenons la configuration du système à l'instant $t$ comme étant $\mathcal{S}_t = n/2 + \delta$, ce qui signifie que le
+réseau a dérivé de $2\delta$ noeuds bleus de plus que les noeuds rouges ($\delta = 0$ signifie que rouges et bleus
+sont en nombre égal). $\xi_\delta$ étant la probabilité d'un basculement vers l'état où tous les noeuds sont rouges,
+nous avons donc pour tout $0 \leq \delta \leq n/2$
 \begin{equation}
 \begin{split}
     \xi_\delta &\leq \left(\dfrac{1/2 - \delta/n}{\alpha/k}\right)^{\alpha}\left(\dfrac{1/2 + \delta/n}{1- \alpha/k}\right)^{k-\alpha}\\
@@ -752,73 +767,200 @@ Let the configuration of the system at time $t$ be $\mathcal{S}_t = n/2 + \delta
 \end{theorem}
 
 \begin{proof}
-This bound follows from the Hoeffding-derived tail bounds of the hypergeometric distribution by Chvatal~\cite{chvatal1979tail}. 
+Cette borne suit les bornes de queue dérivées de Hoeffding de la distribution hypergéométrique définie par
+Chvatal~\cite{chvatal1979tail}.
 \end{proof}
 
-We note that Chvatal's bounds are introduced for simplicity of exposition and are extremely weak.  
-We leave the full closed-form expression in Theorem~\ref{theorem:slush_prob_convergence_minority} to the appendix, which is also significantly stronger than the Chvatal bound. 
-Nonetheless, using the loose Chvatal bound, we make the key observation that as the drift $\delta$ increases, given fixed $\alpha$ and $k$, the probability of moving towards the minority value decreases \emph{exponentially fast} (in fact, even faster, since there is a quadratic term in the inverse exponent). Additionally, the same result holds for increasing $\alpha$ given a fixed $k$. 
+%O \begin{theorem}
+%O Let the configuration of the system at time $t$ be $\mathcal{S}_t = n/2 + \delta$, meaning that the network has drifted to $2\delta$ more blue nodes than red nodes ($\delta = 0$ means that red and blue are equal). Let $\xi_\delta$ be the probability of absorption to the all-red state (minority). Then, for all $0 \leq \delta \leq n/2$, we have
+%O \begin{equation}
+%O \begin{split}
+%O     \xi_\delta &\leq \left(\dfrac{1/2 - \delta/n}{\alpha/k}\right)^{\alpha}\left(\dfrac{1/2 + \delta/n}{1- \alpha/k}\right)^{k-\alpha}\\
+%O     &\leq e^{-2((\alpha/k) - (1/2) + (\delta/n))^2 k}
+%O \end{split}
+%O \end{equation}
+%O \end{theorem}
 
-The outcomes of this theorem demonstrate a key property: once the network loses full bivalency (i.e. $\delta > 0$), it tends to topple and converge rapidly towards the majority color, unable to revert back to the minority with significant probability. This is the fundamental property exploited by our protocols, and what makes them secure despite only sampling a small, constant-sized set of the network. The core result that follows for the safety guarantees in Snowflake is in finding regions (given specific parameter choices) where the reversibility holds with no higher than $\varepsilon$ probability even under adversarial presence. 
+%O \begin{proof}
+%O This bound follows from the Hoeffding-derived tail bounds of the hypergeometric distribution by Chvatal~\cite{chvatal1979tail}.
+%O \end{proof}
 
-\paragraph{Snowflake} 
-For Snowflake, we assume that some fraction of nodes are adversarial. In Slush, once the network gains significant majority support for one proposal (e.g., the color blue), it becomes unlikely for a minority proposal (e.g., the color red) to ever become decided in the future (irreversibility). Furthermore, in Slush nodes simply have to execute the protocol for a deterministic number of rounds, $m$, which is known ahead of protocol execution. When introducing adversarial nodes with arbitrary strategies, however, nodes cannot simply execute the protocol for a deterministic number of rounds, since the adversary may nondeterministically affect the value of $m$. Instead, correct nodes must implement a mechanism to explicitly detect that irreversibility has been reached. To that end, in Snowflake, every correct node implements a decision function, $\mathcal{D}(u, \mathcal{S}_t, blue) \rightarrow \{0, 1\}$, which is a random variable that outputs $1$ if node $u$ detects that the network has reached an irreversibility state at time $t$ for blue. The decision mechanism is probabilistic, meaning that it can fail, although it is designed to do so with negligible probability. We now sketch the proof of Snowflake.
+Nous notons que les bornes de Chvatal sont introduites ici dans un but de simplification et sont extrêmement faibles.
+Nous laissons l'expression dans sa forme complète dans le Théorème~\ref{theorem:slush_prob_convergence_minority}
+disponible en annexe, qui est aussi bien plus fort que la borne de Chvatal.
+Néanmoins, l'utilisation de la borne de Chvatal nous permet de faire l'observation qui consiste à dire qu'au fur et à
+mesure que la dérivation $\delta$ augmente, pour un $\alpha$ et un $k$ constants, la probabilité de basculer vers la
+valeur minoritaire décroît \emph{de manière exponentielle} (en fait encore plus rapidement vu qu'il y a un terme
+quadratique dans l'exposant inverse). De plus, la même observation est valable si l'on fait croître $\alpha$ en gardant
+$k$ constant.
 
-\noindent \emph{Proof Sketch}. We define safety failure to be the event wherein any two correct nodes $u$ and $v$ decide on blue and red, i.e. $\mathcal{D}(u, \mathcal{S}_t, blue) \rightarrow 1$ and $\mathcal{D}(v, \mathcal{S}_{t'}, red) \rightarrow 1$, for any two times $t$ and $t'$. We again model the system as a continuous time random process. The state space is defined the same way as in Slush. However, we note some critical subtleties. First, even if all correct nodes accept a color, the Byzantine nodes may revert. Second, we also have to consider the decision mechanism $\mathcal{D}(*)$. To analyze, we obviate the need to keep track of all network configurations under all adversarial strategies and assume that a node $u$ first decides on blue. Then, conditioned on the state of the network upon $u$ deciding, we calculate the probability that another node $v$ decides red, which is a function of both the probability that the network reverts towards a minority blue state and that $v$ decides at that state. 
-We show that under appropriate choices of $k$, $\alpha$, and $\beta$, we can construct highly secure instances of Snowflake (i.e. safety failure with probability $\leq \varepsilon$) when the network reaches some bias of $\delta$, as shown in Figure~\ref{fig:states_feasible_solutions}. A concrete example is provided in Figure~\ref{fig:fandepsilon}.
+Les conclusions de ce théorème démontreint une propriété clé du système: une fois que le réseau perd sa bivalence
+(ex: $\delta > 0$), il tend à se renverser et converger rapidement vers la couleur majoritaire et il devient alors
+suffisamment improbable qu'il rebascule vers la couleur minoritaire. C'est cette propriété fondamentale que nous
+exploitons dans nos protocoles, et ce qui les rend sûrs malgré le fait que l'échantillonnage se fait sur une petite
+partie du réseau de taille fixe. Le résultat principal qui s'en suit pour les garanties de sûreté de Snowflake consiste
+à trouver des régions (à partir de paramètres spécifiquement choisis) où la réversibilité n'est possible qu'à partir
+d'une probabilité maximale $\varepsilon$ même en conditions d'adversité.
+
+%O We note that Chvatal's bounds are introduced for simplicity of exposition and are extremely weak.
+%O We leave the full closed-form expression in Theorem~\ref{theorem:slush_prob_convergence_minority} to the appendix, which is also significantly stronger than the Chvatal bound.
+%O Nonetheless, using the loose Chvatal bound, we make the key observation that as the drift $\delta$ increases, given fixed $\alpha$ and $k$, the probability of moving towards the minority value decreases \emph{exponentially fast} (in fact, even faster, since there is a quadratic term in the inverse exponent). Additionally, the same result holds for increasing $\alpha$ given a fixed $k$.
+%O
+%O The outcomes of this theorem demonstrate a key property: once the network loses full bivalency (i.e. $\delta > 0$), it tends to topple and converge rapidly towards the majority color, unable to revert back to the minority with significant probability. This is the fundamental property exploited by our protocols, and what makes them secure despite only sampling a small, constant-sized set of the network. The core result that follows for the safety guarantees in Snowflake is in finding regions (given specific parameter choices) where the reversibility holds with no higher than $\varepsilon$ probability even under adversarial presence.
+
+\paragraph{Snowflake}
+
+Dans le cas de Snowflake, nous prenons comme hypothèse qu'une partie des noeuds est antagoniste. Avec Slush, une
+fois que le réseau obtient une majorité significative pour l'une des propositions (ex: la couleur bleue), il devient
+improbable qu'une proposition minoritaire (ex: la couleur rouge) puisse être adoptée dans le futur (irréversibilité).
+De plus, les noeuds Slush ont simplement besoin d'exécuter le protocole pour un nombre déterministe $m$ de tours qui
+est connu en amont de l'exécution du protocole. Lorsqu'on introduit des noeuds antagonistes qui suivent des stratégies
+arbitraires, les noeuds ne peuvent simplement plus exécuter le protocole pour un nombre déterministe de tours vu que
+les adversaires peuvent affecter la valeur de $m$ de manière non déterministe. A la place, les noeuds légitimes doivent
+implémenter un mécanisme pour explicitement détecter que l'irréversibilité a été atteinte. Dans ce but, dans Snowflake
+chaque noeud légitime implémente une fonction de décision, $\mathcal{D}(u, \mathcal{S}_t, blue) \rightarrow \{0, 1\}$,
+qui est une variable aléatoire qui retourne $1$ si le noeud $u$ détecte que l'état d'irréversibilité a été atteint à
+l'instant $t$ pour bleu. Ce mécanisme de décision est probabiliste, ce qui veut dire qu'il peut échouer, même s'il est
+conçu pour que la probabilité de cet échec soit négligeable. Nous pouvons maintenant ébaucher la preuve de Snowflake.
+
+\noindent \emph{Ebauche de preuve}. Nous définissons la stratégie d'échec comme étant l'évênement lors duquel deux
+noeuds légitimes $u$ et $v$ décident entre le bleu et le rouge, ex: $\mathcal{D}(u, \mathcal{S}_t, bleu) \rightarrow 1$
+et $\mathcal{D}(v, \mathcal{S}_{t'}, rouge) \rightarrow 1$, pour deux instants $t$ et $t'$. Nous modélisons une fois de
+plus le système comme un processus à temps aléatoire. L'espace des états est défini de la même manière que pour Slush.
+Néanmoins, nous observons des subtilités critiques. Tout d'abord, même si tous les noeuds légitimes acceptent une
+couleur, les noeuds byzantins peuvent toujours basculer vers l'autre couleur. Ensuite nous devons aussi prendre en
+considération le mécanisme de décision $\mathcal{D}(*)$. Pour cette analyse, nous nous affranchissons du besoin de
+garder l'historique de toutes les configurations du réseau soumises à toutes les stratégies antagonistes et prenons pour
+hypothèse qu'un noeud $u$ décide d'abord d'adopter la couleur bleue. Ensuite en fonction de l'état du réseau suite à la
+décision de $u$, nous calculons la probabilité qu'un autre noeud $v$ adopte le rouge, qui est fonction à la fois de la
+probabilité que le réseau bascule vers l'état minoritaire bleu et que $v$ bascule vers cet état.
+Nous démontrons qu'en choisissant correctement $k$, $\alpha$, et $\beta$, nous pouvons construire des instances
+extrêmement sécurisées de Snowflake (ex: échec de sécurité avec une probabilité de $\leq \varepsilon$) quand le réseau
+atteint un biais de $\delta$, comme le montre la Figure~\ref{fig:states_feasible_solutions}. Un exemple concret est
+présenté dans la Figure~\ref{fig:fandepsilon}.
 
 \begin{figure}[h]
 \begin{center}
 \input{figures/analysis2}
-\caption{Representation of the irreversibility state, which exists when -- even under $f$ Byzantine nodes -- the number of blue correct nodes exceeds that of red correct nodes by more than $2\delta$.
+\caption{Représentation de l'état d'irréversibilité qui existe quand -- même en la présence de $f$ noeuds byzantins --
+  le nombre de noeuds légitimes bleus dépasse le nombre de noeuds légitimes rouges de plus de $2\delta$.
 }
 \label{fig:states_feasible_solutions}
 \end{center}
-\end{figure}    
+\end{figure}
 
-% An important insight is that there exists an irreversible state, or \textit{point of no return}, after which the system will converge to an absorbing state whp. Furthermore a correct node only decides when the system is beyond the point of no return. Composing these two guarantees together, the probability of a safety violation is strictly less than $\varepsilon$, which can be configured as desired. 
+%O \paragraph{Snowflake}
+%O For Snowflake, we assume that some fraction of nodes are adversarial. In Slush, once the network gains significant majority support for one proposal (e.g., the color blue), it becomes unlikely for a minority proposal (e.g., the color red) to ever become decided in the future (irreversibility). Furthermore, in Slush nodes simply have to execute the protocol for a deterministic number of rounds, $m$, which is known ahead of protocol execution. When introducing adversarial nodes with arbitrary strategies, however, nodes cannot simply execute the protocol for a deterministic number of rounds, since the adversary may nondeterministically affect the value of $m$. Instead, correct nodes must implement a mechanism to explicitly detect that irreversibility has been reached. To that end, in Snowflake, every correct node implements a decision function, $\mathcal{D}(u, \mathcal{S}_t, blue) \rightarrow \{0, 1\}$, which is a random variable that outputs $1$ if node $u$ detects that the network has reached an irreversibility state at time $t$ for blue. The decision mechanism is probabilistic, meaning that it can fail, although it is designed to do so with negligible probability. We now sketch the proof of Snowflake.
+%O
+%O \noindent \emph{Proof Sketch}. We define safety failure to be the event wherein any two correct nodes $u$ and $v$ decide on blue and red, i.e. $\mathcal{D}(u, \mathcal{S}_t, blue) \rightarrow 1$ and $\mathcal{D}(v, \mathcal{S}_{t'}, red) \rightarrow 1$, for any two times $t$ and $t'$. We again model the system as a continuous time random process. The state space is defined the same way as in Slush. However, we note some critical subtleties. First, even if all correct nodes accept a color, the Byzantine nodes may revert. Second, we also have to consider the decision mechanism $\mathcal{D}(*)$. To analyze, we obviate the need to keep track of all network configurations under all adversarial strategies and assume that a node $u$ first decides on blue. Then, conditioned on the state of the network upon $u$ deciding, we calculate the probability that another node $v$ decides red, which is a function of both the probability that the network reverts towards a minority blue state and that $v$ decides at that state.
+%O We show that under appropriate choices of $k$, $\alpha$, and $\beta$, we can construct highly secure instances of Snowflake (i.e. safety failure with probability $\leq \varepsilon$) when the network reaches some bias of $\delta$, as shown in Figure~\ref{fig:states_feasible_solutions}. A concrete example is provided in Figure~\ref{fig:fandepsilon}.
+%O
+%O \begin{figure}[h]
+%O \begin{center}
+%O \input{figures/analysis2}
+%O \caption{Representation of the irreversibility state, which exists when -- even under $f$ Byzantine nodes -- the number of blue correct nodes exceeds that of red correct nodes by more than $2\delta$.
+%O }
+%O \label{fig:states_feasible_solutions}
+%O \end{center}
+%O \end{figure}
+
+% An important insight is that there exists an irreversible state, or \textit{point of no return}, after which the system will converge to an absorbing state whp. Furthermore a correct node only decides when the system is beyond the point of no return. Composing these two guarantees together, the probability of a safety violation is strictly less than $\varepsilon$, which can be configured as desired.
 % Unsurprisingly, there is an inherent tension between safety and liveness, but suitable parameters can be found that are practical.
-% Larger values of $k$ obtain higher levels of security for correct nodes, at the expense of slower convergence. 
+% Larger values of $k$ obtain higher levels of security for correct nodes, at the expense of slower convergence.
 
 \paragraph{Snowball}
-Snowball is an improvement in security over Snowflake, where random perturbations in network samples are reduced by introducing a limited form of history, which we refer to as confidence. 
-% Modeling Snowball with a Markov chain is difficult because of a state space explosion problem. In particular, it is not sufficient to simply keep track of color preferences of each correct node, the analysis must also maintain information about their confidence. 
 
-\noindent \emph{Proof Sketch}. We apply martingale concentration inequalities to prove that once the system has reached the irreversibility state, then the growth of the confidence of the majority decided color will perpetually grow and drift further away from those of the minority color, effectively rendering reversibility less likely over time. If the drifts ever revert, then reversibility analysis becomes identical to that of Snowflake.  
+Snowball est une amélioration en terme de sécurité par rapport à Snowflake, où les perturbations aléatoires dans les
+échantillons du réseau sont réduites par l'introduction d'une forme limitée d'historique que l'on appelle confiance.
 
-\subsection{Liveness}
+\noindent \emph{Ebauche de preuve}. Nous appliquons des inégalités de concentration pour prouver qu'une fois le système
+ayant atteint l'état d'irréversibilité, alors l'évolution de la confiance envers la couleur majoritaire adoptée va
+augmenter constamment et dériver de plus en plus loin des noeuds de couleur minoritaire, jusqu'à rendre la réversibilité
+de plus en plus improbable avec le temps. Si cette dérive finit par se retourner, alors l'analyse de la réversibilité
+devient identique à celle de Snowflake.
 
-We assume that the observed adversarial presence $0 \leq f' \leq n(k - \alpha - \psi)/k \leq f$, where we refer to $\psi$ as the buffer zone. 
-The bigger $\psi$, the quicker the ability of the decision mechanism to finalize a value. 
-If, of course, $\psi$ approaches zero or becomes negative, then we violate the upper bound of adversarial tolerance for the parameterized system, and thus the adversary can, with high probability, stall termination by simply choosing to not respond, although the safety guarantees may still hold. 
+%O \paragraph{Snowball}
+%O Snowball is an improvement in security over Snowflake, where random perturbations in network samples are reduced by introducing a limited form of history, which we refer to as confidence.
+%O % Modeling Snowball with a Markov chain is difficult because of a state space explosion problem. In particular, it is not sufficient to simply keep track of color preferences of each correct node, the analysis must also maintain information about their confidence.
+%O
+%O \noindent \emph{Proof Sketch}. We apply martingale concentration inequalities to prove that once the system has reached the irreversibility state, then the growth of the confidence of the majority decided color will perpetually grow and drift further away from those of the minority color, effectively rendering reversibility less likely over time. If the drifts ever revert, then reversibility analysis becomes identical to that of Snowflake.
 
-Assuming that $\psi$ is strictly positive, termination is strictly finite under all network configurations where a proposal has at least $\alpha$ support. Furthermore, not only is termination finite with probability one, we also have a strictly positive probability of termination within any bounded amount of time $t_{max}$, as discussed in Lemma~\ref{lemma:finitetermination}, which follows from Theorem~\ref{theorem:mean-convergence-time}. This captures liveness property P2. 
+\subsection{Vitalité}
 
-\noindent\emph{Proof Sketch.} Using the construction of the system to prove irreversibility, we characterize the distribution of the average time spent (sojourn times) at each state before the system terminates execution by absorption at either absorbing state. The termination time is then a union of these times. 
+Nous prenons pour hypothèse la présence antagoniste observée $0 \leq f' \leq n(k - \alpha - \psi)/k \leq f$, où $\psi$
+représente la zone tampon.
+Plus $\psi$ est grand, plus la capacité du mécanisme de décision à tendre vers une valeur est rapide. Si bien sûr $\psi$
+tend vers zéro ou devient négatif alors nous dépassons la limite supérieure de tolérance antagoniste pour le système
+paramétré, en conséquence l'attaquant peut, avec une haute probabilité, bloquer la convergence en choisissant simplement
+de ne pas répondre, et ceci même si les garanties de sûreté s'appliquent toujours.
 
-For non-conflicting transactions, since the adversary is unable to forge a conflict, the time to decision is simply the mixing time , which is $\Oh{\log{n}}$.
-Liveness guarantees under a fully bivalent network configuration reduce to an optimal convergence time of $\Oh{\log{n}}$ rounds if the adversary is at most $\Oh{\sqrt{n}}$, for $\alpha = \floor{k/2} + 1$. We leave additional detains to Lemma~\ref{lemma:centrallimit}.
-% This result is independently supported by Ben-Or~\cite{ben1983another} and Doerr et al~\cite{doerr2011stabilizing}. 
-When the adversary surpasses $\Oh{\sqrt{n}}$ nodes, the worst-case number of rounds increases polynomially, and as $f$ approaches $n/2$ it approaches exponential convergence rates.
+En partant de $\psi$ strictement positif, la convergence est strictement finie pour toutes les configurations où une
+proposition a un support d'au moins $\alpha$. De plus, non seulement la convergence est finie avec une probabilité de
+un, mais nous avons aussi une probabilité strictement positive de convergence jusqu'à un instant borné $t_{max}$, comme
+décrit dans la Proposition~\ref{lemma:finitetermination}, qui découle du Théorème~\ref{theorem:mean-convergence-time}.
+Cela précise la propriété de vitalité P2.
 
-\noindent\emph{Proof Sketch.} We modify Theorem~\ref{theorem:mean-convergence-time} to include the adversary, which reverts any imbalances in the network by keeping network fully bivalent. 
+\noindent \emph{Ebauche de preuve}. En utilisant la construction du système pour prouver l'irréversibilité, nous
+caractérisons la distribution de la moyenne du temps passé (les périodes "sojourn") dans chaque état avant que le
+système ne termine son exécution en adoptant l'un des états. Ce temps de convergence est l'union de ces périodes.
 
-\paragraph{Multi-Value Consensus}
-Our binary consensus protocol could support multi-value consensus by running logarithmic binary instances, one for each bit of the proposed value. However, such theoretical reduction might not be efficient in practice. Instead, we could directly incorporate multi-values as multi-colors in the protocol, where safety analysis could still be generalized.
+Pour les transactions non conflictuelles, vu que l'attaquant est incapable de générer un conflit, le temps de décision
+est simplement le temps de mélange, qui est $\Oh{\log{n}}$. La vitalité guarantit qu'une configuration de réseau
+entièrement bivalent atteint un temps de convergence optimal de $\Oh{\log{n}}$ tours si le nombre d'attaquants est au
+plus $\Oh{\sqrt{n}}$, pour $\alpha = \floor{k/2} + 1$. Nous donnons plus de détails dans la
+Proposition~\ref{lemma:centrallimit}.
+Quand le nombre de noeuds antagonistes dépasse $\Oh{\sqrt{n}}$, le nombre le plus pessimiste de tours grandit de manière
+polynomiale, et quand $f$ tend vers $n/2$ ce nombre de tours tend vers des taux de convergence exponentiels.
 
-For liveness, we sketch a leaderless initialization mechanism, which in expectation uses $\Oh{\log{n}}$ rounds under the assumption that the network is synchronized in the Appendix~\ref{sec:sync-heuristic}. 
-While the design of initialization mechanisms is interesting, note that it is not necessary for a decentralized payment system, as we show in Section~\ref{sec:implementation}.
-%We leave additional research into the initialization mechanisms to future work. 
-%However, we finally note that when building a decentralized payment system, an initialization mechanism is not necessary, as we show in the implementation of Avalanche in Section~\ref{sec:implementation}.
-Finally, in the Appendix~\ref{sec:full-analysis-churn}, we discuss churn and view discrepancies.
+\noindent \emph{Ebauche de preuve}. Nous modifions le Théorème~\ref{theorem:mean-convergence-time} en y incluant le
+nombre de nodes antagonistes, ce qui annule toute déséquilibre dans le réseau en le gardant entièrement bivalent.
+
+%O \subsection{Liveness}
+%O
+%O We assume that the observed adversarial presence $0 \leq f' \leq n(k - \alpha - \psi)/k \leq f$, where we refer to $\psi$ as the buffer zone.
+%O The bigger $\psi$, the quicker the ability of the decision mechanism to finalize a value.
+%O If, of course, $\psi$ approaches zero or becomes negative, then we violate the upper bound of adversarial tolerance for the parameterized system, and thus the adversary can, with high probability, stall termination by simply choosing to not respond, although the safety guarantees may still hold.
+%O
+%O Assuming that $\psi$ is strictly positive, termination is strictly finite under all network configurations where a proposal has at least $\alpha$ support. Furthermore, not only is termination finite with probability one, we also have a strictly positive probability of termination within any bounded amount of time $t_{max}$, as discussed in Lemma~\ref{lemma:finitetermination}, which follows from Theorem~\ref{theorem:mean-convergence-time}. This captures liveness property P2.
+%O
+%O \noindent\emph{Proof Sketch.} Using the construction of the system to prove irreversibility, we characterize the distribution of the average time spent (sojourn times) at each state before the system terminates execution by absorption at either absorbing state. The termination time is then a union of these times.
+%O
+%O For non-conflicting transactions, since the adversary is unable to forge a conflict, the time to decision is simply the mixing time , which is $\Oh{\log{n}}$.
+%O Liveness guarantees under a fully bivalent network configuration reduce to an optimal convergence time of $\Oh{\log{n}}$ rounds if the adversary is at most $\Oh{\sqrt{n}}$, for $\alpha = \floor{k/2} + 1$. We leave additional detains to Lemma~\ref{lemma:centrallimit}.
+%O % This result is independently supported by Ben-Or~\cite{ben1983another} and Doerr et al~\cite{doerr2011stabilizing}.
+%O When the adversary surpasses $\Oh{\sqrt{n}}$ nodes, the worst-case number of rounds increases polynomially, and as $f$ approaches $n/2$ it approaches exponential convergence rates.
+%O
+%O \noindent\emph{Proof Sketch.} We modify Theorem~\ref{theorem:mean-convergence-time} to include the adversary, which reverts any imbalances in the network by keeping network fully bivalent.
+
+\paragraph{Consensus multi-valeur}
+
+Notre protocole de consensus binaire pourrait supporter des consensus multi-valeur en exécutant des instances binaires
+logarithmiques, une pour chaque bit de la valeur proposée. Cependant, une telle réduction théorique n'est pas
+forcément efficace en pratique. A la place, nous pourrions directement incorporer des valeurs multiples comme des
+couleurs multiples dans le protocole en permettant toujours la généralisation de l'analyse de sûreté.
+
+Pour ce qui est de la vitalité nous ébauchons en Annexe~\ref{sec:sync-heuristic} un mécanisme d'initialisation sans
+leader, qui de toute attente nécessite $\Oh{\log{n}}$ tours dans l'hypothèse que le réseau soit synchronisé. Bien que
+la conception de ce mécanisme soit intéréssante, il est à noter qu'un tel mécanisme n'est pas nécéssaire pour un système
+de paiement décentralisé, comme nous le démontrons en Section~\ref{sec:implementation}.
+Finalement, nous développons les divergences entre vues et pertes en Annexe~\ref{sec:full-analysis-churn}.
+
+%0 \paragraph{Multi-Value Consensus}
+%0 Our binary consensus protocol could support multi-value consensus by running logarithmic binary instances, one for each bit of the proposed value. However, such theoretical reduction might not be efficient in practice. Instead, we could directly incorporate multi-values as multi-colors in the protocol, where safety analysis could still be generalized.
+%0
+%0 For liveness, we sketch a leaderless initialization mechanism, which in expectation uses $\Oh{\log{n}}$ rounds under the assumption that the network is synchronized in the Appendix~\ref{sec:sync-heuristic}.
+%0 While the design of initialization mechanisms is interesting, note that it is not necessary for a decentralized payment system, as we show in Section~\ref{sec:implementation}.
+%0 %We leave additional research into the initialization mechanisms to future work.
+%0 %However, we finally note that when building a decentralized payment system, an initialization mechanism is not necessary, as we show in the implementation of Avalanche in Section~\ref{sec:implementation}.
+%0 Finally, in the Appendix~\ref{sec:full-analysis-churn}, we discuss churn and view discrepancies.
 
 % \subsection{Additional Insights}
 % Two interesting insights arise from the way our protocols are designed and used.
-% First, the protocols discussed in this work lead to both safety and liveness guarantees whose underlying function is smooth, rather than a step function. 
-% In many other consensus protocols, safety is guaranteed with up to a fixed threshold number (e.g.~1/3) of adversarial nodes, beyond which no guarantees are provided. In our protocols, the guarantees degrade gracefully with an adversarial percentage beyond the pre-established bound. For example, optimal system parameters can be chosen to tolerate precisely 1/5 adversarial presence with failure probability $\varepsilon$. However, if the system faces an adversarial presence greater than 1/5, then the probability of failure degrades to slightly above $\varepsilon$, rather than immediately to $1$. 
-% Second, these protocols externalize the safety and liveness tradeoffs. 
-% The system designer may choose to guarantee safety even under catastrophic events, such as an adversarial presence beyond $1/2$, at the expense of liveness.  
-% This presents a powerful knob not available in classical or Nakamoto-based consensus protocols. 
+% First, the protocols discussed in this work lead to both safety and liveness guarantees whose underlying function is smooth, rather than a step function.
+% In many other consensus protocols, safety is guaranteed with up to a fixed threshold number (e.g.~1/3) of adversarial nodes, beyond which no guarantees are provided. In our protocols, the guarantees degrade gracefully with an adversarial percentage beyond the pre-established bound. For example, optimal system parameters can be chosen to tolerate precisely 1/5 adversarial presence with failure probability $\varepsilon$. However, if the system faces an adversarial presence greater than 1/5, then the probability of failure degrades to slightly above $\varepsilon$, rather than immediately to $1$.
+% Second, these protocols externalize the safety and liveness tradeoffs.
+% The system designer may choose to guarantee safety even under catastrophic events, such as an adversarial presence beyond $1/2$, at the expense of liveness.
+% This presents a powerful knob not available in classical or Nakamoto-based consensus protocols.
 
 % \begin{compactitem}
 % \item\textbf{Eventually good ancestry.} Virtuous transactions can be retried by picking new parents, selected from a set that is more likely to be preferred.
