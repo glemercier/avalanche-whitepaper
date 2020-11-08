@@ -85,11 +85,15 @@
 \newcommand{\editchange}[1]{{\color{orange}#1}}
 \newcommand\ddfrac[2]{\frac{\displaystyle #1}{\displaystyle #2}}
 
-\newtheorem{theorem}{Theorem}
-\newtheorem{lemma}[theorem]{Lemma}
+%O \newtheorem{theorem}{Theorem}
+\newtheorem{theorem}{Théorème}
+%O \newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{lemma}[theorem]{Lemme}
 \newtheorem{conjecture}[theorem]{Conjecture}
+%O \theoremstyle{definition}
 \theoremstyle{definition}
-\newtheorem{definition}{Definition}[section]
+%O \newtheorem{definition}{Definition}[section]
+\newtheorem{definition}{Définition}[section]
 
 \newcommand\blfootnote[1]{%
   \begingroup
@@ -98,6 +102,10 @@
   \endgroup
 }
 
+% Default section titles for French version
+\renewcommand{\abstractname}{Résumé}
+\renewcommand{\refname}{Références}
+\renewcommand{\proofname}{Preuve}
 \settimeformat{hhmmsstime}
 \mmddyyyydate
 \title{
@@ -1088,7 +1096,7 @@ Cette intrication concrétise une tension : l'attachement d'une transaction à d
 Nous pouvons résoudre cette tension et fournir une garantie de vitalité à l'aide de deux mécanismes.
 
 %O First we adopt an adaptive parent selection strategy, where transactions are attached at the live edge of the DAG, and are retried with new parents closer to the genesis vertex. This procedure is guaranteed to terminate with uncontested, decided parents, ensuring that a transaction cannot suffer liveness failure due to contested, rogue transactions.
-D'abord nous adoptons une stratégie adaptative de sélection des parents, où les transactions sont attachées sur le bord actif du DAG et sont réessayées avec de nouveaux parents plus proche du sommet genèse. Cette procédure garantit une terminaison avec des parents incontestés, assurant ainsi qu'une transaction ne peut souffrir de défaillance de vitalité en raison de transactions contestées et malveillantes.
+D'abord nous adoptons une stratégie adaptative de sélection des parents, où les transactions sont attachées sur le bord actif du DAG et sont réessayées avec de nouveaux parents plus proche du sommet genèse. Cette procédure garantit un achèvement avec des parents incontestés, assurant ainsi qu'une transaction ne peut souffrir de défaillance de vitalité en raison de transactions contestées et malveillantes.
 %O A secondary mechanism ensures that virtuous transactions with decided ancestry will receive sufficient chits. Correct nodes examine the DAG for virtuous transactions that lack sufficient progeny and emit no-op transactions to help increase their confidence.
 Un mécanisme secondaire s'assure que les transactions vertueuses avec une ascendance décidée reçoit suffisamment de \emph{chits}. Les nœuds corrects examinent le DAG pour y trouver des transactions vertueuses manquant d'une progéniture suffisante et émettent des transactions \emph{no-op} pour accroître leur confiance.
 %O With these two mechanisms in place, it is easy to see that, at worst, Avalanche will degenerate into separate instances of Snowball, and thus provide the same liveness guarantee for virtuous transactions.
@@ -1152,43 +1160,56 @@ Overall, we hope that the protocols and analysis techniques presented here add t
 \bibliography{paper}
 %\newpage
 \begin{appendices}
-\section{Analysis}
+%O \section{Analysis}
+\section{Analyse}
 \label{sec:full-analysis}
-In this appendix, we provide an analysis of Slush, Snowflake and Snowball.
+%O In this appendix, we provide an analysis of Slush, Snowflake and Snowball.
+Cette annexe contient une analyse de Slush, Snowflake et Snowball.
 %For lack of space, we leave additional details to an accompanying report.
 
-\subsection{Preliminaries}
-We assume the network model as discussed in Section~\ref{sec:model_and_goals}. We let $\mathtt{R}$ (``red'') and $\mathtt{B}$ (``blue'') represent two generic conflicting choices.
-Without loss of generality, we focus our attention on counts of $\mathtt{B}$, i.e.\ the total number of nodes that prefer blue.
+%O \subsection{Preliminaries}
+\subsection{Préliminaires}
+%O We assume the network model as discussed in Section~\ref{sec:model_and_goals}. We let $\mathtt{R}$ (``red'') and $\mathtt{B}$ (``blue'') represent two generic conflicting choices.
+Nous supposons le modèle réseau discuté en section~\ref{sec:model_and_goals}. Soient $\mathtt{R}$ (``rouge'') et $\mathtt{B}$ (``bleu'') représentant deux choix conflictuels génériques.
+%O Without loss of generality, we focus our attention on counts of $\mathtt{B}$, i.e.\ the total number of nodes that prefer blue.
+Sans perdre en généralité, nous portons notre attention sur les décomptes de $\mathtt{B}$, c'est-à-dire le nombre de nœuds qui préfèrent le bleu.
 
-\paragraph{Hypergeometric Distribution} Each network query of $k$ peers corresponds to a sample without replacement out of a network of $n$ nodes, also referred to as a hypergeometric sample.
-We let the random variable $\mathcal{H}(\mathcal{N}, x, k) \rightarrow \{0, \dots, k\}$ denote the resulting counts of $\mathtt{B}$ in the sample (unless otherwise stated), where $x$ is the total count of $\mathtt{B}$ in the population. The probability that the query achieves the required threshold of $\alpha$ or more votes is given by:
+%O \paragraph{Hypergeometric Distribution} Each network query of $k$ peers corresponds to a sample without replacement out of a network of $n$ nodes, also referred to as a hypergeometric sample.
+\paragraph{Distribution hypergéométrique} Chaque requête réseau de $k$ pairs correspond à un échantillon sans remplacement depuis un réseau de $n$ nœuds, également appelé un échantillon hypergéométrique.
+%O We let the random variable $\mathcal{H}(\mathcal{N}, x, k) \rightarrow \{0, \dots, k\}$ denote the resulting counts of $\mathtt{B}$ in the sample (unless otherwise stated), where $x$ is the total count of $\mathtt{B}$ in the population. The probability that the query achieves the required threshold of $\alpha$ or more votes is given by:
+La variable aléatoire $\mathcal{H}(\mathcal{N}, x, k) \rightarrow \{0, \dots, k\}$ note les décomptes résultant de $\mathtt{B}$ dans l'échantillon (sauf mention spécifique), où $x$ est le nombre total de $\mathtt{B}$ dans la population. La probabilité que la requête atteigne le seuil requis d'au moins $\alpha$ votes est donnée par :
 \begin{equation}
 \small
 P(\mathcal{H}(\mathcal{N}, x, k) \geq \alpha) = \left.\sum_{j = \alpha}^{k} {x \choose j} {n - x \choose k - j} \middle/ {n \choose k}\right.
 \label{eq:hypergeometric}
 \end{equation}
-For ease of notation, we overload $\mathcal{H}(*)$ by implicitly referring to $P(\mathcal{H}(\mathcal{N}, x, k) \geq \alpha)$ as $\mathcal{H}(\mathcal{N}, x, k, \alpha)$. 
+%O For ease of notation, we overload $\mathcal{H}(*)$ by implicitly referring to $P(\mathcal{H}(\mathcal{N}, x, k) \geq \alpha)$ as $\mathcal{H}(\mathcal{N}, x, k, \alpha)$. 
+Pour faciliter la notation, nous surchargeons $\mathcal{H}(*)$ en nous référant implicitement à $P(\mathcal{H}(\mathcal{N}, x, k) \geq \alpha)$ par $\mathcal{H}(\mathcal{N}, x, k, \alpha)$.
 
-\paragraph{Tail Bounds On Hypergeometric Distribution} We can reduce some of the complexity in Equation~\ref{eq:hypergeometric} by introducing a bound on the hypergeometric distribution induced by $\mathcal{H}^k_{\mathcal{N},x}$.
-Let $p=x/n$ be the ratio of support for $\mathtt{B}$ in the population.
-The expectation of $\mathcal{H}(\mathcal{N}, x, k)$ is exactly $kp$.
-Then, the probability that $\mathcal{H}(\mathcal{N}, x, k)$ will deviate from the mean by more than some small constant $\psi$ is given by the Hoeffding tail bound \cite{hoeffding1963probability}, as follows,
+%O \paragraph{Tail Bounds On Hypergeometric Distribution} We can reduce some of the complexity in Equation~\ref{eq:hypergeometric} by introducing a bound on the hypergeometric distribution induced by $\mathcal{H}^k_{\mathcal{N},x}$.
+\paragraph{Bornes de queue sur la distribution hypergéométrique} Nous pouvons un peu réduire la complexité de l'équation~\ref{eq:hypergeometric} en introduisant une borne sur la distribution hypergéométrique induite par $\mathcal{H}^k_{\mathcal{N},x}$.
+%O Let $p=x/n$ be the ratio of support for $\mathtt{B}$ in the population.
+Soit $p=x/n$ la proportion du support pour $\mathtt{B}$ dans la population.
+%O The expectation of $\mathcal{H}(\mathcal{N}, x, k)$ is exactly $kp$.
+Nous attendons exactement $kp$ pour $\mathcal{H}(\mathcal{N}, x, k)$.
+%O Then, the probability that $\mathcal{H}(\mathcal{N}, x, k)$ will deviate from the mean by more than some small constant $\psi$ is given by the Hoeffding tail bound \cite{hoeffding1963probability}, as follows,
+Donc, la probabilité que $\mathcal{H}(\mathcal{N}, x, k)$ dévie de la moyenne de plus d'une petite constante $\psi$ est donnée par la borne de queue de Hoeffding~\cite{hoeffding1963probability}, comme suit,
 \begin{equation}
 \begin{split}
     P(\mathcal{H}(\mathcal{C}, x, k) \leq (p-\psi)k) &\leq e^{-k\mathcal{D}(p-\psi, p)}\\
     &\leq e^{-2(p-\psi)^2k}
 \end{split}
 \end{equation}
-where $\mathcal{D}(p-\psi, p)$ is the Kullback-Leibler divergence, measured as
+where $\mathcal{D}(p-\psi, p)$ est la divergence de Kullback-Leibler, measurée par
 \begin{equation}
 \begin{split}
     \mathcal{D}(a, b) &= a \log \frac{a}{b} + (1 - a) \log \frac{1 - a}{1 - b}
 \end{split}
 \end{equation}
 
-\paragraph{Concentration of Sub-Martingales}
-Let $\{X_{\{t \geq 0\}}\}$ be a sub-martingale and $|X_t - X_{t-1}| < c_t$ almost surely. Then, for all positive reals $\psi$ and all positive integers $t$, 
+\paragraph{Concentration de sous-martingales}
+%O Let $\{X_{\{t \geq 0\}}\}$ be a sub-martingale and $|X_t - X_{t-1}| < c_t$ almost surely. Then, for all positive reals $\psi$ and all positive integers $t$, 
+Soit $\{X_{\{t \geq 0\}}\}$ une sous-martingale et $|X_t - X_{t-1}| < c_t$ presque sûrement. Alors, pour tout réel positif $\psi$ et tout entier positif $t$, 
 \begin{equation}
 \begin{split}
 P(X_t \geq X_0 + \psi) \leq e^{-\psi^2 / 2\sum_{i = 1}^{t} c_t^2}
@@ -1198,8 +1219,10 @@ P(X_t \geq X_0 + \psi) \leq e^{-\psi^2 / 2\sum_{i = 1}^{t} c_t^2}
 
 \subsection{Slush}
 %\label{sec:analysis}
-Slush operates in a non-Byzantine setting; that is, $f = 0$, $c = n$.
-In this section, we will characterize the irreversibility properties of Slush (which appear in Snowflake and Snowball), as well as the precise converge rate distribution. The distribution of of both safety and liveness of Slush translate well to the Byzantine setting.
+%O Slush operates in a non-Byzantine setting; that is, $f = 0$, $c = n$.
+Slush opère dans une configuration non-byzantine, c'est-à-dire $f = 0$, $c = n$.
+%O In this section, we will characterize the irreversibility properties of Slush (which appear in Snowflake and Snowball), as well as the precise converge rate distribution. The distribution of of both safety and liveness of Slush translate well to the Byzantine setting.
+Dans cette section, nous caractériserons les propriétés d'irréversibilité de Slush (qui apparaissent dans Snowflake et Snowball), ainsi que la distribution de taux de convergence précise. La distribution de la sûreté de fonctionnement et de vitalité de Slush se traduisent bien dans une configuration byzantine.
 
 % \begin{figure}
 %     \small
@@ -1219,47 +1242,60 @@ In this section, we will characterize the irreversibility properties of Slush (w
 % \end{algorithmic}
 % \end{figure}
 
-The procedural version of Slush in Figure~\ref{fig:slush-loop} made use of a parameter $m$, the number of rounds that a node executes Slush queries. 
+%O The procedural version of Slush in Figure~\ref{fig:slush-loop} made use of a parameter $m$, the number of rounds that a node executes Slush queries. 
+La version procédurale de Slush en figure~\ref{fig:slush-loop} faisait usage d'un paramètre $m$, le nombre de tours d'un nœud exécutant des requêtes Slush.
 % To derive this parameter, we transform the protocol execution from a procedural and concurrent version to one carried out by a scheduler, shown in Figure~\ref{fig:slush_protocol_simulator}.
-What we ultimately want to extract is the total number of rounds $\phi$ that the scheduler will need to execute in order to guarantee that the entire network is the same color, whp.
+%O What we ultimately want to extract is the total number of rounds $\phi$ that the scheduler will need to execute in order to guarantee that the entire network is the same color, whp.
+Nous voulons en définitive extraire le nombre total de tours $\phi$ que l'ordonnanceur doit exécuter afin de garantir que l'entièreté du réseau se retrouve de la même couleur, ceci avec une forte probabilité.
 
-We analyze the system mainly using a continuous time process. Let $\{X_{\{t \geq 0\}}\}$ be a CTMC.
-The state space $\mathcal{S}$ of the stochastic process is a condensed version of the full configuration space, where each state $\{0, \dots, n\}$ represents the total number of blue nodes in the system. 
+%O We analyze the system mainly using a continuous time process. Let $\{X_{\{t \geq 0\}}\}$ be a CTMC.
+Nous analysons le système en utilisant principalement un processus à temps continu. Soit $\{X_{\{t \geq 0\}}\}$ un processus de Markov à temps continu.
+%O The state space $\mathcal{S}$ of the stochastic process is a condensed version of the full configuration space, where each state $\{0, \dots, n\}$ represents the total number of blue nodes in the system. 
+L'espace d'état $\mathcal{S}$ du processus stochastique est une version condensée de tout l'espace de configuration, où chaque état $\{0, \dots, n\}$ représente le nombre total de nœuds bleus dans le système.
 
-Let $\mathcal{F}_{X_s}$ be the filtration, or the history pertaining to the process, up to time $s$. This process is Markovian and time-homogeneous, conforming to 
+%O Let $\mathcal{F}_{X_s}$ be the filtration, or the history pertaining to the process, up to time $s$. This process is Markovian and time-homogeneous, conforming to 
+Soit $\mathcal{F}_{X_s}$ la filtration, ou l'historique afférent au processus, jusqu'au temps $s$. Ce processus est Markovien et homogène dans le temps, se conformant à
 \[
     P\{X_t = j | \mathcal{F}_{X_s}\} = P\{X_t = j | X_s\} = P\{X_t = j | X_0\}    
 \]
-Throughout the paper, we use $Q \equiv (q_{ij}, i, j \in \mathcal{S})$ notation to refer to the infinitesimal generator of the process, where death ($i \rightarrow i-1$) and birth ($i \rightarrow i+1$) rates of configuration transitions are denoted via $\mu_i$ and $\lambda_i$ ($\lambda_ i$ is distinct from the clock parameter $\lambda$, and will be clear from context). These rates are 
+%O Throughout the paper, we use $Q \equiv (q_{ij}, i, j \in \mathcal{S})$ notation to refer to the infinitesimal generator of the process, where death ($i \rightarrow i-1$) and birth ($i \rightarrow i+1$) rates of configuration transitions are denoted via $\mu_i$ and $\lambda_i$ ($\lambda_ i$ is distinct from the clock parameter $\lambda$, and will be clear from context). These rates are 
+Dans cet article, nous utilisons la notation $Q \equiv (q_{ij}, i, j \in \mathcal{S})$ pour nous référer au générateur infinitésimal du processus, où les taux de mort ($i \rightarrow i-1$) et de naissance ($i \rightarrow i+1$) de transitions de configuration sont notées via $\mu_i$, et$\lambda_i$ ($\lambda_ i$ est disctint du paramètre d'horloge $\lambda$ et sera sorti du contexte). Ces taux sont
 \[
     \begin{cases}
         \mu_i = i\ \mathcal{H}(\mathcal{N}, c-i, k, \alpha), & \text{for } i \rightarrow i - 1 \\
         \lambda_i = (c-i)\ \mathcal{H}(\mathcal{N}, i, k, \alpha), & \text{for } j \rightarrow i + 1 \\
     \end{cases}
 \]
-for $1\leq i\leq c-1$, and where $i = 0$ and $i = c$ are absorbing. Let $p_{ij}(t)$ refer to the probability of transitioning from state $i$ to $j$ at time $t$. 
-We always assume that 
+%O for $1\leq i\leq c-1$, and where $i = 0$ and $i = c$ are absorbing. Let $p_{ij}(t)$ refer to the probability of transitioning from state $i$ to $j$ at time $t$. 
+pour $1\leq i\leq c-1$, et où $i = 0$ et $i = c$ sont absorbants. Soit $p_{ij}(t)$ une référence à la probabilité de transition de l'état $i$ à $j$ à l'instant $t$.
+%O We always assume that 
+Nous supposons toujours que
 \[
     p_{ij}(t) = 
     \begin{cases}
-      \lambda_it + o(t), & \text{for } j = i + 1 \\
-      \mu_it + o(t), & \text{for } j = i - 1 \\
-      1 - (\lambda_i + \mu_i)t + o(t), & \text{for } j = i \\
-      o(t), & \text{otherwise }\\
+      \lambda_it + o(t), & \text{pour } j = i + 1 \\
+      \mu_it + o(t), & \text{pour } j = i - 1 \\
+      1 - (\lambda_i + \mu_i)t + o(t), & \text{pour } j = i \\
+      o(t), & \text{sinon }\\
     \end{cases}
 \]
-where all $o(t)$ are uniform in $i$. 
+%O where all $o(t)$ are uniform in $i$. 
+où tous les $o(t)$ sont uniformes en $i$.
 
-\paragraph{Irreversibility}
+%O \paragraph{Irreversibility}
+\paragraph{Irreversibilité}
 %We now discuss the core results of irreversibility properties of our family of protocols.
-In Section~\ref{sec:analysis}, we discussed the loose Chvatal bound which provided intuitive understanding into the strong irreversibility dynamics of our core subsampling mechanism. In particular, once the network drifts to some majority value, it tends to revert back with only an exponentially small probability. We compute the closed-form expression for reversibility, and show that it is exponentially small.
+%O In Section~\ref{sec:analysis}, we discussed the loose Chvatal bound which provided intuitive understanding into the strong irreversibility dynamics of our core subsampling mechanism. In particular, once the network drifts to some majority value, it tends to revert back with only an exponentially small probability. We compute the closed-form expression for reversibility, and show that it is exponentially small.
+En section ~\ref{sec:analysis}, nous avons traité de la borne \emph{loose} % HOULA
+de Chtaval qui a fourni une compréhension intuitive de la dynamique de forte irréversibilité au cœur de notre mécanisme de sous-échantillonnage. En particulier, une fois que le réseau tend vers une valeur majoritaire donnée, il ne peut s'inverser qu'avec une probabilité exponentiellement petite. Nous calculons l'expression de forme fermée pour la réversibilité, et nous montrons qu'elle est exponentiellement petite.
 \begin{theorem}
 \label{theorem:slush_prob_convergence_minority}
-Let $\xi_\delta$ be the probability of absorption into the all-red state ($s_0$), starting from a drift of $\delta$ (i.e. $\delta$ drift away from $n/2$). Then, assuming $\delta > 1$, 
+%O Let $\xi_\delta$ be the probability of absorption into the all-red state ($s_0$), starting from a drift of $\delta$ (i.e. $\delta$ drift away from $n/2$). Then, assuming $\delta > 1$, 
+Soit $\xi_\delta$ la probabilité d'absorption dans l'état totalement rouge ($s_0$), commençant par un drift de $\delta$ (c'est-à-dire que $\delta$ tendent à s'éloigner de $n/2$). Alors, en supposant $\delta > 1$,
 \begin{equation}
 \xi_\delta = 1 - \ddfrac{\sum_{l = 1}^{\delta} \prod_{i = 1}^{l-1} \mu_i^2 \prod_{j = l}^{n-l}\lambda_j}{2\sum_{l = 1}^{n/2}\prod_{i=1}^{l-1}\mu_i^2\prod_{j=l}^{n-l}\mu_j}
 \end{equation}
-and
+et
 % \begin{equation}
 % \xi_\delta - \xi_{\delta+1} = \ddfrac{\mu_1^2\dots\mu_{\delta}^2\lambda_{\delta+1}\dots\lambda_{n-\delta}}{\Phi(\alpha, k, n)}
 % \end{equation}
@@ -1270,11 +1306,13 @@ and
 &\approx \ddfrac{n-\delta-1 \sum_{j = \alpha}^{k}\ddfrac{(n-\delta-1)^k (\delta+1)^{k-j}}{n^{2k - j}}}{\delta+1 \sum_{j = \alpha}^{k}\ddfrac{(\delta+1)^k (n-\delta-1)^{k-j}}{n^{2k - j}}}
 \end{split}
 \end{equation}
-where from now on we refer to $\mathcal{u}_{\delta+1}$ as the drift of the process. 
+%O where from now on we refer to $\mathcal{u}_{\delta+1}$ as the drift of the process. 
+où à partir de maintenant nous nous référons à $\mathcal{u}_{\delta+1}$ par le drift du processus.
 \end{theorem}
 
 \begin{proof}
-Our results are derived based on constructions from Tan~\cite{tan1976absorption}. We construct a sub-matrix of $Q$, denoted $B$, as shown in Figure~\ref{fig:matrixB}.
+%O Our results are derived based on constructions from Tan~\cite{tan1976absorption}. We construct a sub-matrix of $Q$, denoted $B$, as shown in Figure~\ref{fig:matrixB}.
+Nos résultats sont dérivés en se fondant sur les constructions de Tan~\cite{tan1976absorption}. Nous construisons une sous-matrice de $Q$, notée $B$, comme on le voit en figure~\ref{fig:matrixB}.
 \begin{figure*}
 \[B = 
 \begin{bmatrix}
@@ -1287,7 +1325,7 @@ Our results are derived based on constructions from Tan~\cite{tan1976absorption}
     0 & \dots & 0 & 0 & \mu_{n-1} & -(\lambda_{n-1} + \mu_{n-1})
 \end{bmatrix}
 \]
-\caption{Matrix $B$.}
+\caption{Matrice $B$.}
 \label{fig:matrixB}
 \end{figure*}
 Let $W_1'$ = $(\mu_1, 0, \dots, 0)$, $W_{n-1}'$ = $(0, \dots, 0, \lambda_{n-1})$. Then, we can express $Q$ as 
@@ -1299,7 +1337,8 @@ Let $W_1'$ = $(\mu_1, 0, \dots, 0)$, $W_{n-1}'$ = $(0, \dots, 0, \lambda_{n-1})$
         0 & \dots & 0
     \end{bmatrix}
 \]
-As a reminder, the stationary distribution can be found via $\lim_{t \rightarrow \infty} P(t) = e^{Qt}$, where we have
+%O As a reminder, the stationary distribution can be found via $\lim_{t \rightarrow \infty} P(t) = e^{Qt}$, where we have
+Rappelons que la distribution stationnaire peut être trouvée \emph{via} $\lim_{t \rightarrow \infty} P(t) = e^{Qt}$, où nous avons
 \[
     e^{Qt} = \sum_{i = 0}^{\infty} \frac{t^i}{i!} Q^i = \sum_{i = 0}^{\infty} \frac{t^i}{i!}
     \begin{bmatrix}
@@ -1309,30 +1348,38 @@ As a reminder, the stationary distribution can be found via $\lim_{t \rightarrow
     \end{bmatrix}
 \]
 As Tan (eq. 2.3) shows, we have
+Comme le montre Tan (eq. 2.3), nous avons
 \[
     \xi(t) = B^{-1}\left[\sum_{i = 0}^{\infty} B^i  - \mathbb{I}_{n-1} \right] W_1
 \]
-Since we want the ultimate probabilities, we have that 
+%O Since we want the ultimate probabilities, we have that 
+Comme nous voulons les probabilités ultimes, nous avons 
 \[
     \xi = \lim_{t \rightarrow \infty} \xi(t) = -B^{-1}W_1
 \]
-We can explicitly compute $\xi_\delta$ in terms of our rates $\mu_i$ and $\lambda_i$, getting 
+%O We can explicitly compute $\xi_\delta$ in terms of our rates $\mu_i$ and $\lambda_i$, getting 
+Nous pouvons explicitement calculer $\xi_\delta$ en termes de nos taux $\mu_i$ et $\lambda_i$, obtenant ainsi
 \[
     \xi_\delta = \ddfrac{\sum_{l = 1}^{n-\delta}\prod_{i = 1}^{n-l}\mu_i \prod_{j = n-l+1}^{n-1}\lambda_j}{\sum_{l = 1}^{n}\prod_{i = 1}^{n-l}\mu_i \prod_{j = n-l+1}^{n-1}\lambda_j}
 \]
-However, we note that $u_{i} = \lambda_{n-i}$. Algebraic manipulation from this observation leads to the two equations in the theorem. This expression is strictly lower than the Chvatal bounds used in Section~\ref{sec:analysis}.
+%O However, we note that $u_{i} = \lambda_{n-i}$. Algebraic manipulation from this observation leads to the two equations in the theorem. This expression is strictly lower than the Chvatal bounds used in Section~\ref{sec:analysis}.
+Cependant, notons que $u_{i} = \lambda_{n-i}$. La manipulation algébrique à partir de cette observation mène aux deux équations du théorème. Cette expression est strictement inférieure aux bornes de Chtaval utilisées en section~\ref{sec:analysis}.
 \end{proof}
 
-Using the construction for the absorption (and (ir)reversibility) probabilities as discussed previously, a natural follow up computation is in regards to \emph{mean convergence time}. 
-Let $T_{z}(t) = \inf \{t \geq 0 : X_t = \{0, n\} | X_0 = z\}$, and let $\tau_z = \mathbb{E}[T_{z}(t)]$. $\tau_z$ is the mean time to reach either absorbing state, starting from state $z$, which corresponds to the mean convergence time. The next theorem characterizes this distribution.
+%O Using the construction for the absorption (and (ir)reversibility) probabilities as discussed previously, a natural follow up computation is in regards to \emph{mean convergence time}. 
+En utilisant la construction pour les probabilités d'absorption (et d'(ir)réversibilité) précédemment traitées, il est naturel de poursuivre par un calcul concernant le \emph{temps de convergence moyen}.
+%O Let $T_{z}(t) = \inf \{t \geq 0 : X_t = \{0, n\} | X_0 = z\}$, and let $\tau_z = \mathbb{E}[T_{z}(t)]$. $\tau_z$ is the mean time to reach either absorbing state, starting from state $z$, which corresponds to the mean convergence time. The next theorem characterizes this distribution.
+Soit $T_{z}(t) = \inf \{t \geq 0 : X_t = \{0, n\} | X_0 = z\}$, et soit $\tau_z = \mathbb{E}[T_{z}(t)]$. $\tau_z$ est le temps moyen pour atteindre l'un ou l'autre des états absorbants, à partir de l'état $z$, qui correspond au temps moyen de convergence. Le théorème suivant caractérise cette distribution.
 
 \begin{theorem}
 \label{theorem:mean-convergence-time}
-Let $\tau_z$ be the expected time to convergence, starting from state $z > n/2$, to any of the two converging states in the network (all-red or all-blue). Then, 
+%O Let $\tau_z$ be the expected time to convergence, starting from state $z > n/2$, to any of the two converging states in the network (all-red or all-blue). Then, 
+Soit $\tau_z$ le temps attendu de convergence, à partir de l'état $z > n/2$, vers l'un des deux états convergents dans le réseau (totalement rouge ou totalement bleu). Alors,
 \begin{equation}
 \tau_z = \ddfrac{\sum_{d = 1}^{n-1}x(d)y(d)}{2\sum_{l = 1}^{n/2}\prod_{i=1}^{l-1}\mu_i^2\prod_{j=l}^{n-l}\mu_j}
 \end{equation}
-where $x(d)$ and $y(d)$ are
+%O where $x(d)$ and $y(d)$ are
+où $x(d)$ et $y(d)$ sont
 \begin{equation}
 \begin{split}
 x(d) &= \sum_{l = 1}^{\min(z, d)} \prod_{i=1}^{l-1} \mu_i \prod_{j = l}^{d-1} \lambda_j\\
@@ -1342,17 +1389,21 @@ y(d) &= \sum_{l = 1}^{n - d - \max(z-d, 0)} \prod_{i = d+1}^{n-l} \mu_i \prod_{j
 \end{theorem}
 
 \begin{proof}
-Following the calculations from before, $-B^{-1}$ at row $z$ provides the number of traversals to each other state starting from $z$. Calculating their sum, we have our result. The above equation is the full expression of the matrix row sum. 
+%O Following the calculations from before, $-B^{-1}$ at row $z$ provides the number of traversals to each other state starting from $z$. Calculating their sum, we have our result. The above equation is the full expression of the matrix row sum. 
+D'après les calculs qui précèdent, $-B^{-1}$ à la rangée $z$ fournit le nombre de traversées vers chaque autre état en partant de $z$. En calculant leur somme, nous avons notre résultat. L'équation ci-dessus est l'expression complète de la somme des rangées des matrices.
 \end{proof}
 
-Theorem~\ref{theorem:mean-convergence-time} leads to the next lemma that captures property P2, under the assumption that at the beginning of the protocol, one proposal has at least $\alpha$ support in the network. 
+%O Theorem~\ref{theorem:mean-convergence-time} leads to the next lemma that captures property P2, under the assumption that at the beginning of the protocol, one proposal has at least $\alpha$ support in the network. 
+Le théorème~\ref{theorem:mean-convergence-time} mène au lemme suivant qui capture la propriété P2, en suppposant qu'au début du protocole, une proposition a un support d'au moins $\alpha$ dans le réseau.
 \begin{lemma}
-Slush reaches an absorbing state in finite time almost surely.
+%O Slush reaches an absorbing state in finite time almost surely.
+Slush atteint presque sûrement un état absorbant dans un temps fini.
 \label{lemma:finitetermination}
 \end{lemma}
 
 \begin{proof}
-Starting from any non-absorbing, transient state, there is a non-zero probability of being absorbed. Additionally, since termination is finite and everywhere differentiable, Theorem~\ref{theorem:mean-convergence-time} also implies that the probability of termination of any network configuration where a proposal has $\geq \alpha$ support in bounded time $t_{max}$ is strictly positive. 
+%O Starting from any non-absorbing, transient state, there is a non-zero probability of being absorbed. Additionally, since termination is finite and everywhere differentiable, Theorem~\ref{theorem:mean-convergence-time} also implies that the probability of termination of any network configuration where a proposal has $\geq \alpha$ support in bounded time $t_{max}$ is strictly positive. 
+En partant d'un quelconque état non-absorbant et transitoire, il y a une probabilité non nulle d'absorbtion. De plus, comme la terminaison est finie et différentiable partout, le théorème~\ref{theorem:mean-convergence-time} implique aussi que la probabilité de terminaison de toute configuration réseau où une proposition a un support $\geq \alpha$ dans un temps borné $t_{max}$ est strictement positive.
 \end{proof}
 
 \subsection{Snowflake}
