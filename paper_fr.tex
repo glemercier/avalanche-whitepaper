@@ -848,7 +848,7 @@ Finally, in the Appendix~\ref{sec:full-analysis-churn}, we discuss churn and vie
 %\label{sec:evaluation}
 
 %O Using Snowball consensus, we have implemented a bare-bones payment system, Avalanche, which supports Bitcoin transactions. In this section, we describe the design and sketch how the implementation can support the value transfer primitive at the center of cryptocurrencies.
-Grâce au consensus Snowball, nous avons implémenté un système de paiement simpliste, Avalanche, qui supporte les transactions Bitcoin. Dans cette section, nous en décrivons la conception et schématison la manière dont l'implémentation peut supporter la primitive de transfert de valeur au cœur des cryptomonnaies.
+Grâce au consensus Snowball, nous avons implémenté un système de paiement simpliste, Avalanche, qui supporte les transactions Bitcoin. Dans cette section, nous en décrivons la conception et schématisons la manière dont l'implémentation peut supporter la primitive de transfert de valeur au cœur des cryptomonnaies.
 %O Deploying a full cryptocurrency involves bootstrapping, minting, staking, unstaking,
 %O and inflation control. While we have solutions for these issues, their full
 %O discussion is beyond the scope of this paper, whose focus is centered on the
@@ -865,16 +865,18 @@ Le déploiement complet d'une cryptomonnaie implique l'initialisation, l'émissi
 %O In a cryptocurrency setting, cryptographic signatures enforce that only a key owner is able to create a transaction that spends a particular coin. Since correct clients follow the protocol as prescribed and never double spend coins, in Avalanche, they are guaranteed both safety and liveness for their \emph{virtuous} transactions. In contrast, liveness is not guaranteed for \emph{rogue} transactions, submitted by Byzantine clients, which conflict with one another. Such decisions may stall in the network, but have no safety impact on virtuous transactions.
 Dans une configuration de cryptomonnaie, les signatures cryptographiques imposent que seul le possesseur de la clef soit capable de créer une transaction dépensant un dépôt donné. Comme les clients corrects suivent le protocole tel qu'il est prescrit et ne peuvent pratiquer la double dépense, ils ont la garantie tant de sûreté de fonctionnement que de vitalité pour leurs transactions \emph{vertueuses}. Par contraste, la vitalité n'est pas garantie pour les transactions \emph{malveillantes} soumises par des clients byzantins, lesquelles entrent mutuellement en conflit. Ces décisions peuvent arrêter le réseau mais n'ont pas d'impact sur les transactions vertueuses.
 %O We show that this is a sensible tradeoff, and that the resulting system is sufficient for building complex payment systems.
-Nous montrons que ce compromis est sensé et que le système qui en résulte suffit à bâtir des systèmes de paiement complexes.
+Nous montrons que ce compromis est raisnnable et que le système qui en résulte suffit à bâtir des systèmes de paiement complexes.
 
 \input{avalanche_fr}
 
-\subsection{Multi-Input UTXO Transactions}
-In addition to the DAG structure in Avalanche, an \emph{unspent transaction output} (UTXO)~\cite{nakamoto2008bitcoin} graph that captures
-spending dependency is used to realize the ledger for the payment system. To
-avoid ambiguity, we denote the transactions that encode the data for money
-transfer \emph{transactions}, while we call the
-transactions ($T \in \mathcal{T}$) in Avalanche's DAG \emph{vertices}.
+%O \subsection{Multi-Input UTXO Transactions}
+\subsection{Transactions à UTXO multi-entrées}
+%O In addition to the DAG structure in Avalanche, an \emph{unspent transaction output} (UTXO)~\cite{nakamoto2008bitcoin} graph that captures
+%O spending dependency is used to realize the ledger for the payment system. To
+%O avoid ambiguity, we denote the transactions that encode the data for money
+%O transfer \emph{transactions}, while we call the
+%O transactions ($T \in \mathcal{T}$) in Avalanche's DAG \emph{vertices}.
+En addition à la structure de DAG dans Avalanche, un graphe de \emph{unspent transaction output} (UTXO)~\cite{nakamoto2008bitcoin}, ou sortie de transaction non dépensée, qui capture les dépendances des dépenses est utilisé pour réaliser le registre du système de paiement. Pour lever toute ambiguïté, nous appelons les transactions qui codent les données de transfert d'argent \emph{transactions} alors que nous appelons les transactions ($T \in \mathcal{T}$) dans le DAG d'Avalanche des \emph{sommets}.
 
 %\tronly
 %{
@@ -943,16 +945,25 @@ transactions ($T \in \mathcal{T}$) in Avalanche's DAG \emph{vertices}.
 %Figure~\ref{fig:cash-system-a} demonstrates the actual implementation where the DAG is built at transaction granularity, whereas Figure~\ref{fig:cash-system-b} shows the equivalent logic of the underlying protocol, where vertices are at transaction-input granularity.
 %}
 %{
-We inherit the transaction and address mechanisms from Bitcoin. At their simplest, transactions consist of multiple inputs and outputs, with corresponding redeem scripts.
-Addresses are identified by the hash of their public keys, and signatures are generated by corresponding private keys.
-The full scripting language is used to ensure that a redeem script is authenticated to spend a UTXO\@.
-UTXOs are fully consumed by a valid transaction, and may generate new UTXOs spendable by named recipients.
-Multi-input transactions consume multiple UTXOs, and in Avalanche, may appear in multiple conflict sets.
-To account for these correctly, we represent \emph{transaction-input} pairs (e.g. $\texttt{In}_{a1}$) as Avalanche vertices.
-The conflict relation of transaction-input pairs is transitive because of each pair only spends one unspent output.
-Then, we use the conjunction of \textsc{isAccepted} for all inputs of a transaction to ensure that no transaction will be accepted unless all its inputs are accepted (Figure~\ref{fig:cash-system-b}). In other words, a transaction is accepted only if all its transaction-input pairs are accepted in their respective Snowball conflict sets.
-Following this idea, we finally implement the DAG of transaction-input pairs such that multiple
-transactions can be batched together per query.
+%O We inherit the transaction and address mechanisms from Bitcoin. At their simplest, transactions consist of multiple inputs and outputs, with corresponding redeem scripts.
+Nous héritons les mécanismes de transaction et d'adresse de Bitcoin. En simplifiant à l'extrême, les transactions consistent en multiples entrées et sorties, avec les scripts d'échange correspondants.
+%O Addresses are identified by the hash of their public keys, and signatures are generated by corresponding private keys.
+Les adresses sont identifiées par l'empreinte de leurs clefs publiques et les signatures sont générées par les clefs privées.
+%0 The full scripting language is used to ensure that a redeem script is authenticated to spend a UTXO\@.
+Le langage de script est utilisé pour s'assurer qu'un script d'échange est authentifié pour dépenser une UTXO\@.
+%O UTXOs are fully consumed by a valid transaction, and may generate new UTXOs spendable by named recipients.
+Les UTXO sont totalement consommées par une transaction valide et peut engendrer de nouvelles UTXO que des destinataires nommés peuvent dépenser.
+%O Multi-input transactions consume multiple UTXOs, and in Avalanche, may appear in multiple conflict sets.
+Les transactions multi-entrées consomment plusieurs UTXO et, dans Avalanche, peuvent apparaître dans plusieurs ensembles de conflits.
+%O To account for these correctly, we represent \emph{transaction-input} pairs (e.g. $\texttt{In}_{a1}$) as Avalanche vertices.
+Pour les prendre correctement en compte, nous représentons les paires d'entrées de transactions (\emph{transaction-input}), par exemple $\texttt{In}_{a1}$, comme des sommets Avalanche.
+%O The conflict relation of transaction-input pairs is transitive because of each pair only spends one unspent output.
+La relation des conflits de paires de sorties de transation est transitive car une seule paire ne dépense qu'une sortie non dépensée.
+%O Then, we use the conjunction of \textsc{isAccepted} for all inputs of a transaction to ensure that no transaction will be accepted unless all its inputs are accepted (Figure~\ref{fig:cash-system-b}). In other words, a transaction is accepted only if all its transaction-input pairs are accepted in their respective Snowball conflict sets.
+Nous utilisons la conjonction de \textsc{isAccepted} pour toutes les entrées d'une transaction pour nous assurer qu'aucune transaction ne sera acceptée à moins que toutes ses entrées ne soient acceptées (Figure~\ref{fig:cash-system-b}). En d'autres termes, une transaction n'est acceptée que si toutes ses paires d'entrées de transaction sont acceptées dans leurs ensembles de conflits Snowball respectifs.
+%O Following this idea, we finally implement the DAG of transaction-input pairs such that multiple
+%O transactions can be batched together per query.
+Selon cette idée, nous pouvons finalement implémenter le DAG des paires d'entrées de transactions tel que plusieurs transactions peuvent être regroupées par requête.
 
 %}
 
@@ -967,10 +978,14 @@ transactions can be batched together per query.
 \begin{figure}[t]
 \begin{center}
     \input{figures/cash-system-b}
-    \captionof{figure}{The underlying logical DAG structure used by Avalanche.
-    The tiny squares with shades are dummy vertices which just help form the
-    DAG topology for the purpose of clarity, and can be replaced by direct
-    edges. The rounded gray regions are the conflict sets.}\label{fig:cash-system-b}
+%O     \captionof{figure}{The underlying logical DAG structure used by Avalanche.
+%O     The tiny squares with shades are dummy vertices which just help form the
+%O     DAG topology for the purpose of clarity, and can be replaced by direct
+%O     edges. The rounded gray regions are the conflict sets.}\label{fig:cash-system-b}
+    \captionof{figure}{La structure de DAG logique sous-jacente utilisée par Avalanche.
+    Les petits carrés avec des ombres sont des sommets fictifs qui ne servent qu'à former
+    la topologie du DAG dans un but de clarté, et peuvent être remplacés par des arêtes
+    directes. Les régions grises arrondies sont les ensembles de conflits.}\label{fig:cash-system-b}
 \end{center}
 \end{figure}
 
@@ -1041,44 +1056,71 @@ transactions can be batched together per query.
 %\end{algorithmic}
 %\end{center}
 
-\paragraph{Optimizations}
-We implement some optimizations to help the system scale.
-First, we use \emph{lazy updates} to the DAG, because the recursive definition for confidence may otherwise require a costly DAG traversal.
-We maintain the current $d(T)$ value for each active vertex on the DAG, and update it only when a descendant vertex gets a chit.
-Since the search path can be pruned at accepted vertices, the cost for an update is constant if the rejected vertices have a limited number of descendants and the undecided region of
-the DAG stays at constant size.
-Second, the conflict set could be large in practice, because a rogue client can generate a large volume of conflicting transactions.
-Instead of keeping a container data structure for each conflict set, we create a mapping from each UTXO to the preferred transaction that stands as the representative for the entire conflict set.
-This enables a node to quickly determine future conflicts, and the appropriate response to queries.
-Finally, we speed up the query process by terminating early as soon as the $\alpha$ threshold is met, without waiting for $k$ responses.
+%O \paragraph{Optimizations}
+\paragraph{Optimisations}
+%O We implement some optimizations to help the system scale.
+Nous implémentons quelques optimisations pour que le système puisse passer à l'échelle.
+%O First, we use \emph{lazy updates} to the DAG, because the recursive definition for confidence may otherwise require a costly DAG traversal.
+D'abord, nous utilisons des \emph{lazy updates}, des mises à jour retardées, du DAG, car la définition récursive de la confiance pourrait engendrer une traversée du DAG coûteuse.
+
+%O We maintain the current $d(T)$ value for each active vertex on the DAG, and update it only when a descendant vertex gets a chit.
+Nous maintenons la valeurs $d(T)$ courante pour chaque sommet actif sur le DAG, et nous ne le mettons à jour que quand un sommet de la progéniture obtient un \emph{chit}.
+%O Since the search path can be pruned at accepted vertices, the cost for an update is constant if the rejected vertices have a limited number of descendants and the undecided region of
+%O the DAG stays at constant size.
+Comme le chemin de recherche peut être purgé sur des sommets acceptés, le coût d'une mise à jour est constant si les sommets rejetés ont un nombre limité de descendant et si la région non décidée du DAG reste de taille constante.
+%O Second, the conflict set could be large in practice, because a rogue client can generate a large volume of conflicting transactions.
+Ensuite, l'ensemble de conflits peut être vaste en pratique, car un client malveillant peut générer un volume important de transactions conflictuelles.
+%O Instead of keeping a container data structure for each conflict set, we create a mapping from each UTXO to the preferred transaction that stands as the representative for the entire conflict set.
+Au lieu de conserver une structure de données comme un conteneur pour chaque ensemble de conflits, nous créons une correspondance à partir de chaque UTXO vers la transaction préférée qui peut représenter tout l'ensemble de conflits.
+%O This enables a node to quickly determine future conflicts, and the appropriate response to queries.
+Cela permet à un nœud de déterminer rapidement les conflits à venir ainsi que la réponse appropriée aux requêtes.
+%O Finally, we speed up the query process by terminating early as soon as the $\alpha$ threshold is met, without waiting for $k$ responses.
+Enfin, nous accélérons le processus de requête en terminant au plus tôt, dès que le seuil $\alpha$ est atteint, sans attendre les $k$ réponses.
 
 %The safety guarantees of Snowball can be mapped to those of Avalanche, which is a concrete instantiation of Snowball using a directed acyclic graph to amortize cost. 
 %We note that the structure of the Avalanche DAG itself does not correspond to votes, which is a subtle difference between other consensus protocols that make usage of a DAG. The DAG is merely a performance optimization, and is itself entirely orthogonal to the consensus process.
 
-\paragraph{DAG} Compared to Snowball, Avalanche introduces a DAG structure that entangles the fate of unrelated conflict sets, each of which is a single-decree instance.
-This entanglement embodies a tension: attaching a virtuous transaction to undecided parents helps propel transactions towards a decision, while it puts transactions at risk of suffering liveness failures when parents turn out to be rogue.
-We can resolve this tension and provide a liveness guarantee with the aid of two mechanisms.
+%O \paragraph{DAG} Compared to Snowball, Avalanche introduces a DAG structure that entangles the fate of unrelated conflict sets, each of which is a single-decree instance.
+\paragraph{DAG} Comparé à Snowball, Avalanche introduit une structure de DAG qui lie fortement le sort d'ensembles de conflits sans relation entre eux, chacun étant une instance à décret unique.
+%O This entanglement embodies a tension: attaching a virtuous transaction to undecided parents helps propel transactions towards a decision, while it puts transactions at risk of suffering liveness failures when parents turn out to be rogue.
+Cette intrication concrétise une tension : l'attachement d'une transaction à des parents non décidés contribue à la décision concernant les transactions, tandis que les transactions risquent des défaillances de vitalité quand les parents s'avèrent malveillants.
+%O We can resolve this tension and provide a liveness guarantee with the aid of two mechanisms.
+Nous pouvons résoudre cette tension et fournir une garantie de vitalité à l'aide de deux mécanismes.
 
-First we adopt an adaptive parent selection strategy, where transactions are attached at the live edge of the DAG, and are retried with new parents closer to the genesis vertex. This procedure is guaranteed to terminate with uncontested, decided parents, ensuring that a transaction cannot suffer liveness failure due to contested, rogue transactions.
-A secondary mechanism ensures that virtuous transactions with decided ancestry will receive sufficient chits. Correct nodes examine the DAG for virtuous transactions that lack sufficient progeny and emit no-op transactions to help increase their confidence.
-With these two mechanisms in place, it is easy to see that, at worst, Avalanche will degenerate into separate instances of Snowball, and thus provide the same liveness guarantee for virtuous transactions.
+%O First we adopt an adaptive parent selection strategy, where transactions are attached at the live edge of the DAG, and are retried with new parents closer to the genesis vertex. This procedure is guaranteed to terminate with uncontested, decided parents, ensuring that a transaction cannot suffer liveness failure due to contested, rogue transactions.
+D'abord nous adoptons une stratégie adaptative de sélection des parents, où les transactions sont attachées sur le bord actif du DAG et sont réessayées avec de nouveaux parents plus proche du sommet genèse. Cette procédure garantit une terminaison avec des parents incontestés, assurant ainsi qu'une transaction ne peut souffrir de défaillance de vitalité en raison de transactions contestées et malveillantes.
+%O A secondary mechanism ensures that virtuous transactions with decided ancestry will receive sufficient chits. Correct nodes examine the DAG for virtuous transactions that lack sufficient progeny and emit no-op transactions to help increase their confidence.
+Un mécanisme secondaire s'assure que les transactions vertueuses avec une ascendance décidée reçoit suffisamment de \emph{chits}. Les nœuds corrects examinent le DAG pour y trouver des transactions vertueuses manquant d'une progéniture suffisante et émettent des transactions \emph{no-op} pour accroître leur confiance.
+%O With these two mechanisms in place, it is easy to see that, at worst, Avalanche will degenerate into separate instances of Snowball, and thus provide the same liveness guarantee for virtuous transactions.
+Ces deux mécanismes mis en place, il est facile de voir qu'au pire Avalanche dégénérera en instances distinctes de Snowball, fournissant ainsi la même garantie de vitalité pour les transactions vertueuses.
 
-Unlike other cryptocurrencies~\cite{IOTA} that use graph vertices
-directly as votes, Avalanche only uses a DAG for the purpose of batching queries
-in the underlying Snowball instances.
-Because confidence is built by collected chits, and not by just the presence of
-a vertex, simply flooding the network with vertices attached to the rejected
-side of a subgraph will not subvert the protocol.
+%O Unlike other cryptocurrencies~\cite{IOTA} that use graph vertices
+%O directly as votes, Avalanche only uses a DAG for the purpose of batching queries
+%O in the underlying Snowball instances.
+Contrairement à d'autres cryptomonnaies~\cite{IOTA} qui utilisent directement les sommets du graphe comme votes, Avalanche n'utilise un DAG que pour regrouper les requêtes dans les instances Snowball sous-jacentes.
 
-\subsection{Communication Complexity}
-Let the DAG induced by Avalanche have an expected branching factor of $p$, corresponding to the width of the DAG, and determined by the parent selection algorithm.
-Given the $\beta_1$ and $\beta_2$ decision threshold, a transaction that has just reached the point of decision will have an associated progeny $\mathcal{Y}$.
-Let $m$ be the expected depth of $\mathcal{Y}$.
-If we were to let the Avalanche network make progress and then freeze the DAG at a depth $y$,
-then it will have roughly $py$ vertices/transactions, of which $p(y - m)$ are decided in expectation.
-Only $pm$ recent transactions would lack the progeny required for a decision.
-For each node, each query requires $k$ samples, and therefore the total message cost per transaction is in expectation $(pky) / (p(y - m)) = ky/(y-m)$.
-Since $m$ is a constant determined by the undecided region of the DAG as the system constantly makes progress, message complexity per node is $O(k)$, while the total complexity is $O(kn)$.
+%O Because confidence is built by collected chits, and not by just the presence of
+%O a vertex, simply flooding the network with vertices attached to the rejected
+%O side of a subgraph will not subvert the protocol.
+Comme la confiance est bâtie sur les \emph{chits} récoltés, et non simplement par la présence d'un sommet, la simple inondation du réseau par des sommets attachés à une partie rejetée du sous-graphe ne subvertit pas le protocole.
+
+%O \subsection{Communication Complexity}
+\subsection{Complexité des communications}
+%O Let the DAG induced by Avalanche have an expected branching factor of $p$, corresponding to the width of the DAG, and determined by the parent selection algorithm.
+Soit un facteur de ramification attendu de $p$ dans Avalanche, correspondant à la largeur du DAG, et déterminé par l'algorithme de sélection du parent.
+%O Given the $\beta_1$ and $\beta_2$ decision threshold, a transaction that has just reached the point of decision will have an associated progeny $\mathcal{Y}$.
+Étant donné le seuil de décision $\beta_1$ et $\beta_2$, une transaction qui vient d'atteindre le point de décision aura une progéniture associée $\mathcal{Y}$.
+%O Let $m$ be the expected depth of $\mathcal{Y}$.
+Soit $m$ la profondeur attendue de $\mathcal{Y}$.
+%O If we were to let the Avalanche network make progress and then freeze the DAG at a depth $y$,
+%O then it will have roughly $py$ vertices/transactions, of which $p(y - m)$ are decided in expectation.
+Si nous devions permettre au réseau Avalanche de progresser puis de geler le DAG à une profondeur $y$, alors il aurait à peu près $py$ sommets/transactions, desquels on pourrait attendre que $p(y - m)$ soient décidés.
+%O Only $pm$ recent transactions would lack the progeny required for a decision.
+Seules $pm$ transactions récentes manqueraient de la progéniture nécessaires à une prise de décision.
+%O For each node, each query requires $k$ samples, and therefore the total message cost per transaction is in expectation $(pky) / (p(y - m)) = ky/(y-m)$.
+Pour chaque nœud, chaque requête demande $k$ échantillons, et donc on attend un coût total des messages par transaction de $(pky) / (p(y - m)) = ky/(y-m)$.
+%O Since $m$ is a constant determined by the undecided region of the DAG as the system constantly makes progress, message complexity per node is $O(k)$, while the total complexity is $O(kn)$.
+Comme $m$ est une constante déterminée par la région non décidée du DAG pendant que le système progresse constamment, la complexité en messages par nœuds est $O(k)$ alors que la complexité totale est $O(kn)$.
 
 \section{Evaluation}
 \label{sec:evaluation}
