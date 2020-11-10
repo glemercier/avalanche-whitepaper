@@ -1470,7 +1470,8 @@ Nos résultats sont dérivés en se fondant sur les constructions de Tan~\cite{t
 \caption{Matrice $B$.}
 \label{fig:matrixB}
 \end{figure*}
-Let $W_1'$ = $(\mu_1, 0, \dots, 0)$, $W_{n-1}'$ = $(0, \dots, 0, \lambda_{n-1})$. Then, we can express $Q$ as 
+%O Let $W_1'$ = $(\mu_1, 0, \dots, 0)$, $W_{n-1}'$ = $(0, \dots, 0, \lambda_{n-1})$. Then, we can express $Q$ as 
+Soit $W_1'$ = $(\mu_1, 0, \dots, 0)$, $W_{n-1}'$ = $(0, \dots, 0, \lambda_{n-1})$. Alors nous pouvons exprimer $Q$ par
 \[
     Q =
     \begin{bmatrix}
@@ -1569,7 +1570,7 @@ Nous pouvons borner trivialement l'intervalle de temps et montrer la sûreté de
 %O However, we can make the following observation: if the probability of going from state $c$ (all-blue) to $c-1$ is exponentially small, then it will take the attacker exponential time (in expectation; note, this is a lower bound, and in reality it will take much longer) to succeed in reverting the system. 
 Nous pouvons cependant faire l'observation suivante : si la probabilité d'aller de l'état $c$ (totalement bleu) à $c-1$ est exponentiellement petite, alors il faudra à l'attaquant un temps exponentiel (attendu\,; on note que c'est une borne inférieure et, en réalité, il faudra beaucoup plus longtemps) pour réussir à inverser l'état du système.
 %O Hence, we can assume that once all correct nodes are the same color, the attack from the adversary will terminate since it is impractical to continue an attack. 
-Nous pouvons donc suppposer qu'une fois que tous les nœuds corrects sont de la même couleur, l'attaque de l'adversaire se termine puisqu'il serait irréaliste de la poursuivre.
+Nous pouvons donc suppposer qu'une fois tous les nœuds corrects de la même couleur, l'attaque de l'adversaire se termine puisqu'il serait irréaliste de la poursuivre.
 
 %O In fact, under reasonably bounded timeframes, the variational distance between the exact approach and the approximation is very small. 
 En fait, dans un cadre temporel raisonnablement borné, la distance variationnelle entre l'approche exacte et l'approximation est très petite.
@@ -1578,7 +1579,7 @@ Nous laissons les détails à l'article qui accompagne celui-ci, mais nous discu
 
 
 %O As stated in Section~\ref{sec:analysis}, the way to analyze the adversary using the same construction as in Slush is to condition reversibility on the first node $u$ deciding on blue, which can happen at any state (as specified by $\mathcal{D}(*)$). At that point, the adversarial strategy collapses to a single function, which is to continually vote for red. The probabilities of reversibility, for all states $\{1, \dots, c-1\}$ must encode the probability that additional blue nodes commit, and the single function of the adversary. The birth and death rates are transformed as follows:
-Comme il en a été fait mention en section~\ref{sec:analysis}, la manière d'analyser l'adversaire en employant la même construction que dans Slush consiste à conditionner la réversibilité sur le premier nœud $u$ se décidant pour le bleu, ce qui peut se produire à n'importe quel état (comme le spécifie $\mathcal{D}(*)$). À ce point, la stratégie contradictoire se réduit à une seule fonction, qui est de continuellement voter pour rouge. Les probabilités de réversibilité, pour tous les états $\{1, \dots, c-1\}$ doivent coder la probabilité que des nœuds bleus s'engagent ansi que la fonction unique de l'adversaire. Les taux de naissance et de mort sont transformés comme suit\,:
+Comme il en a été fait mention en section~\ref{sec:analysis}, la manière d'analyser l'adversaire en employant la même construction que dans Slush consiste à conditionner la réversibilité sur le premier nœud $u$ se décidant pour le bleu, ce qui peut se produire à n'importe quel état (comme le spécifie $\mathcal{D}(*)$). À ce point, la stratégie contradictoire se réduit à une seule fonction, qui est de continuellement voter pour rouge. Les probabilités de réversibilité, pour tous les états $\{1, \dots, c-1\}$ doivent coder la probabilité que des nœuds bleus s'engagent, anisi que la fonction unique de l'adversaire. Les taux de naissance et de mort sont transformés comme suit\,:
 \[
     \begin{cases}
         \mu_i = &i(1 - \mathbb{I}[\mathcal{D}(*, i, \mathbb{B})])\ \mathcal{H}(\mathcal{N}, c-i + f, k, \alpha)\\
@@ -1602,23 +1603,35 @@ attendue dans le réseau après échantillonnage sera $\Oh{\sqrt{n}}$. Un advers
 \end{proof}
 
 \subsection{Snowball}
-We make the following observation: if the confidences between red and blue are equal, then the adversary has the same identical leverage in the irreversibility of the system as in Snowflake, regardless of network configuration. In fact, Snowflake can be viewed as Snowball but where drifts in confidences never exceed one. The same analysis applies to Snowball as in Snowflake, with the additional requirement of bounding the long-term behavior of the confidences in the network. To that end, analysis follows using martingale concentration inequalities, in particular the one introduced in Equation~\ref{eq:submartingale}. Snowball can be viewed as a two-urn system, where each urn is a sub-martingale. The guarantees that can be extracted hereon are that the confidences of the majority committed value (in our frame of reference is always blue), grow always more than those of the minority value, with high probability, drifting away as $t \rightarrow t_{max}$. 
-\subsection{Safe Early Commitment}
-As we reasoned previously, each conflict set in Avalanche can be viewed as an instance of Snowball, where each progeny instance iteratively votes for the entire path of the ancestry.
-This feature provides various benefits; however, it also can lead to some virtuous transactions that depend on a rogue transaction to suffer the fate of the latter.
+%O We make the following observation: if the confidences between red and blue are equal, then the adversary has the same identical leverage in the irreversibility of the system as in Snowflake, regardless of network configuration. In fact, Snowflake can be viewed as Snowball but where drifts in confidences never exceed one. The same analysis applies to Snowball as in Snowflake, with the additional requirement of bounding the long-term behavior of the confidences in the network. To that end, analysis follows using martingale concentration inequalities, in particular the one introduced in Equation~\ref{eq:submartingale}. Snowball can be viewed as a two-urn system, where each urn is a sub-martingale. The guarantees that can be extracted hereon are that the confidences of the majority committed value (in our frame of reference is always blue), grow always more than those of the minority value, with high probability, drifting away as $t \rightarrow t_{max}$. 
+Nous faisons l'observation suivante : si la confiance entre rouge et bleu est équivalente, alors l'adversaire a même levier % HOULA
+sur l'irréversibilité du système que dans Snowflake, quelle que soit la configuration du réseau. En fait, Snowflake peut être vu comme Snowball où les drifts % HOULA
+de confiance n'excèdent jamais un. La même analyse s'applique à Snowball comme à Snowflake, avec la contrainte supplémentaire de bornage des comportements des confiances à long terme sur le réseau. L'analyse suit à cette fin en emplouant des inégalités de concentration de martingales, notamment celle qui a été introduite en équation~\ref{eq:submartingale}. Snowball peut être vu comme un système à deux urnes où chaque urne est une sous-martingale. Les garanties qui peuvent en être extraites ci-après sont que les confiances de la valeur engagée par la majorité (toujours bleu dans notre cadre de référence) croissent toujours plus que celles de la valeur minoritaire, avec une forte probabilité, tendant à s'écarter alors que $t \rightarrow t_{max}$. % HOULA TOUT LE PARAGRAPHE
+%O \subsection{Safe Early Commitment}
+\subsection{Engagement préalable sûr}
+%O As we reasoned previously, each conflict set in Avalanche can be viewed as an instance of Snowball, where each progeny instance iteratively votes for the entire path of the ancestry.
+Comme nous l'avons précédemment déduit, chaque ensemble de conflits dans Avalanche peut être vu comme une instance de Snowball où chaque instance de la progéniture vote itérativement pour tout le chemin de l'ascendance. 
+%O This feature provides various benefits; however, it also can lead to some virtuous transactions that depend on a rogue transaction to suffer the fate of the latter.
+Cette caractéristique offre plusieurs avantages\,; cependant, elle peut aussi mener à ce que des transactions vertueuses dépendant d'une transaction malveillante souffrent le sort de celle-ci.
 %has the drawback that it can entangle the fate of some unfortunate virtuous transactions with the fate of rogue ones.
-In particular, rogue transactions can interject in-between virtuous transactions and reduce the ability of the virtuous transactions to ever reach the required $\textsc{isAccepted}$ predicate.
-As a thought experiment, suppose that a transaction $T_i$ names a set of parent transactions that are all decided, as per local view.
-If $T_i$ is sampled over a large enough set of successful queries without discovering any conflicts, then, since by assumption the entire ancestry of $T_i$ is decided, it must be the case (probabilistically) that we have achieved irreversibility.
+%O In particular, rogue transactions can interject in-between virtuous transactions and reduce the ability of the virtuous transactions to ever reach the required $\textsc{isAccepted}$ predicate.
+En particulier, les transactions malveillantes peuvent s'insérer entre des transactions vertueuses et réduire la possibilité que celles-ci atteignent le prédicat $\textsc{isAccepted}$ nécessaire.
+%O As a thought experiment, suppose that a transaction $T_i$ names a set of parent transactions that are all decided, as per local view.
+En guise d'expérience mentale, supposons qu'une transaction $T_i$ nomme un ensemble de transactions parent qui sont toutes décidées, selon la vue locale.
+%O If $T_i$ is sampled over a large enough set of successful queries without discovering any conflicts, then, since by assumption the entire ancestry of $T_i$ is decided, it must be the case (probabilistically) that we have achieved irreversibility.
+Si $T_i$ est échantillonnée sur un ensemble suffisamment grand de requêtes réussies découvrir aucun conflit, alors, puisque par supposition toute l'ascendance de $T_i$ est décidée, il s'ensuit (de manière probabiliste) que nous sommes arrivés à l'irréversibilité.
 
-To then statistically measure the assuredness that $T_i$ has been accepted by a large percentage of correct nodes without any conflicts, we make use of a one-way birth process, where a birth occurs when a new correct node discovers the conflict of $T_i$. Necessarily, deaths cannot exist in this model, because a conflicting transaction cannot be unseen once a correct node discovers it. 
+%O To then statistically measure the assuredness that $T_i$ has been accepted by a large percentage of correct nodes without any conflicts, we make use of a one-way birth process, where a birth occurs when a new correct node discovers the conflict of $T_i$. Necessarily, deaths cannot exist in this model, because a conflicting transaction cannot be unseen once a correct node discovers it. 
+Pour ensuite mesurer statistiquement l'assurance que $T_i$ a été acceptée par un grand pourcentage de nœuds corrects sans aucun conflit, nous nous servons d'un processus de naissance à sens unique, où une naissance se produit quand une nouveau nœud correct découvre le conflit de $T_i$. Les morts ne peuvent pas exister dans ce modèle, car une transaction conflictuelle ne peut pas être escamotée une fois qu'un nœud correct la découvre.
 % Let $t = 0$ be the time when $T_j$, which conflicts with $T_i$, is introduced to a single correct node $u$.
 % Let $s_x$, for $x = 1$ to $c$, be the state where the number of correct nodes that know about $T_j$ is $x$, and let $p(s_x)$ be the probability of birth at state $s_x$. Then, we have:
-Our births are as follows:
+%O Our births are as follows:
+Nos naissances se font comme suit\,:
 \begin{equation}
     \lambda_i = \frac{c - i}{c} \left(1 - \frac{{n - i \choose k}}{{n \choose k}}\right)
 \end{equation}
-Solving for the expected time to reach the final birth state provides a lower bound to the $\beta_1$ parameter in the $\textsc{isAccepted}$ fast-decision branch. The table below shows an example of the analysis for $n = 2000$, $\alpha = 0.8k$, and various $k$, where $\varepsilon \ll 10^{-9}$, and where $\beta$ is the minimum required value before deciding.
+%O Solving for the expected time to reach the final birth state provides a lower bound to the $\beta_1$ parameter in the $\textsc{isAccepted}$ fast-decision branch. The table below shows an example of the analysis for $n = 2000$, $\alpha = 0.8k$, and various $k$, where $\varepsilon \ll 10^{-9}$, and where $\beta$ is the minimum required value before deciding.
+La résolution du temps attendu pour atteindre l'état final de naissance fournit une borne inférieure au paramètre $\beta_1$ dans la branche de décision rapide $\textsc{isAccepted}$. La table ci-dessous montre un exemple d'analyse pour $n = 2000$, $\alpha = 0.8k$ et divers $k$, où $\varepsilon \ll 10^{-9}$, et où $\beta$ est la valeur minimale requise avant la décision.
 \begin{table}[h!]
     \small
 	\centering
@@ -1633,51 +1646,67 @@ Solving for the expected time to reach the final birth state provides a lower bo
 %     \captionof{figure}{An example of $\beta$ solutions for different $k$, with $n = 2000, \alpha = 0.8k$.}
 %     \label{fig:fast-path-beta}
 % \end{figure}
-\noindent Overall, a very small number of iterations are sufficient for the safe early commitment predicate. This supports the choice of $\beta$ in our evaluation.
+%O \noindent Overall, a very small number of iterations are sufficient for the safe early commitment predicate. This supports the choice of $\beta$ in our evaluation.
 
-\subsection{Initialization Heuristic}
+\noindent Globalement, un très petit nombre d'itérations est suffisant pour le prédicat d'engagement préalable sûr. Cela confirme le choix de $\beta$ dans notre évaluation.
+
+%O \subsection{Initialization Heuristic}
+\subsection{Heuristique d'initialisation}
 \label{sec:sync-heuristic}
-To improve liveness, we can use strong synchrony assumptions. The heuristic works as follows. Every node operates in two phases: in the first phase, it gossips and collects proposals for $\Oh{\log{n}}$ rounds, where each round lasts for the maximum message delay, which ensures the proposal from a correct node will propagate to almost all other correct nodes; in the second phase, each node stops collecting proposals, and gossips the existing proposals for an additional $\Oh{\log{n}}$ rounds so that every correct node ends up with approximately the same set of proposals. Finally, each node samples for the proposals it knows of locally, checking for those that have an $\alpha$ majority, ordered deterministically, such as by hash values. It then selects the first value by the order as its initial state when it starts the actual consensus protocol.
-In a cryptocurrency setting, the deterministic ordering function would incorporate fees paid out for every new proposal, which means that the adversary is financially limited in its ability to launch a fairness attack against the initialization.
+%O To improve liveness, we can use strong synchrony assumptions. The heuristic works as follows. Every node operates in two phases: in the first phase, it gossips and collects proposals for $\Oh{\log{n}}$ rounds, where each round lasts for the maximum message delay, which ensures the proposal from a correct node will propagate to almost all other correct nodes; in the second phase, each node stops collecting proposals, and gossips the existing proposals for an additional $\Oh{\log{n}}$ rounds so that every correct node ends up with approximately the same set of proposals. Finally, each node samples for the proposals it knows of locally, checking for those that have an $\alpha$ majority, ordered deterministically, such as by hash values. It then selects the first value by the order as its initial state when it starts the actual consensus protocol.
+Pour améiorer la vitalité, nous pouvons utiliser des hypothèses de forte synchronie. L'heuristique fonctionne comme suit. Chaque nœud opère en deux phases\,: dans la première, elle diffuse et collecte des propositions pendant $\Oh{\log{n}}$ tours, où chaque tour dure le temps maximum d'un message, ce qui garantit que la proposition d'un nœud correct se propage vers presque tous les autres nœuds corrects\,; dans la seconde phase, chaque nœud arrête de collecter les propositions dont il a localement la connaissance, en recherchant ceux qui ont une majorité $\alpha$, ordonnée de manière déterministe, comme par la valeur de leur empreinte cryptographique. Il sélectionne ensuite la première valeur dans l'ordre pour en faire son état initial quand il commence vraiment le protocole de consensus.
+%O In a cryptocurrency setting, the deterministic ordering function would incorporate fees paid out for every new proposal, which means that the adversary is financially limited in its ability to launch a fairness attack against the initialization.
+Dans une configuration de cryptomonnaie, la fonction de tri déterministe incorporerait les frais payés pour toute nouvelle proposition, ce qui signifie que l'adversaire serait financièrement limité pour lancer une attaque d'impartialité contre l'initialisation.
 
-\subsection{Churn and View Discrepancy}\label{sec:full-analysis-churn}
+%O \subsection{Churn and View Discrepancy}\label{sec:full-analysis-churn}
+\subsection{Roulement et incohérence de vues}\label{sec:full-analysis-churn}
 
-Realistic systems need to accommodate the departure and arrival of nodes.
-Up to now, we simplified our analysis by assuming a precise knowledge of network membership, i.e. $\mathcal{L}(u) = \mathcal{N}$.
-We now demonstrate that correct nodes can admit a well-characterized amount of churn, by showing how to pick parameters such that Avalanche nodes can differ in their view of the network and still safely make decisions.
+%O Realistic systems need to accommodate the departure and arrival of nodes.
+Les systèmes réalistes doivent s'accommoder du départ et de l'arrivée des nœuds.
+%O Up to now, we simplified our analysis by assuming a precise knowledge of network membership, i.e. $\mathcal{L}(u) = \mathcal{N}$.
+Jusqu'à présent, nous avons simplifié notre analyse en supposant une connaissance précise des membres du réseau, c'est-à-dire $\mathcal{L}(u) = \mathcal{N}$.
+%O We now demonstrate that correct nodes can admit a well-characterized amount of churn, by showing how to pick parameters such that Avalanche nodes can differ in their view of the network and still safely make decisions.
+Nous allons maintenant démontrer que les nœuds corrects peuvent admettre un roulement caractérisé d'entrants et de sortants en montrant comment choisir des paramètres tels que les nœuds Avalanche puissent différer dans leurs vues respectives du réseau tout en maintenant leur capacité à prendre des décisions en toute sécurité.
 
 {\color{black} 
 
-To characterize churn we use a generalized set intersection construction that allows us to make arguments about worst-case network view splits. Before formalizing it, we provide the intuition: suppose we split the network into two entirely independent, but fully connected, subsets. Clearly, the Byzantine adversary wins with probability one since it can send two conflicting transactions to the two independent networks respectively, and they would finalize the transactions immediately. This represents the worst case view split. 
+%O To characterize churn we use a generalized set intersection construction that allows us to make arguments about worst-case network view splits. Before formalizing it, we provide the intuition: suppose we split the network into two entirely independent, but fully connected, subsets. Clearly, the Byzantine adversary wins with probability one since it can send two conflicting transactions to the two independent networks respectively, and they would finalize the transactions immediately. This represents the worst case view split. 
+Pour caractériser le roulement, nous utilisons une construction d'intersections d'ensembles généralisés qui nous permet d'établir des arguments concernant les éclatements de vues du réseau. Avant de le formaliser, nous fournissons cette intuition\,: supposons que nous éclations le réseau en deux sous-ensembles entièrement indépendants mais parfaitement connectés. Il est clair que l'adversaire byzantin gagne avec une probabilité de un puisqu'il peut envoyer deux transactions conflictuelles à chaque réseau indépendant, et chacun finaliserait immédiatement les transactions. Cela représente le cas d'éclatement le plus défavorable.
 \begin{figure}
 \centering
 \includegraphics[width=0.8\linewidth]{figures/network_view.pdf}
-\caption{Changes in network view based on $S_d$'s size. All prior proofs up to now represent the variant where $S_a = S_b = \emptyset$. With the new construction, the probability of safety violation is simply a direct application of the prior sets of proofs under the new subsets.}
+%O \caption{Changes in network view based on $S_d$'s size. All prior proofs up to now represent the variant where $S_a = S_b = \emptyset$. With the new construction, the probability of safety violation is simply a direct application of the prior sets of proofs under the new subsets.}
+\caption{Changements de la vue du réseau en se basant sur la taille de $S_d$. Toutes les preuves antérieures jusqu'à présent représentent la variante où $S_a = S_b = \emptyset$. Avec la nouvelle construction, la probabilité de violation de la sécurité de fonctionnement n'est qu'une application directe des ensembles antérieurs de preuves pour les nouveaux sous-ensembles.}
 \label{fig:network_view}
 \end{figure}
-We can generalize this to arbitrary network splits, which can even be applied recursively in each subset. The proofs of safety then are a matter of characterizing the probability of red and blue committing into the two (possibly independent) subsets.
+%O We can generalize this to arbitrary network splits, which can even be applied recursively in each subset. The proofs of safety then are a matter of characterizing the probability of red and blue committing into the two (possibly independent) subsets.
+Nous pouvons généraliser ceci à d'autres éclatements du réseau, et même récursivement dans chaque sous-ensemble. Les preuves de sûreté de fonctionnement sont alors une question de caractérisation de la probabilité que les rouges et les bleus s'engagent dans les deux sous-ensembles (éventuellement indépendants).
 
-Suppose we divide the set of correct nodes into three subsets, $S_a$, $S_d$, $S_b$. We overload $\mathcal{L}(S_{*})$ to represent the views of any node within the input set. The view of all nodes in $S_a$ is $\mathcal{L}(S_a) = S_a \cup S_d \cup \mathcal{B}$, the view of all nodes in $S_b$ is $\mathcal{L}(S_b) = S_b \cup S_d \cup \mathcal{B}$, and the view of $S_d$ is $\mathcal{N}$. We assume the worst case, which means that adversarial nodes are common to all subsets. When $S_d = \emptyset$, this represents a division of the network into two equal subsets where $|S_a| = |S_b| = n/2$~\footnote{$|S_a|$ and $|S_b|$ do not have to be equal, we assume so as a demonstration.}. If $S_d$ is all correct nodes, then $|S_a| = |S_b| = n$. This construction is visually demonstrated in Figure~\ref{fig:network_view}. 
+%O Suppose we divide the set of correct nodes into three subsets, $S_a$, $S_d$, $S_b$. We overload $\mathcal{L}(S_{*})$ to represent the views of any node within the input set. The view of all nodes in $S_a$ is $\mathcal{L}(S_a) = S_a \cup S_d \cup \mathcal{B}$, the view of all nodes in $S_b$ is $\mathcal{L}(S_b) = S_b \cup S_d \cup \mathcal{B}$, and the view of $S_d$ is $\mathcal{N}$. We assume the worst case, which means that adversarial nodes are common to all subsets. When $S_d = \emptyset$, this represents a division of the network into two equal subsets where $|S_a| = |S_b| = n/2$~\footnote{$|S_a|$ and $|S_b|$ do not have to be equal, we assume so as a demonstration.}. If $S_d$ is all correct nodes, then $|S_a| = |S_b| = n$. This construction is visually demonstrated in Figure~\ref{fig:network_view}. 
+Supposons que nous divisions l'ensemble de nœuds corrects en trois sous-ensembles, $S_a$, $S_d$, $S_b$. Nous surchargeons $\mathcal{L}(S_{*})$ pour représenter les vues de tout nœud dans l'ensemble d'entrées. La vue de tous les nœuds dans $S_a$ est $\mathcal{L}(S_a) = S_a \cup S_d \cup \mathcal{B}$, celle de tous les nœuds dans $S_b$ est $\mathcal{L}(S_b) = S_b \cup S_d \cup \mathcal{B}$, et la vue de $S_d$ est $\mathcal{N}$. Nous supposons le cas le plus défavorable, ce qui signifie que les nœuds de l'adversaire sont communs à tous les sous-ensembles. Quand $S_d = \emptyset$, cela représente une division du réseau en deux sous-ensembles égaux où $|S_a| = |S_b| = n/2$~\footnote{$|S_a|$ et $|S_b|$ ne sont pas nécessairement égaux, nous posons ceci pour la démonstration.}. Si $S_d$ est uniquement composé de nœuds corrects, alors $|S_a| = |S_b| = n$. Cette construction est démontrée visuellement en figure~\ref{fig:network_view}.
 
 \begin{lemma}
-Let $\tau \in \mathbb{Z}^{+}$. Let $|S_d| = n - \tau$, and thus $|S_{\{a, b\}}| = \tau/2$. There exists some maximal size of $\tau$ such that probability of any two nodes $u, v \in S_a,\ S_b,\ S_d$ finalizing equivocating transactions is less than $\epsilon$. 
+%O Let $\tau \in \mathbb{Z}^{+}$. Let $|S_d| = n - \tau$, and thus $|S_{\{a, b\}}| = \tau/2$. There exists some maximal size of $\tau$ such that probability of any two nodes $u, v \in S_a,\ S_b,\ S_d$ finalizing equivocating transactions is less than $\epsilon$. 
+Soit $\tau \in \mathbb{Z}^{+}$. Soit $|S_d| = n - \tau$, et donc $|S_{\{a, b\}}| = \tau/2$. Il existe un taille maximale de $\tau$ telle que la probabilité pour que deux nœuds quelconques $u, v \in S_a,\ S_b,\ S_d$ finalisant des transactions équivoques soit inférieuire à $\epsilon$. 
 \end{lemma}
 \begin{proof}
-We assume that the adversary has full control of the network view splits, meaning that they choose in full how to create $S_a,\ S_b,\ S_d$. To prove safety, we simply reuse the same exact construction as in Subsection~\ref{subsection:appendix_snowflake}, but we replace the original set $\mathcal{N}$ with a new set of interest, namely $S_a \cup S_d \cup \mathcal{B}$ (i.e., we exclude $S_b$)~\footnote{Sets are symmetric in this example.}. To thus find the maximal $\tau$, we simply replace $u_i$ and $\lambda_i$ with 
+%O We assume that the adversary has full control of the network view splits, meaning that they choose in full how to create $S_a,\ S_b,\ S_d$. To prove safety, we simply reuse the same exact construction as in Subsection~\ref{subsection:appendix_snowflake}, but we replace the original set $\mathcal{N}$ with a new set of interest, namely $S_a \cup S_d \cup \mathcal{B}$ (i.e., we exclude $S_b$)~\footnote{Sets are symmetric in this example.}. To thus find the maximal $\tau$, we simply replace $u_i$ and $\lambda_i$ with 
+Nous supposons que l'adversaire a le contrôle total des éclatements de la vue du réseau, ce qui signifie qu'il peut choisir sans contrainte de créer $S_a,\ S_b,\ S_d$. Pour prouver la sécurité de fonctionnement, il nous suffit de réutiliser exactement la même construction qu'en section~\ref{subsection:appendix_snowflake}, mais nous remplaçons l'ensemble originel $\mathcal{N}$ avec le nouvel ensemble qui nous intéresse, nommément $S_a \cup S_d \cup \mathcal{B}$ (c'est-à-dire que nous excluons $S_b$)~\footnote{Les ensembles sont symétriques dans cet exemple.}. Donc, pour trouver les $\tau$ maximal, nous nous contentons de remplacer $u_i$ et $\lambda_i$ par
 \begin{equation}
     \begin{cases}
         \bar \mu_i = i\ \mathcal{H}(S_a \cup S_d \cup \mathcal{B}, c-(\tau/2)-i, k, \alpha), & \text{for } i \rightarrow i - 1 \\
         \lambda_i = (c-i)\ \mathcal{H}(S_a \cup S_d \cup \mathcal{B}, i, k, \alpha), & \text{for } j \rightarrow i + 1 \\
     \end{cases}
 \end{equation}
-where
+où
 \begin{equation}
 \begin{split}
 P(\mathcal{H}&(S_a \cup S_d \cup \mathcal{B}, x, k) \geq \alpha)\\
 &= \left.\sum_{j = \alpha}^{k} {x \choose j}{c-(\tau/2)-x \choose k-j}\middle/{c - (\tau/2) \choose k}\right.\\
 \end{split}
 \end{equation}
-and apply the same construction as in Subsection~\ref{subsection:appendix_snowflake}. As $\tau$ increases, it is clear that $S_a$ (and conversely, $S_b$), become more independent and less reliant on the values proposed by members in $S_d$, thus incrementing the ability of the adversaries. 
+%O and apply the same construction as in Subsection~\ref{subsection:appendix_snowflake}. As $\tau$ increases, it is clear that $S_a$ (and conversely, $S_b$), become more independent and less reliant on the values proposed by members in $S_d$, thus incrementing the ability of the adversaries. 
+et nous appliquons la même construction qu'en section~\ref{subsection:appendix_snowflake}. Alors que $\tau$ augmente, il est clair que $S_a$ (et, réciproquement, $S_b$) deviennent plus indépendant et dépendent moins des valeurs par les membres de $S_d$, augmentant ainsi les capacités de l'adversaire.
 \end{proof}
 
 
