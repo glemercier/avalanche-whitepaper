@@ -1282,14 +1282,21 @@ Comme $m$ est une constante déterminée par la région non décidée du DAG pen
 
 \section{Conclusion}
 \label{sec:conclusions}
-This paper introduced a novel family of consensus protocols, coupled with the appropriate mathematical tools for analyzing them.
-\tronly{These protocols are highly efficient and robust, combining the best features of classical and Nakamoto consensus.}
-They scale well, achieve high throughput and quick finality, work without precise membership knowledge, and degrade gracefully under catastrophic adversarial attacks.
+%O This paper introduced a novel family of consensus protocols, coupled with the appropriate mathematical tools for analyzing them.
+Cet article a présenté une nouvelle famille de protocoles de consensus, accompagnée des outils mathématiques appropriés pour leur analyse.
+%O \tronly{These protocols are highly efficient and robust, combining the best features of classical and Nakamoto consensus.}
+\tronly{Ces protocoles sont extrêmement efficaces et robustes, et rassemblent les meilleures fonctionnalités des consensus classiques et Nakamoto.}{} 
+%O They scale well, achieve high throughput and quick finality, work without precise membership knowledge, and degrade gracefully under catastrophic adversarial attacks.
+Ils passent bien à l'échelle, permettent un haut débit et une finalité rapide, ne nécessitent pas une connaissance précise des participants et leur fonctionnement ne se dégrade que peu à peu lors d'attaques catastrophiques.
 
-There is much work to do to improve this line of research. \tronly{
-One such improvement could be the introduction of an adversarial network scheduler.
-Another}{One} improvement would be to characterize the system's guarantees under an adversary whose powers are realistically limited, whereupon performance would improve even further. \tronly{Finally, more}{More} sophisticated initialization mechanisms would bear fruitful in improving liveness of multi-value consensus.
-Overall, we hope that the protocols and analysis techniques presented here add to the arsenal of the distributed system developers and provide a foundation for new lightweight and scalable mechanisms.
+%O There is much work to do to improve this line of research. \tronly{
+Il reste beaucoup à faire dans ce domaine de recherche. \tronly{
+%O One such improvement could be the introduction of an adversarial network scheduler.
+Une amélioration possible consisterait à introduire un ordonnanceur de réseaux adverses. % HOULA
+%O Another}{One} improvement would be to characterize the system's guarantees under an adversary whose powers are realistically limited, whereupon performance would improve even further. \tronly{Finally, more}{More} sophisticated initialization mechanisms would bear fruitful in improving liveness of multi-value consensus.
+Une autre}{Une} serait de caractériser les garanties du système face à un adversaire dont les pouvoirs seraient limités de manière réaliste, à la suite de quoi les performances se verraient encode améliorées. \tronly{D'autres}{Plus} mécanismes d'initialisation sophistiqués seraient souhaitables pour améliorer la vitalité d'un consensus multi-valeurs. 
+%O Overall, we hope that the protocols and analysis techniques presented here add to the arsenal of the distributed system developers and provide a foundation for new lightweight and scalable mechanisms.
+En résumé, nous espérons que les protocoles et les techniques d'analyse présentés ici renforceront l'arsenal des développeurs de systèmes distribués et permettront de bâtir de nouveaux mécanismes légers et évolutifs.
 
 %\section*{Acknowledgments}\tronly{}{\vspace{-0.5em}}
 %\label{sec:related-work}
@@ -1606,7 +1613,7 @@ attendue dans le réseau après échantillonnage sera $\Oh{\sqrt{n}}$. Un advers
 %O We make the following observation: if the confidences between red and blue are equal, then the adversary has the same identical leverage in the irreversibility of the system as in Snowflake, regardless of network configuration. In fact, Snowflake can be viewed as Snowball but where drifts in confidences never exceed one. The same analysis applies to Snowball as in Snowflake, with the additional requirement of bounding the long-term behavior of the confidences in the network. To that end, analysis follows using martingale concentration inequalities, in particular the one introduced in Equation~\ref{eq:submartingale}. Snowball can be viewed as a two-urn system, where each urn is a sub-martingale. The guarantees that can be extracted hereon are that the confidences of the majority committed value (in our frame of reference is always blue), grow always more than those of the minority value, with high probability, drifting away as $t \rightarrow t_{max}$. 
 Nous faisons l'observation suivante : si la confiance entre rouge et bleu est équivalente, alors l'adversaire a même levier % HOULA
 sur l'irréversibilité du système que dans Snowflake, quelle que soit la configuration du réseau. En fait, Snowflake peut être vu comme Snowball où les drifts % HOULA
-de confiance n'excèdent jamais un. La même analyse s'applique à Snowball comme à Snowflake, avec la contrainte supplémentaire de bornage des comportements des confiances à long terme sur le réseau. L'analyse suit à cette fin en emplouant des inégalités de concentration de martingales, notamment celle qui a été introduite en équation~\ref{eq:submartingale}. Snowball peut être vu comme un système à deux urnes où chaque urne est une sous-martingale. Les garanties qui peuvent en être extraites ci-après sont que les confiances de la valeur engagée par la majorité (toujours bleu dans notre cadre de référence) croissent toujours plus que celles de la valeur minoritaire, avec une forte probabilité, tendant à s'écarter alors que $t \rightarrow t_{max}$. % HOULA TOUT LE PARAGRAPHE
+de confiance n'excèdent jamais un. La même analyse s'applique à Snowball comme à Snowflake, avec la contrainte supplémentaire de bornage des comportements des confiances à long terme sur le réseau. L'analyse suit à cette fin en employant des inégalités de concentration de martingales, notamment celle qui a été introduite en équation~\ref{eq:submartingale}. Snowball peut être vu comme un système à deux urnes où chaque urne est une sous-martingale. Les garanties qui peuvent en être extraites ci-après sont que les confiances de la valeur engagée par la majorité (toujours bleu dans notre cadre de référence) croissent toujours plus que celles de la valeur minoritaire, avec une forte probabilité, tendant à s'écarter alors que $t \rightarrow t_{max}$. % HOULA TOUT LE PARAGRAPHE
 %O \subsection{Safe Early Commitment}
 \subsection{Engagement préalable sûr}
 %O As we reasoned previously, each conflict set in Avalanche can be viewed as an instance of Snowball, where each progeny instance iteratively votes for the entire path of the ancestry.
