@@ -5,10 +5,10 @@
 Nous conduisons nos expériences sur Amazon EC2 en faisant tourner une plage allant d'une
 centaine (125) à des milliers (2000) d'instances de machines virtuelles. Nous  utilisons
 des instances \texttt{c5.large}, chacune simulant un noeud individuel. AWS fournit une bande passante
-allant jusqu'à 2 Gigabits par seconde, sachant que le protocole {\sysname} utilise au maximum 100 Megabits
+allant jusqu'à 2 gigabits par seconde, sachant que le protocole {\sysname} utilise au maximum 100 mégabits
 par seconde environ.
 
-Notre implémentation supporte deux types de transactions: la première est le format d'UTXO
+Notre implémentation supporte deux types de transactions\,: la première est le format d'UTXO
 customisé, tandis que l'autre repose directement sur le code de Bitcoin 0.16. Ces deux formats
 supportés utilisent la librairie de cryptographie secp256k1 issue du projet Bitcoin et exposent
 le même format d'adresse pour les portefeuilles. Toutes nos expériences utilisent le format
@@ -47,9 +47,9 @@ d'abord {\sysname} sur 125 noeuds exécutant chacun 10 processus client qui gén
 Comme le montre le premier groupe de barres dans la Figure~\ref{fig:eval-thr}, le système atteint 6851
 transactions par seconde (tps) pour une taille de batch de 20 et plus de 7002 tps pour une taille de
 batch de 40. Notre système sature plus vite avec des petites tailles de batch en comparaison avec d'autres
-blockchains dont les performances sont connues: Bitcoin regroupe des batchs de plusieurs milliers de
-transactions par bloc, Algorand~\cite{GiladHMVZ17} gère des blocks de 2-10 MégaOctets, i.e., 8.4--41.9K
-transactions par batch et Conflux~\cite{confluxLLXLC18} gère des blocs de 4 MégaOctets, i.e., 16.8K tx/batch.
+blockchains dont les performances sont connues\,: Bitcoin regroupe des batchs de plusieurs milliers de
+transactions par bloc, Algorand~\cite{GiladHMVZ17} gère des blocks de 2-10 mégaoctets, c'est-à-dire 8.4--41.9K
+transactions par batch et Conflux~\cite{confluxLLXLC18} gère des blocs de 4 mégaoctets, c'est-à-dire 16.8K tx/batch.
 Ces systèmes sont relativement lents pour prendre une simple décision, et demandent de surcroît une taille
 de batch (et donc de bloc) importante pour obtenir de meilleures performances. Atteindre un haut niveau de débit
 transactionnel avec une petite taille de batch implique une latence réduite, comme nous le démontrons plus loin.
@@ -78,20 +78,20 @@ La Figure~\ref{fig:eval-thr} montre que le débit global se dégrade d'environ $
 réseau augmente d'un facteur 16 pour atteindre $n = 2000$. Cette dégradation est mineure si on la compare au
 taux d'augmentation du réseau. Notez que l'axe X est logarithmique.
 
-Avalanche tire sa bonne mise à l'échelle de plusieurs sources: premièrement en maintenant un ordre partiel qui
+Avalanche tire sa bonne mise à l'échelle de plusieurs sources\,: premièrement en maintenant un ordre partiel qui
 capture uniquement les relations entre les dépenses ce qui permet une meilleure parallélisation qu'un journal
-BFT répliqué classique qui traite toutes les transactions de manière linéaire; deuxièmement l'absence de leader
-permet d'éviter les goulots d'étranglement; et finalement le nombre de messages que chaque noeud doit gérer par
+BFT répliqué classique qui traite toutes les transactions de manière linéaire\,; deuxièmement l'absence de dirigeant
+permet d'éviter les goulets d'étranglement\,; et finalement le nombre de messages que chaque noeud doit gérer par
 décision est $O(k)$ et n'augmente pas au fur et à mesure que le réseau s'agrandit.
 
 \subsection{Engorgement dû à la cryptographie}
 
-Nous examinons ensuite où se situent les goulots d'étranglement dans notre implémentation.
+Nous examinons ensuite où se situent les goulets d'étranglement dans notre implémentation.
 La barre violette à la droite de chaque groupe dans la Figure~\ref{fig:eval-thr-raw} montre le débit
 d'Avalanche lorsque la vérification des signatures est désactivée. Les débits s'améliorent d'environ 2.6x, par
 par rapport à la barre bleue sur la gauche.
-Cela révèle que le surplus de calcul dû à la vérification cryptographique est le principal goulot d'étranglement
-de l'implémentation de notre système. Ce problème peut être mitigé en déléguant la vérification des transactions
+Cela révèle que le surplus de calcul dû à la vérification cryptographique est le principal goulet d'étranglement
+de l'implémentation de notre système. On peut pallier ce problème en déléguant la vérification des transactions
 à un GPU\@. Même en l'absence d'une telle optimisation, 7K tps dépasse de loin ce qui existe en matière de blockchain.
 
 \subsection{Latence}
@@ -131,17 +131,17 @@ médiane est plus ou moins indépendante de la taille du réseau.
 \label{fig:eval-lat2}
 \end{figure}
 
-\subsection{Clients malicieux}
+\subsection{Clients malveillants}
 \label{sec:evaluation-misbehaving}
 \begin{figure}
 \includegraphics[width=\linewidth]{figures/lat3.pdf}
-\captionof{figure}{Latence en fonction du taux de transactions véreuses.}
+\captionof{figure}{Latence en fonction du taux de transactions malveillantes.}
 \label{fig:eval-lat3}
 \end{figure}
 
-Nous évaluons ensuite comment des transactions véreuses générées par des clients malicieux qui effectuent des
-double dépenses sur des sorties non dépensées peuvent affecter la latence des transactions légitimes crées par
-des clients honnêtes. Nous adoptons une stratégie qui simule des clients malicieux où une fraction (de $0\%$ à $25\%$)
+Nous évaluons ensuite comment des transactions conflictuelles générées par des clients malveillants effectuant des
+double dépenses sur des sorties non dépensées peuvent affecter la latence des transactions légitimes créées par
+des clients honnêtes. Nous adoptons une stratégie qui simule des clients malveillants où une fraction (de $0\%$ à $25\%$)
 des transactions en attente sont en conflit avec d'autres transactions existantes.
 
 Le processus client effectue ceci en désignant des flux de transactions contenant des double dépenses parmi toutes
@@ -149,18 +149,18 @@ les transactions simulées en attente, et envoie les transactions conflictuelles
 pour cela les mêmes paramètres avec $n = 1000$ comme dans les expériences précédentes, et nous mesurons uniquement
 le débit et la latence des transactions confirmées.
 
-La latence d'{\sysname} est seulement légèrement influencée par les clients malicieux, comme le montre la
-Figure~\ref{fig:eval-lat3}. Etonnement la latence maximale baisse légèrement lorsque le pourcentage de transactions
-véreuses augmente. Ce comportement s'explique par le fait que lorsqu'on introduit des transactions véreuses, le débit
+La latence d'{\sysname} est seulement légèrement influencée par les clients malveillants, comme le montre la
+Figure~\ref{fig:eval-lat3}. Étonnamment, la latence maximale baisse légèrement lorsque le pourcentage de transactions
+conflictuelles augmente. Ce comportement s'explique par le fait que lorsqu'on introduit de telles transactions, le débit
 \emph{effectif} est réduit et soulage donc la charge du système.
 
-Cette observation est confirmée par la Figure~\ref{fig:eval-thr2}, qui montre que le débit (de transactions légitimes)
-decroît avec le taux de transactions véreuses. De plus, la baisse du débit apparaît proportionnelle au nombre de
-clients malicieux ce qui démontre que les attaques potentielles ne bénéficient pas d'un effet de levier.
+Cette observation est confirmée par la figure~\ref{fig:eval-thr2} qui montre que le débit (de transactions légitimes)
+decroît avec le taux de transactions conflictuelles. De plus, la baisse du débit apparaît proportionnelle au nombre de
+clients malveillants, ce qui démontre que les attaques potentielles ne bénéficient pas d'un effet de levier.
 
 \begin{figure}
 \includegraphics[width=\linewidth]{figures/thr-byz.pdf}
-\captionof{figure}{Débit de transactions en fonction du taux de transactions véreuses.}
+\captionof{figure}{Débit de transactions en fonction du taux de transactions conflictuelles.}
 \label{fig:eval-thr2}
 \end{figure}
 
@@ -174,14 +174,14 @@ clients malicieux ce qui démontre que les attaques potentielles ne bénéficien
 
 L'expérience suivante place le système dans l'émulation d'un scénario géo-répliqué, modélisé sur le même scénario
 détaillé dans un travail préliminaire~\cite{GiladHMVZ17}.
-Nous avons selectionné 20 villes majeures qui semblent être localisées à proximité d'un nombre conséquent de noeuds
-Bitcoin joignables, d'après ~\cite{bitnodes2018}. Ces villes couvrent l'Amérique du nord, l'Europe, l'Asie occidentale,
+Nous avons sélectionné 20 villes majeures qui semblent être localisées à proximité d'un nombre conséquent de noeuds
+Bitcoin joignables, d'après ~\cite{bitnodes2018}. Ces villes couvrent l'Amérique du Nord, l'Europe, l'Asie occidentale,
 l'Asie orientale, l'Océanie, et incluent également les 10 villes où l'on trouve le plus grand nombre de noeuds
 joignables. Nous utilisons les données de latence obtenues depuis~\cite{wondernetworkping2018} et nous émulons
 la latence des paquets réseau dans le noyau Linux en utilisant les commandes \texttt{tc} et \texttt{netem}.
 2000 noeuds sont distribués équitablement parmi toutes les villes, sans émuler de latence supplémentaire entre les
 noeuds d'une même ville. Comme pour l'évaluation d'Algorand, nous limitons aussi la bande passante par processus
-à 20 Mégabits par seconde dans le but de simuler des paramètres à l'échelle d'internet d'un réseau comportant de
+à 20 mégabits par seconde dans le but de simuler des paramètres à l'échelle d'internet d'un réseau comportant de
 nombreux liens. Nous assignons ensuite un processus client à chaque ville, qui génère 400 transactions sortantes
 par ville à tout moment.
 
@@ -197,40 +197,40 @@ une ébauche de leur protocole sans proposer d'implémentation pratique ou de r�
 ceux qui proposent effectivement des résultats, la plupart ne sont pas évalués dans des conditions réalistes ou à
 grande échelle (des centaines de milliers de noeuds complets participant au consensus).
 
-En conséquent, nous choisissons Algorand and Conflux pour notre étude comparative. Algorand, Conflux, et Avalanche
-sont tous fondamentalement différents dans leur conception. L'algorithme de consensus à l'échelle d'un comité
-d'Algorand repose sur un accord byzantin basé sur un quorum, et Conflux supplémente le consensus de Nakamoto d'une
-structure type Graphe Acyclique Dirigé (DAG) pour permettre un meilleur débit, tandis qu'Avalanche appartient à
+En conséquent, nous choisissons Algorand et Conflux pour notre étude comparative. Algorand, Conflux et Avalanche
+sont tous fondamentalement différents dans leur conception. L'algorithme de consensus par comité
+d'Algorand repose sur un accord byzantin basé sur un quorum, et Conflux supplémente le consensus de Nakamoto par une
+structure de type Graphe Acyclique Orienté (DAG) pour permettre un meilleur débit, tandis qu'Avalanche appartient à
 une nouvelle famille de protocoles basés sur la méta-stabilité. Par ailleurs, nous utilisons
 Bitcoin~\cite{nakamoto2008bitcoin} comme base technique.
 
-Les évaluations d'Algorand et Avalanche reposent toutes deux sur un réseau décisionnel de 2000 noeuds sur EC2.
+Les évaluations d'Algorand et d'Avalanche reposent toutes deux sur un réseau décisionnel de 2000 noeuds sur EC2.
 Notre évaluation se fait sur des instances \texttt{c5.large} partagées, tandis qu'Algorand utilise des instances
 \texttt{m4.2xlarge}\@. Ces deux plateformes sont très similaires à l'exception d'un léger avantage en terme de
-fréquence CPU pour le \texttt{c5.large}, qui au final n'est que partiellement utilisé vu que nos processus ne
+fréquence CPU pour le \texttt{c5.large}, qui au final n'est que partiellement utilisé puisque nos processus ne
 consomment que $30\%$ de temps processeur lors de ces expériences. Les paramètres de sécurité choisis pour nos
 expériences garantissent une probabilité de violation de sécurité en dessous de $10^{-9}$ en présence de
 $20\%$ de noeuds byzantins, en comparaison de l'évaluation Algorand qui garantit une probabilité de violation en dessous
-de $5 \times 10^{-9}$ avec $20\%$ noeuds byzantins.
+de $5 \times 10^{-9}$ avec $20\%$ de noeuds byzantins.
 
 Ni Algorand ni Conflux ne prennent en compte le surplus de calcul lié à la vérification cryptographique dans leurs
-études. Leurs évaluations utilisent des blocs qui contiennent des MégaOctets de données factices et présentent les
-mesures de débit en MégaOctets ou GigaOctets par heure. Nous utilisons donc la taille moyenne d'une transaction
-Bitcoin, 250 octets, pour en déduire leurs débits de transactions. Par contraste nos expériences transportent des
+études. Leurs évaluations utilisent des blocs qui contiennent des mégaoctets de données factices et présentent les
+mesures de débit en mégaoctets ou gigaoctets par heure. Nous utilisons donc la taille moyenne d'une transaction
+Bitcoin, 250 octets, pour en déduire leurs débits de transactions. Par contraste, nos expériences transportent des
 données de transactions réelles et prennent entièrement en compte le temps de calcul des vérifications cryptographiques.
 
-Le débit de transactions est de 3-7 tps pour Bitcoin, 874 tps pour Algorand (avec des blocs de 10 MégaOctets), 3355 tps
+Le débit de transactions est de 3-7 tps pour Bitcoin, 874 tps pour Algorand (avec des blocs de 10 mégaoctets), 3355 tps
 pour Conflux (le papier fait mention d'un débit 3.84 fois supérieur au débit d'Algorand dans les mêmes conditions).
 
-En comparaison, {\sysname} obtient plus de 3400 tps de manière consistante sur un réseau allant jusqu'à 2000 noeuds
-sans aucun comité de décision ou preuve de travail. Pour ce qui est de la latence, une transaction est confirmée
+En comparaison, {\sysname} obtient constamment plus de 3400 tps sur un réseau allant jusqu'à 2000 noeuds
+sans aucun comité de décision ni preuve de travail. Pour ce qui est de la latence, une transaction est confirmée
 après 10--60 minutes pour Bitcoin, environ 50 secondes pour Algorand, 7.6--13.8 minutes avec Conflux, et 1.35 secondes
 pour {\sysname}.
 
-Avalanche se comporte bien mieux qu'Algorand à la fois en terme de débit et de latence vu qu'Algorand utilise une
+Avalanche se comporte bien mieux qu'Algorand à la fois en terme de débit et de latence étant donné qu'Algorand utilise une
 fonction aléatoire vérifiable pour élire ses comités, et maintient un journal ordonné pendant qu'{\sysname} établit
 un ordre partiel uniquement. Bien que l'entité à la tête d'Algorand soit anonyme et change continuellement, elle reste
-néanmoins basée sur un leader unique qui pourrait être un facteur limitant pour la mise à l'échelle, tandis
+néanmoins basée sur un dirigeant unique qui pourrait être un facteur limitant pour le passage à l'échelle, tandis
 qu'{\sysname} n'est pas contrôlé par une entité unique.
 
 Avalanche a un débit similaire à Conflux, mais sa latence est 337--613 fois meilleure. Conflux utilise également une

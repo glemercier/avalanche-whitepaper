@@ -110,7 +110,7 @@
 \mmddyyyydate
 \title{
 %O \Large\bf Scalable and Probabilistic Leaderless BFT Consensus through Metastability}
-\Large\bf Consensus BFT sans dirigeant, extensible et probabiliste, par métastabilité}
+\Large\bf Consensus BFT sans dirigeant extensible et probabiliste par métastabilité}
 \author{%
 \tronly{%
 Team~Rocket,
@@ -153,7 +153,7 @@ Ces protocoles fournissent une forte garantie de sûreté probabiliste en prése
 %O Unlike blockchains that rely on proof-of-work, they are quiescent and green.
 Contrairement aux blockchains fondées sur la preuve de travail (\emph{proof-of-work}), ils sont économes et écologiques.
 %O Unlike traditional consensus protocols where one or more nodes typically process linear bits in the number of total nodes per decision, no node processes more than logarithmic bits. It does not require accurate knowledge of all participants and exposes new possible tradeoffs and improvements in safety and liveness for building consensus protocols.
-Contrairement aux protocoles de consensus traditionnels où un ou plusieurs nœuds traitent typiquement des bits de manière linéaire dans les nombres de nœuds totaux par décision, aucun nœud ne les traite plus que de manière logarithmique. HOULA
+Contrairement aux protocoles de consensus traditionnels où, typiquement, un ou plusieurs nœuds traitent linéairement l'information par décision, aucun nœud ne traite l'information plus que de manière logarithmique. % HOULA
 %Finally, unlike traditional consensus protocols and similar to longest-chain protocols, our protocols provide increase in both liveness and safety guarantees when the observed adversarial presence decreases below the maximal expected bound. 
 
 %where $k$ is dependent on the security requirements of the system.
@@ -165,15 +165,15 @@ Contrairement aux protocoles de consensus traditionnels où un ou plusieurs nœu
 % for some security parameter $k \ll n$. \Jon{This sentence led me to assuem that the two ``best'' protocols were both going to be important; that there would be a reason to use the $O(kn\log n)$ version despite its poorer aymptotics. But when I got to later pages, I see you're only discussing Avalanche after all; the other algorithms are purely steps on the pedagogical garden path, right? Maybe remove the reference to the intermediate steps from the abstract?} 
 
 %O The paper describes the Snow protocol family, analyzes its guarantees, and describes how it can be used to construct the core of an internet-scale electronic payment system called Avalanche, which is evaluated in a large scale deployment.
-Cet article décrit la famille de protocoles Snow, analyse ses garanties et décrit la manière dont il peut être utilisé pour construire le cœur d'un système de paiement électronique à l'échelle de l'internet appelé Avalanche, qui est évalué lors d'un déploiement à grande échelle.
+Cet article décrit la famille de protocoles Snow, analyse ses garanties et décrit la manière dont il peut être employé pour bâtir le cœur d'un système de paiement électronique à l'échelle de l'internet appelé Avalanche, lequel est évalué lors d'un déploiement à grande échelle.
 %O Experiments demonstrate that the system can achieve high throughput (3400 tps), provide low confirmation latency (1.35 sec), and scale well compared to existing systems that deliver similar functionality. For our implementation and setup, the bottleneck of the system is in transaction verification.
-Les expériences démontrent que le système peut atteindre un haut débit (3400~tps), fournir une faible latence de confirmation (1,35~s) et correctement passer à l'échelle par rapport à d'autres systèmes offrant des fonctionnalités similaires. Le goulet d'étranglement du système dans l'implémentation et la configuration retenue est la vérification des transations.
+Les expériences montrent que le système peut atteindre un haut débit (3400~tps), fournir une faible latence de confirmation (1,35~s) et correctement passer à l'échelle par rapport à d'autres systèmes offrant des fonctionnalités similaires. Le goulet d'étranglement du système dans l'implémentation et la configuration retenues est la vérification des transactions.
 \end{abstract}
 
 \section{Introduction}
 
 %O Achieving agreement among a set of distributed hosts lies at the core of countless applications, ranging from Internet-scale services that serve billions of people~\cite{Burrows06,HuntKJR10} to cryptocurrencies worth billions of dollars~\cite{marketcapcryptocurrency}.
-L'accord parmi un ensemble d'hôtes distribués se retrouve au cœur d'innombrables applications allant de services à l'échelle de l'Internet servant des milliards de gens~\cite{Burrows06,HuntKJR10} à des cryptomonnaies valant des milliards de dollars~\cite{marketcapcryptocurrency}.
+L'obtention d'un accord au sein d'un ensemble d'hôtes distribués se retrouve au cœur d'innombrables applications allant de services à l'échelle de l'Internet servant des milliards de gens~\cite{Burrows06,HuntKJR10} à des cryptomonnaies valant des milliards de dollars~\cite{marketcapcryptocurrency}.
 %O To date, there have been two main families of solutions to this problem.
 À ce jour, il existe deux familles principales de solutions à ce problème.
 %O Traditional consensus protocols %, exemplified by PBFT~\cite{castro1999practical},
@@ -182,24 +182,24 @@ Les protocoles de consensus traditionnels
 sont fondés sur une communication entre chaque pair pour s'assurer que tous les nœuds correct arrivent aux mêmes décisions avec une certitude absolue.
 %Because they usually require quadratic communication overhead and accurate knowledge of membership, they have been difficult to scale
 %O to large numbers of participants.
-Comme ils impliquent en général un nombre de communication exponentiel et une connaissance exacte des participants, il s'est avéré difficile de l'étendre
+Comme ils impliquent en général un nombre de communications quadratique et une connaissance exacte des membres du réseau, il s'est avéré difficile de l'étendre
 à de nombreux participants.
 %O On the other hand, Nakamoto consensus protocols~\cite{nakamoto2008bitcoin,GarayKL15, PassSS17, SompolinskyZ15, SompolinskyLZ16, SompolinskyZ18, BentovHMN17, EyalGSR16,Kokoris-KogiasJ16,PassS16a, PassS18} have become popular with the rise of Bitcoin.
 D'un autre côté, les protocoles de consensus Nakamoto~\cite{nakamoto2008bitcoin,GarayKL15, PassSS17, SompolinskyZ15, SompolinskyLZ16, SompolinskyZ18, BentovHMN17, EyalGSR16,Kokoris-KogiasJ16,PassS16a, PassS18} ont été popularisés par Bitcoin.
 %O These protocols provide a probabilistic safety guarantee: Nakamoto consensus decisions may revert with some probability $\varepsilon$.
-Ces protocoles fournissent une garantie de sûreté probabiliste : les décisions par consensus Nakamoto peuvent s'inverser avec une certaine probabilité $\varepsilon$.
+Ces protocoles fournissent une garantie de sûreté probabiliste\,: les décisions par consensus Nakamoto peuvent s'inverser avec une certaine probabilité $\varepsilon$.
 %O A protocol parameter allows this probability to be rendered arbitrarily small, enabling high-value financial systems to be constructed on this foundation.
 Un paramètre du protocole permet d'abaisser à volonté cette probabilité, ce qui permet de bâtir des systèmes financiers de grande valeur sur ces fondations.
 %O This family is a natural fit for open, permissionless settings where any node can join the system at any time.
-Cette famille est faite pour des configurations ouvertes et en libre accès où tout nœud peut rejoindre le système à tout moment.
+Cette famille est conçue pour des configurations ouvertes et en libre accès où tout nœud peut rejoindre le système à tout moment.
 %O Yet, these protocols are costly, wasteful, and limited in performance.
 Cependant ces protocoles sont coûteux, gaspilleurs et limités en performance.
 %O By construction, they cannot quiesce: their security relies on constant participation by miners, even when there are no decisions to be made.
-Par construction, ils sont tenus de fonctionner même à vide : leur sécurité se base sur une participation constante des mineurs, même quand aucune décision ne doit être prise.
+Par construction, ils sont tenus de fonctionner même à vide\,: leur sécurité se base sur une participation constante des mineurs, même quand aucune décision ne doit être prise.
 %O Bitcoin currently consumes around 63.49 TWh/year~\cite{bitcoinpower}, about twice as all of Denmark~\cite{denmarkpower}.
 Bitcoin consomme actuellement autour de 63.49 TWh/an~\cite{bitcoinpower}, environ deux fois l'énergie consommée par le Danemark~\cite{denmarkpower}.
 %O Moreover, these protocols suffer from an inherent scalability bottleneck that is difficult to overcome through simple reparameterization~\cite{CromanDEGJKMSSS16}. % \Jon{I wanted the paper to expand on this point, but I missed it.}
-De plus, ces protocoles souffrent d'un goulet d'étranglement intrinsèque pour le passage à l'échelle, qui est difficile à dépasser par la simple reparamétrisation~\cite{CromanDEGJKMSSS16}.
+De plus, ces protocoles souffrent d'un goulet d'étranglement intrinsèque pour le passage à l'échelle, qui s'avère difficile à dépasser par la simple reparamétrisation~\cite{CromanDEGJKMSSS16}.
 %O This paper introduces a new family of consensus protocols called Snow.
 Cet article présente une nouvelle famille de protocoles de consensus appelés Snow.
 %O Inspired by gossip algorithms, this family gains its properties through a deliberately metastable mechanism.
@@ -207,35 +207,35 @@ Inspirée par les algorithmes de \emph{gossip} ou bavardage, cette famille poss�
 %O Specifically, the system operates by repeatedly sampling the network at random, and steering correct nodes towards a common outcome.
 En particulier, le système opère en échantillonnant répétitivement le réseau au hasard, et en dirigeant les nœuds corrects vers un résultat commun.
 %O Analysis shows that this metastable mechanism is powerful: it can move a large network to an irreversible state quickly, where the irreversibility implies that a sufficiently large portion of the network has accepted a proposal and a conflicting proposal will not be accepted with any higher than negligible ($\varepsilon$) probability. 
-L'analyse montre que ce mécanisme métastable est puissant : il peut rapidement changer l'état d'un vaste réseau de manière irréversible, où l'irréversibilité implique qu'une part suffisamment importante du réseau a accepté une proposition et qu'une proposition différente ne sera acceptée qu'avec une probabilité au maximum négligeable.
+L'analyse montre que ce mécanisme métastable est puissant\,: il peut rapidement changer l'état d'un vaste réseau de manière irréversible, où l'irréversibilité implique qu'une part suffisamment importante du réseau a accepté une proposition et qu'une proposition différente ne sera acceptée qu'avec une probabilité au maximum négligeable.
 %{\color{red} We should clarify this.  The current statement is too strong.}
 % though it is not always guaranteed to do so.
 % \Jon{Not universal in that some applications require a hard guarantee?}
 
 %O Similar to Nakamoto consensus, the Snow protocol family provides a probabilistic safety guarantee, using a tunable security parameter that can render the possibility of a consensus failure arbitrarily small.
-De même que le consensus Nakamoto, la famille des protocoles Snow fournissent une garantie de sûreté probabiliste, grâce à un paramètre des sécurité réglable qui peut amenuiser à volonter la possibilité d'un échec du consensus.
+De même que le consensus Nakamoto, la famille des protocoles Snow fournissent une garantie de sûreté probabiliste, grâce à un paramètre de sécurité configurable qui peut amenuiser à volonté la possibilité d'un échec du consensus.
 %O Unlike Nakamoto consensus, the protocols are green, quiescent and efficient; they do not rely on proof-of-work~\cite{DworkN92} and do not consume energy when there are no decisions to be made.
 Contrairement au consensus Nakamoto, ces protocoles sont écologiques, économes et efficients ; ils ne dépendent pas d'une preuve de travail\cite{DworkN92} et ne consomment pas d'énergie quand il n'y a pas de décision à prendre.
 %0 The efficiency of the protocols stems partly from removing the leader bottleneck: each node requires $\Oh{1}$ communication overhead per round and $\Oh{\log{n}}$ rounds in expectation, whereas classical consensus protocols have one or more nodes that require $\Oh{n}$ communication per round (phase).
-L'efficacité des protocoles provient en partie de l'élimination du goulet d'étranglement des dirigeants : chaque nœud ne demande qu'un nombre de communications correspondant à $\Oh{1}$ par tour et une prévision de $\Oh{\log{n}}$ tours, alors que, dans les protocoles de consensus classique, un ou plusieurs nœuds requièrent $\Oh{n}$ communications par tour.
+L'efficacité des protocoles provient en partie de l'élimination du goulet d'étranglement des dirigeants\,: chaque nœud ne demande qu'un nombre de communications correspondant à $\Oh{1}$ par tour et une prévision de $\Oh{\log{n}}$ tours, alors que, dans les protocoles de consensus classiques, un ou plusieurs nœuds requièrent $\Oh{n}$ communications par tour.
 %O Further, the Snow family tolerates discrepancies in knowledge of membership, as we discuss later. In contrast, classical consensus protocols require the full and accurate knowledge of $n$ as its safety foundation.
-De plus, la famille Snow tolère des incohérences dans la connaissance des participants, comme nous le verrons plus loin. Par contraste, les protocoles de consensus classiques exigent une connaisssance complète et exacte de $n$ comme fondation de la sûreté.
+De plus, la famille Snow tolère des incohérences dans la connaissance des participants, comme nous le verrons plus loin. Par contraste, les protocoles de consensus classiques exigent une connaisssance complète et exacte de $n$ comme fondation de la sûreté de fonctionnement.
 
 %O Snow's subsampled voting mechanism has two additional properties that improve on previous approaches for consensus. 
 Le mécanisme de vote sous-échantillonné possède deux propriété supplémentaires supérieures par rapport aux approches antérieures du consensus.
 %O Whereas the safety of quorum-based approaches breaks down immediately when the predetermined threshold $f$ is exceeded,
 %O Snow's probabilistic safety guarantee degrades smoothly when Byzantine participants exceed $f$.
-Alors que la sûreté des approches basées sur un quorum s'effondre immédiatement quand le seuil prédéterminé $f$ est dépassé,
+Alors que la sûreté de fonctionnement dans les approches basées sur un quorum s'effondre immédiatement quand le seuil prédéterminé $f$ est dépassé,
 la garantie de sûreté probabiliste de Snow se dégrade progressivement quand les participants byzantins dépassent $f$.
 %O This makes it easier to pick the critical threshold $f$.
 Cela facilite le choix du seuil critique $f$.
 %O It also exposes new tradeoffs between safety and liveness: the Snow family is more efficient when the fraction of Byzantine nodes is small, and it can be parameterized to tolerate more than a third of the Byzantine
 %O nodes by trading off liveness.
-Cela expose également de nouveaux compromis entre sûreté et vitalité : la famille Snow est plus efficace quand la fraction de nœuds byzantins est petite, et cela peut être paramétré pour tolérer plus d'un tiers de nœuds byzantins en sacrifiant la vitalité.
+Cela expose également de nouveaux compromis entre sûreté et vitalité\,: la famille Snow est plus efficace quand la fraction de nœuds byzantins est petite, et cela peut être paramétré pour tolérer plus d'un tiers de nœuds byzantins en sacrifiant la vitalité.
 
 %O To demonstrate the potential of this protocol family, we illustrate a practical
 %O peer-to-peer payment system, Avalanche. In effect, Avalanche executes multiple Snowball (one from the Snow family) instances with the aid of a Directed Acyclic Graph (DAG). The DAG serves to piggyback multiple instances, reducing the cost from $\Oh{\log{n}}$ to $\Oh{1}$ per node and streamlining the path where there are no conflicting transactions.
-Pour démontrer le potentiel de cette famille de protocoles, nous l'illustrons par un système pratique de paiement pair à pair, Avalanche. Dans les faits, Avalanche exécute plusieurs instances de Snowball (l'un des protocoles de la famille Snow) avec l'aide d'un graphe orienté acyclique (\emph{Directed Acyclic Graph} ou DAG). Le DAG sert à empiler plusieurs instances en réduisant le coût de $\Oh{\log{n}}$ à $\Oh{1}$ par nœud et en optimisant le chemin où il n'existe pas de transactions conflictuelles.
+Pour démontrer le potentiel de cette famille de protocoles, nous l'illustrons par un système pratique de paiement pair à pair, Avalanche. Dans les faits, Avalanche exécute plusieurs instances de Snowball (l'un des protocoles de la famille Snow) à l'aide d'un graphe orienté acyclique (\emph{Directed Acyclic Graph} ou DAG). Le DAG sert à empiler plusieurs instances en faisant passer le coût de $\Oh{\log{n}}$ à $\Oh{1}$ par nœud et en optimisant le chemin là où il n'existe pas de transactions conflictuelles.
 %This combination of the best features of traditional and Nakamoto consensus involves one significant tradeoff: liveness for \editchange{equivocating proposals}. %conflicting transactions.
 %
 %\editchange{Specifically, the consensus protocol from the Snowball family does not guarantee liveness in all cases. It does, however, guarantee logarithmic expected rounds for termination given a propoer initialization heuristic (Section~\ref{sec:liveness}). It also guarantees fast termination when the proposed value is unanimous. As the core part of Avalanche, it guarantees liveness only for \emph{virtuous} transactions, i.e.\ those issued by correct clients and thus guaranteed not to conflict with other transactions.}
@@ -244,20 +244,20 @@ Pour démontrer le potentiel de cette famille de protocoles, nous l'illustrons p
 %O of consensus protocols, based on randomized sampling and metastable decision.
 En résumé, la principale contribution de cet article consiste à présenter une nouvelle famille de protocoles de consensus fondés sur un échantillonnage aléatoire et des décisions métastables.
 %O The next section provides the model, goals and necessary assumptions for the new protocols.
-La section suivante fournit le modèle, les buts et les suppositions nécessaires pour les nouveaux protocoles.
+La section suivante fournit le modèle, les buts et les hypothèses nécessaires pour les nouveaux protocoles.
 %O Section~\ref{sec:protocol} gives intuition behind the protocols, followed by their full specification,
-La section~\ref{sec:protocol} donne l'intuition derrière les protocoles, suivis de leurs spécifications complètes,
+La section~\ref{sec:protocol} expose l'intuition ayant mené à ces protocoles, suivie de leurs spécifications complètes,
 %Section~\ref{sec:attack} briefly discusses typical attack vectors and their possible defense,
 %O Section~\ref{sec:analysis} provides methodology used
 %O by our formal analysis of safety and liveness in Appendix~\ref{sec:full-analysis},
-La section~\ref{sec:analysis} fournit la méthodologie employée par notre analyse formelle de sûreté et de vitalité en Appendix~\ref{sec:full-analysis},
+La section~\ref{sec:analysis} fournit la méthodologie employée par notre analyse formelle de sûreté de fonctionnement et de vitalité en annexe~\ref{sec:full-analysis},
 %Section~\ref{sec:implementation} describes a Bitcoin-like payment system,  Section~\ref{sec:evaluation} evaluates the system,
 %O Section~\ref{sec:implementation} describes Avalanche, a Bitcoin-like payment system,
 La section~\ref{sec:implementation} décrit Avalanche, un système de paiement similaire à Bitcoin,
 %O Section~\ref{sec:evaluation} evaluates Avalanche,
 La section~\ref{sec:evaluation} évalue Avalanche,
 %O Section~\ref{sec:related-work} presents related work, and finally, Section~\ref{sec:conclusions} summarizes our contributions.
-La section~\ref{sec:related-work} présente les travaux en relation, et, finalement, la section~\ref{sec:conclusions} résume nos contributions.
+La section~\ref{sec:related-work} présente les travaux en rapport, et, finalement, la section~\ref{sec:conclusions} résume nos contributions.
 
 %O \section{Model and Goals}
 \section{Modèle et buts}
@@ -292,17 +292,17 @@ La section~\ref{sec:related-work} présente les travaux en relation, et, finalem
 % transitions are defined by a totally ordered list of accepted transactions.
 
 %O \paragraph{Safety} Unlike classical consensus protocols, and similar to longest-chain-based consensus protocols such as Nakamoto consensus~\cite{nakamoto2008bitcoin}, we adopt an $\varepsilon$-safety guarantee that is probabilistic. 
-\paragraph{Sûreté} À l'inverse des protocoles de consensus classiques, et à l'instar des protocoles de consensus fondés sur la chaîne la plus longue~\cite{nakamoto2008bitcoin}, nous adoptons une garantie de sûreté-$\varepsilon$ qui est probabiliste.
+\paragraph{Sûreté de fonctionnement} À l'inverse des protocoles de consensus classiques, et à l'instar des protocoles de consensus fondés sur la chaîne la plus longue~\cite{nakamoto2008bitcoin}, nous adoptons une garantie de sûreté de fonctionnement~$\varepsilon$ qui est probabiliste.
 %O In practice, this probabilistic guarantee is as strong as traditional safety guarantees, since appropriately small choices of $\varepsilon$ can render consensus failure negligible, lower than the probability of hardware failure due to random events.
-En pratique, cette garantie probabiliste est aussi forte que les garantie de sûreté traditionnelles puisque le choix d'un petit $\varepsilon$ peut rendre la défaillance du consensus négligeable, inférieurs à la probabilité d'une panne matérielle due à des événements imprévisibles.
+En pratique, cette garantie probabiliste est aussi forte que les garanties de sûreté traditionnelles puisque le choix d'un petit $\varepsilon$ peut rendre la défaillance du consensus négligeable, inférieure à la probabilité d'une panne matérielle due à des événements imprévisibles.
 %OFigure~\ref{fig:fandepsilon} shows how the portion ($f/n$) of misbehaving participants (or computation power) affects the probability of system safety failure (decision of two conflicting proposals), given a choice of finality.
-La figure~\ref{fig:fandepsilon} montre comment la portion ($f/n$) de participants (ou de puissance informatique) problématique affecte la probabilité d'une défaillance de la sûreté du système (décision de deux propositions incompatibles), selon un choix de finalité.
+La figure~\ref{fig:fandepsilon} montre comment la portion ($f/n$) de participants (ou de puissance informatique) problématique affecte la probabilité d'une défaillance de la sûreté du système (décision de deux propositions incompatibles), étant donné un choix de finalités.
 % The maximum tolerated Byzantine presence $f$, is dependent on the choice of $\varepsilon$. Similar to Nakamoto consensus, given an observed Byzantine presence $f'$, where $f' \leq f$, the safety failure probability of our protocols maintains the property that $\varepsilon' \leq \varepsilon$. On the other hand, for classical consensus protocols, the failure probability is simply zero for all $f' \leq f$, and almost sure (i.e. one) for $f' > f$.
 
 \begin{figure}[h]
     \includegraphics[width=\linewidth]{figures/safety-f-eps.pdf}
 %O    \caption{Classical BFT protocols that tolerate $f$ failures will encounter total safety failure when the threshold is exceeded even by one additional node. The Bitcoin curve shows a typical finality choice for Bitcoin where a block is considered final when it is ``buried'' in a branch having 6 additional blocks compared to any other competing forks. Snowflake belongs to the Snow family, and it is configured with $k=10$, $\beta=150$. Snowflake-7,8 uses $\alpha=7$ and $\alpha=8$ respectively (see Section~\ref{sec:protocol} for the definition of $k$, $\alpha$ and $\beta$.}
-    \caption{Les protocoles BFT classiques qui tolèrent $f$ défaillances rencontrent une défaillance totale de leur sûreté quand le seuil est dépaasé même d'un seul nœud supplémentaire. La courbe de Bitcoin montre un choix de finalité typique pour Bitcoin où un bloc est considéré final quand il est \guillemotleft\,enterré\,\guillemotright~ dans une branche sous 6 blocs supplémentaires par rapport aux autres branches concurrentes. Snowflake appartient à la famille Snow et est configuré avec $k=10$, $\beta=150$. Snowflake-7,8 utilise $\alpha=7$ et $\alpha=8$ respectivement (voir en section~\ref{sec:protocol} pour la définition de $k$, $\alpha$ et $\beta$.}
+    \caption{Les protocoles BFT classiques qui tolèrent $f$ défaillances rencontrent une défaillance totale de leur sûreté de fonctionnement quand le seuil est dépassé même d'un seul nœud supplémentaire. La courbe de Bitcoin montre un choix de finalité typique pour Bitcoin où un bloc est considéré final quand il est \guillemotleft\,enterré\,\guillemotright~ dans une branche sous 6 blocs supplémentaires par rapport aux autres branches concurrentes. Snowflake appartient à la famille Snow et est configuré avec $k=10$, $\beta=150$. Snowflake-7,8 utilise $\alpha=7$ et $\alpha=8$ respectivement (voir en section~\ref{sec:protocol} pour la définition de $k$, $\alpha$ et $\beta$.}
     \label{fig:fandepsilon}
 \end{figure}
 
@@ -321,9 +321,9 @@ Cette garantie de limite est similaire à celle de divers protocoles comme Ben-O
 %O In particular, for Nakamoto consensus, the number of required blocks for a transaction increases exponentially with the number of adversarial nodes, with an asymptote at $f = n/2$ wherein the number is infinite.
 En particulier, pour le consensus Nakamoto, le nombre de blocs requis pour une transaction augmente exponentiellement avec le nombre de nœuds antagonistes, avec une asymptote à $f = n/2$ où le nombre est infini. % wut?
 %O In other words, the time required for finality approaches $\infty$ as $f$ approaches $n/2$\tronly{ (Figure~\ref{fig:livenessproperties}).}{.}
-En d'autres termes, le temps nécessaire à la finalité approche $\infty$ quand $f$ approche $n/2$\tronly{ (Figure~\ref{fig:livenessproperties}).}{.}
+En d'autres termes, le temps nécessaire à la finalité approche $\infty$ quand $f$ approche $n/2$\tronly{ (figure~\ref{fig:livenessproperties}).}{.}
 %O Furthermore, the required number of rounds is calculable ahead of time, as to allow the system designer to tune liveness at the expense of safety. Lastly, unlike traditional consensus protocols and similar to Nakamoto, our protocols benefit from lower adversarial presence, as discussed in property P3 below.
-De plus, le nombre requis de tours est calculable à l'avance, ce qui permet au concepteur du système de régler la vitalité aux dépens de la sûreté. Enfin, contrairement aux protocoles de consensus traditionnels et similairement à Nakamoto, nos protocoles bénéficient d'une moindre présence antagoniste, comme le détaille la propriété P3 ci-dessous.
+De plus, le nombre requis de tours est calculable à l'avance, ce qui permet au concepteur du système de régler la vitalité aux dépens de la sûreté de fonctionnement. Enfin, contrairement aux protocoles de consensus traditionnels et similairement à Nakamoto, nos protocoles bénéficient d'une moindre présence antagoniste, comme le détaille la propriété P3 ci-dessous.
 
 \tronly{%
 \begin{figure}[h!]
@@ -335,13 +335,13 @@ De plus, le nombre requis de tours est calculable à l'avance, ce qui permet au 
 }
 
 %O \emph{Formal Guarantees}: Let the system be parameterized for an $\varepsilon$ safety failure probability under a maximum expected $f$ number of adversarial nodes. Let $\Oh{\log n} < t_{max} < \infty$ be the upper bound of the execution of the protocols. The Snow protocols then provide the following guarantees:
-\emph{Garantie formelle} : Soit un paramétrage du système pour une probabilité de défaillance de la sûreté $\varepsilon$ pour un nombre maximal attendu $f$ de nœuds antagonistes. Soit $\Oh{\log n} < t_{max} < \infty$ la limite supérieure de l'exécution du protocole. Les protocoles Snow fournissent alors les garanties suivantes\,:
+\emph{Garantie formelle}\,: Soit un paramétrage du système pour une probabilité de défaillance de la sûreté de fonctionnement $\varepsilon$ pour un nombre maximal attendu $f$ de nœuds antagonistes. Soit $\Oh{\log n} < t_{max} < \infty$ la limite supérieure de l'exécution du protocole. Les protocoles Snow fournissent alors les garanties suivantes\,:
 \begin{compactitem}
 % RVR: this property is unnecessary because the liveness property already ensures non-triviality
 %    \item \textbf{Non-triviality}: To ensure that the protocol carries out real work, decisions must include values proposed by external clients;
 
 %O     \item \textbf{P1. Safety.} When decisions are made by any two correct nodes, they decide on conflicting transactions with negligible probability ($\leq \varepsilon$).
-     \item \textbf{P1. Sûreté.} Quand les décisions sont prises par deux nœuds corrects, ils décident de transactions conflictuelles avec une probabilité négligeable ($\leq \varepsilon$).
+     \item \textbf{P1. Sûreté de fonctionnement.} Quand les décisions sont prises par deux nœuds corrects, ils décident des transactions conflictuelles avec une probabilité négligeable ($\leq \varepsilon$).
     % \item \textbf{P2. Liveness.} Transactions will be accepted by every correct node in $\Oh{\log n}$ rounds if either the observed Byzantine presence $f'$, where $f' < f$, is sufficiently small, or the network is initialized in a univalent state.
 %O     \item \textbf{P2. Liveness (Upper Bound).} Snow protocols terminate with a strictly positive probability within $t_{max}$ rounds.  
      \item \textbf{P2. Vitalité (limite supérieure).} Les protocoles Snow se terminent avec une probabilité strictement positive en au plus $t_{max}$ tours.
@@ -353,13 +353,13 @@ De plus, le nombre requis de tours est calculable à l'avance, ce qui permet au 
 %O \paragraph{Network} 
 \paragraph{Réseau} 
 %O In the standard definition of asynchrony~\cite{ben1983another}, message transmission time is finite, but the distribution is unspecified (and thus the delivery time can be unbounded for some messages). This implies that the scheduling of message transmission itself could behave arbitrarily, and potentially even maliciously (with full asynchrony).
-Dans la définition standard de l'asynchronie~\cite{ben1983another}, le temps de transmission des messages est fini, mais la distribution n'est pas spécifiée (donc le temps de délivrance peut être sans limite pour certains messages). Cela implique que l'échelonnement de la transmission des messages lui-même peut être quelconque, voire potentiellement malveillant (pour une complète asynchronie).
+Dans la définition standard de l'asynchronie~\cite{ben1983another}, le temps de transmission des messages est fini, mais la distribution n'est pas spécifiée (donc le temps de délivrance peut être non borné pour certains messages). Cela implique que l'ordonnancement de la transmission des messages lui-même peut être quelconque, voire potentiellement malveillant (pour une complète asynchronie).
 %O We use a modified version of this model, which is well-accepted~\cite{banerjee2014epidemic, ganesh2005effect, draief2006thresholds, keeling2011modeling, liggett1997stochastic} in the analysis of epidemic networks and gossip-based stochastic systems. In particular, we fix the distribution of message delay to that of the exponential distribution.
 Nous employons une version modifiée de ce modèle, lequel est bien accepté~\cite{banerjee2014epidemic, ganesh2005effect, draief2006thresholds, keeling2011modeling, liggett1997stochastic} dans l'analyse des réseaux épidémiques et des systèmes stochastiques à base de \emph{gossip}. En particulier, nous fixons la distribution des délais de messages à celle de la distribution exponentielle.
 %O We note that, just like in the standard asynchronous model, there is a strictly non-zero probability that any correct node may execute its next local round only after an arbitrarily large amount of time has passed.
 Nous notons que, tout comme dans le modèle asynchrone standard, il existe une probabilité strictement non-nulle que tout nœud correct ne peut exécuter son prochain tour local qu'après qu'un laps de temps arbitrairement long a passé.
 %O Furthermore, we also note that scheduling only applies to correct nodes, and the adversary may execute arbitrarily, as discussed later. 
-De plus, nous notons également que l'échelonnement ne s'applique qu'aux nœuds corrects, et que l'adversaire peut s'exécuter arbitrairement, comme nous le verrons plus loin.
+De plus, notons également que l'ordonnancement ne s'applique qu'aux nœuds corrects, et que l'adversaire peut s'exécuter arbitrairement, comme nous le verrons plus loin.
 
 %O \paragraph{Achieving Liveness}
 \paragraph{Obtention de la vitalité} % HOULA
@@ -367,7 +367,7 @@ De plus, nous notons également que l'échelonnement ne s'applique qu'aux nœuds
 Les consensus classiques qui fonctionnent en asynchronie ne restent pas bloqués lors d'une phase de vote car l'initiateur du vote interroge toujours tous les participants connus et attend $n - f$ réponses.
 %The consequence of these two assumptions is therefore that progress cannot be indefinitely delayed by the adversary since the correct nodes (whose number is sufficient for voting) will eventually deliver the required messages.
 %O In our system, however, nodes operate via subsampling, hence it is possible for a single sample to select a majority of adversarial nodes, and therefore the node gets stuck waiting for the responses. To ensure liveness, a node should be able to wait with some timeout. Therefore, our protocols are synchronous in order to guarantee liveness. Lastly, it is worth noting that Nakamoto consensus is synchronous, in which the required difficulty of proof-of-work is dependent on the maximum network delay~\cite{PassSS17}. %Also, other protocols that rely on gossip [Citation here] are also essentially synchronous due to the synchronous nature of gossip protocols. \editinsert{RvR pointed this out, we need to carefully word it though.
-Dans notre système, cependant, les nœuds opèrent par sous-échantillonnage, d'où la possibilité pour un seul échantillon qu'une majorité de nœuds antagonistes soit sélectionné, ce qui contraint le nœud à attendre en vain une réponse. Pour s'assurer de la vitalité, un nœud doit pouvoir poser une limite à l'attente. Enfin, il faut noter que le consensus Nakamoto est synchrone et que la difficulté requise pour la preuve de travail dépend du délai maximum du réseau~\cite{PassSS17}. 
+Dans notre système, cependant, les nœuds opèrent par sous-échantillonnage, d'où la possibilité pour un seul échantillon qu'une majorité de nœuds antagonistes soit sélectionné, ce qui contraint le nœud à attendre en vain une réponse. Pour s'assurer de la vitalité, un nœud doit pouvoir limiter son attente. Enfin, il faut noter que le consensus Nakamoto est synchrone et que la difficulté requise pour la preuve de travail dépend du délai maximum du réseau~\cite{PassSS17}. 
 
 %O \paragraph{Adversary}
 \paragraph{Adversité} % HOULA : Adversaire ? Adversaires ? Adversatif ?
@@ -384,7 +384,7 @@ En résumé, l'adversaire est limité en puissance informatique (il ne peut pas 
 
 \paragraph{Attaques Sybil}
 %O Consensus protocols provide their guarantees based on assumptions that only a fraction of participants are adversarial.
-Les protocoles de consensus fournissent leurs garanties fondées sur la supposition que seule une fraction des participants sont antagonistes.
+Les protocoles de consensus fournissent leurs garanties en se fondant sur l'hypothèse que seule une fraction des participants sont antagonistes.
 %O These bounds could be violated if the network is naively left open to arbitrary participants.
 Ces limites peuvent être violées si le réseau est naïvement laissé ouvert à des participants quelconques.
 %O In particular, a Sybil attack~\cite{douceur2002sybil}, wherein a large number of identities are generated by an adversary, could be used to exceed the bounds.
@@ -395,7 +395,7 @@ Une longue suite de travaux, comme PBFT~\cite{castro1999practical}, sépare le p
 %O In fact, to our knowledge, only Nakamoto-style consensus has ``baked-in'' Sybil prevention as part of its consensus, made possible by chained proof-of-work~\cite{aspnes2005exposing}, which requires miners to continuously stake a hardware investment.
 En fait, à notre connaissance, le consensus Nakamoto est le seul à avoir intégré la protection anti-Sybil dans son consensus, chose rendue possible par la preuve de travail chaînée~\cite{aspnes2005exposing} qui demande aux mineurs de continuellement mettre en jeu un investissement matériel.
 %O Other protocols, discussed in Section~\ref{sec:related-work}, rely on proof-of-stake (by economic argument) or proof-of-authority (by administrative argument that makes the system ``permissioned'').
-D'autres protocoles, dont il est question en section~\ref{sec:related-work}, se basent sur la preuve d'enjeu (\emph{proof of stake} ou PoS, par un argument économique) ou preuve d'autorité (\emph{proof of authority} ou PoA, par un argument administratif) qui rend le système \guillemotleft\,permissionné\,\guillemotright.
+D'autres protocoles, dont il est question en section~\ref{sec:related-work}, se basent sur la preuve d'enjeu (\emph{proof of stake} ou PoS, par un argument économique) ou la preuve d'autorité (\emph{proof of authority} ou PoA, par un argument administratif) qui rend le système \guillemotleft\,permissionné\,\guillemotright.
 %O The consensus protocols presented in this paper can adopt any
 %O Sybil control mechanism, although proof-of-stake is most aligned with their quiescent operation.
 Les protocoles de consensus présentés dans cet article peuvent adopter n'importe quel mécanisme de contrôle de Sybil, bien que la preuve d'enjeu soit la plus en ligne avec le caractère économe de leur opération.
@@ -409,12 +409,12 @@ Le déploiement complet d'un système de paiement autonome en P2P incorporant de
 %O \paragraph{Flooding Attacks}
 \paragraph{Attaques par inondation}
 %O Flooding/spam attacks are a problem for any distributed system. 
-Les attaques par inondation (\emph{flooding}) et spam représentent un problème pour tout système distribué.
+Les attaques par inondation et par spam représentent un problème pour tout système distribué.
 %O Without a protection mechanism, an attacker can generate large numbers of transactions and flood protocol data structures, consuming storage.
 Sans mécanisme de protection, un attaquant peut générer un grand nombre de transactions et inonder les structures de données du protocole, consommant ainsi des ressources de stockage.
 % Although there is no proper, protocol-level methodology to prevent such an attack, there are very effective heuristics that we can employ.
 %O There are a multitude of techniques to deter such attacks, including network-layer protection, proof-of-authority, local proof-of-work and economic mechanisms. 
-Il existe une multitude de techniques pour repousser ces attaques comme la protection de la couche réseau, la preuve d'autorité, la preuve de travail local et des mécanismes économiques.
+Il existe une multitude de techniques pour repousser ces attaques comme la protection de la couche réseau, la preuve d'autorité, la preuve de travail local, ainsi que des mécanismes économiques.
 %O In Avalanche, we use transaction fees, making such attacks costly even if the attacker is sending money back to addresses under its control.
 Dans Avalanche, nous utilisons les frais de transaction, rendant ainsi ces attaques coûteuses même si l'attaquant renvoie l'argent aux adresses qu'il contrôle.
 
@@ -425,7 +425,7 @@ Dans Avalanche, nous utilisons les frais de transaction, rendant ainsi ces attaq
 %O We do not assume that all members of the network are known to all participants, but rather may temporarily have some discrepancies in network view.
 Nous ne supposons pas que tous les membres du réseau sont connus de tous les participants, car la vue du réseau qu'ont ces derniers peut souffrir d'incohérences temporaires.
 %O We quantify the bounds on the discrepancy in Appendix~\ref{sec:full-analysis-churn}.
-Nous quantifions les limites en Annexe~\ref{sec:full-analysis-churn}.
+Nous en quantifions les bornes en annexe~\ref{sec:full-analysis-churn}.
 %O We assume a safe bootstrapping mechanism, similar to that of Bitcoin, that enables a node to connect with sufficiently many correct nodes to acquire a statistically unbiased view of the network.
 Nous supposons un mécanisme de démarrage initial sûr, similaire à celui de Bitcoin, qui permet à un nœud de se connecter à suffisamment de nœuds corrects pour acquérir une vue statistiquement non biaisée du réseau.
 %O We do not assume a PKI\@.
@@ -449,7 +449,7 @@ suivante, les preuves formelles étant disponibles en annexe.
 %O We provide full specifications for the protocols in this section, and defer the analysis to the next section, and present formal proofs in the appendix.
 
 %0 \subsection{Slush: Introducing Metastability}
-\subsection{Slush: A propos de métastabililté}
+\subsection{Slush\,: présentation de la métastabililté}
 
 %O The core of our approach is a single-decree consensus protocol,
 %O inspired by epidemic or gossip protocols.
@@ -457,9 +457,9 @@ suivante, les preuves formelles étant disponibles en annexe.
 %O Slush is \emph{not} tolerant to Byzantine faults, only crash-faults (CFT), but serves as an illustration for the BFT protocols that follow.
 %O For ease of exposition, we will describe the operation of Slush using a decision between two conflicting colors, red and blue.
 
-Le principe de notre approche est un protocole de consensus à décision simple inspiré des protocoles dits "épidémiques"
-ou "gossip". Le protocole le plus simple, Slush, est la fondation de cette famille, comme le montre la
-Figure~\ref{fig:slush-loop}. Slush \emph{n'est pas} tolérant aux fautes byzantines, seulement aux fautes par défaut
+Le principe de notre approche est un protocole de consensus à simple décret inspiré des protocoles dits épidémiques
+ou \emph{gossip}. Le protocole le plus simple, Slush, est la fondation de cette famille, comme le montre la
+figure~\ref{fig:slush-loop}. Slush \emph{n'est pas} tolérant aux fautes byzantines, seulement aux fautes par défaut % HOULA : faute ou défaillance ?
 de fonctionnement (CFT), mais sert à mettre en avant les autres protocoles tolérants aux fautes byzantines qui vont
 suivre. Dans un souci de simplicité de présentation, nous décrirons le fonctionnement de Slush en le comparant
 à une décision à prendre entre deux couleurs incompatibles, le rouge et le bleu.
@@ -473,16 +473,16 @@ suivre. Dans un souci de simplicité de présentation, nous décrirons le foncti
 %O It then goes back to the query step, and initiates a subsequent round of query, for a total of $m$ rounds.
 %O Finally, the node decides the color it ended up with at time $m$.
 
-Avec Slush, un noeud démarre dans un état de couleur neutre. Après réception d'une transaction envoyée par un client,
-un node de couleur neutre adopte la couleur définie dans la transaction et initie une requête. Pour lancer une
-requête, le noeud choisit un échantillon réduit et de taille constante ($k$) de noeuds appartenant au réseau suivant
-une distribution uniformément aléatoire puis initie sa propre requête, tandis qu'un noeud déja coloré répond
-simplement avec sa couleur actuelle. Une fois que le noeud qui fait la requête récupère $k$ réponses, il vérifie si
+Avec Slush, un nœud démarre dans un état de couleur neutre. Après réception d'une transaction envoyée par un client,
+un nœud de couleur neutre adopte la couleur définie dans la transaction et initie une requête. Pour lancer une
+requête, le nœud choisit un échantillon réduit et de taille constante ($k$) de nœuds appartenant au réseau suivant
+une distribution uniformément aléatoire puis initie sa propre requête, tandis qu'un nœud déja coloré répond
+simplement avec sa couleur actuelle. Une fois que le nœud qui fait la requête récupère $k$ réponses, il vérifie si
 une proportion $\ge\alpha$ de l'échantillon retourne la même couleur, $\alpha > \floor{k/2}$ étant un paramètre
 du protocole. Si le seuil $\alpha$ est dépassé et que la couleur dominante revenant de l'échantillon sollicité est
-différente de la couleur propre du node à l'origine de la requête, ce node adopte cette nouvelle couleur. Il revient
+différente de la couleur propre du nœud à l'origine de la requête, ce nœud adopte cette nouvelle couleur. Il revient
 ensuite à l'étape de génération de la requête et lance un nouveau tour de requête jusqu'à un total de $m$ tours.
-En définitive, le node décide de sa couleur finale à l'instant $m$.
+En définitive, le nœud décide de sa couleur finale à l'instant $m$.
 
 \algnewcommand{\IIf}[1]{\State\algorithmicif\ #1\ \algorithmicthen}
 \algnewcommand{\EndIIf}{\unskip\ \algorithmicend\ \algorithmicif}
@@ -501,11 +501,11 @@ En définitive, le node décide de sa couleur finale à l'instant $m$.
     \Procedure{slushLoop}{$u, \codecolor_0 \in \{\texttt{R}, \texttt{B}, \bot\}$}
         \State $\codecolor \assign \codecolor_0$ \textrm{// initialise avec une couleur}
         \For{$r \in \{1\ldots m\}$}
-            \State \textrm{// Si $\bot$, réitère jusqu'à ce que \textsc{onQuery} applique la couleur}
+            \State \textrm{// Si $\bot$, saute jusqu'à ce que \textsc{onQuery} applique la couleur}
             \If{$\codecolor = \bot$}
                 \Continue
             \EndIf
-            \State \textrm{// échantillonne aléatoirement parmi les noeuds connus}
+            \State \textrm{// échantillonne aléatoirement parmi les nœuds connus}
             \State $\mathcal{K} \assign \Call{échantillon}{\mathcal{N}\backslash u, k}$
             \State $P \assign \texttt{[}\Call{requête}{v, \codecolor}\quad\textbf{pour}\ v \in \mathcal{K}\texttt{]}$
             \For{$\codecolor' \in \{\texttt{R}, \texttt{B}\}$}
@@ -516,7 +516,7 @@ En définitive, le node décide de sa couleur finale à l'instant $m$.
         \EndFor
         \State \Call{accepte}{$\codecolor$}
     \EndProcedure
-    \captionof{figure}{Protocole Slush. Les temps d'expiration sont omis dans un souci de lisibilité.}\label{fig:slush-loop}
+    \captionof{figure}{Protocole Slush. Temps d'expiration omis dans un souci de lisibilité.}\label{fig:slush-loop}
 \end{algorithmic}
 \end{figure}
 
@@ -527,16 +527,16 @@ En définitive, le node décide de sa couleur finale à l'instant $m$.
 %O Finally, if $m$ is chosen high enough, Slush ensures that all nodes will be colored identically with high probability (whp).
 %O Each node has a constant, predictable communication overhead per round, and $m$ grows logarithmically with $n$.
 
-Slush a quelques propriétés intéréssantes. Premièrement, il n'a quasiment \emph{pas besoin de mémoire}: un noeud ne
+Slush possède quelques propriétés intéressantes. Premièrement, il n'a quasiment \emph{pas besoin de mémoire}\,: un nœud ne
 stocke aucun état intermédiaire entre chaque tour autre que sa couleur actuelle, et plus particulièrement ne stocke
-aucun historique de ses interactions avec les autres noeuds. Deuxièmement, contrairement aux protocoles de consensus
+aucun historique de ses interactions avec les autres nœuds. Deuxièmement, contrairement aux protocoles de consensus
 traditionnels qui sollicitent tous les participants, chaque tour n'implique qu'un échantillon du réseau réduit et de
 taille constante choisi aléatoirement. Troisièmement, Slush progresse quelque soit la configuration du réseau (même
-depuis un état entièrement bivalent, ex: partage 50/50 entre les deux couleurs) vu que des perturbations aléatoires
-sur l'échantillonnage auront pour conséquence de fournir un léger avantage à l'une des deux couleurs qui sera ensuite
+depuis un état entièrement bivalent, c'est-à-dire un partage 50/50 entre les deux couleurs) puisque des perturbations aléatoires
+sur l'échantillonnage auront pour conséquence de fournir un léger avantage à l'une des deux couleurs, lequel sera ensuite
 amplifié au fur et à mesure des échantillonnages.
-Finalement si $m$ est choisi pour être suffisamment élevé, Slush s'assure que tous les noeuds convergeront vers la
-même couleur avec une haute probabilité. Chaque noeud nécéssite un temps de communication par tour constant et
+Finalement, si $m$ est choisi pour être suffisamment élevé, Slush s'assure que tous les nœuds convergent vers la
+même couleur avec une forte probabilité. Chaque nœud nécessite un nombre de communications par tour constant et   % HOULA communication overhead
 prévisible, et $m$ croît de manière logarithmique suivant $n$.
 
 \tronly{
@@ -545,23 +545,22 @@ prévisible, et $m$ croît de manière logarithmique suivant $n$.
 %O to the opposite so as to keep the network in balance, preventing a decision.
 %O We address this in our first BFT protocol that introduces more state storage at the nodes.
 
-Le protocole Slush ne fournit pas de fortes garanties quant à la sûreté de fonctionnement en la présence de noeuds
-byzantins. En particulier si les noeuds légitimes développent une préférence pour une certaine couleur, un adversaire
-byzantin pourra inverser la couleur des noeuds afin de maintenir le système à l'équilibre, incapable de prendre une
-décision. Nous adressons ce problème dans notre premier protocole tolérant aux fautes byzantines qui introduit un
-meilleur suivi de l'état au niveau des nodes.
+Le protocole Slush ne fournit pas de fortes garanties quant à la sûreté de fonctionnement en présence de nœuds
+byzantins. En particulier, si les nœuds légitimes développent une préférence pour une certaine couleur, un adversaire
+byzantin pourra inverser la couleur des nœuds afin de maintenir le système à l'équilibre, empêchant ainsi de prendre une
+décision. Nous étudions ce problème dans notre premier protocole BFT qui ajoute un stockage de l'état sur les nœuds.
 }{
 %O We next examine how to extend Slush to tolerate Byzantine behavior.
-Nous examinons ensuite comment améliorer Slush pour être tolérant au problème des généraux byzantins.
+Nous examinons ensuite la manière de fournir à Slush une tolérance aux comporements byzantins.
 }
 
-\subsection{Snowflake: BFT}
+\subsection{Snowflake\,: BFT}
 
-Snowflake améliore Slush en ajoutant un compteur unique qui capture la force de conviction d'un noeud dans sa couleur
-actuelle. Ce compteur associé à chaque noeud stocke le nombre d'échantillons du réseau consécutifs que le noeud a
-sollicité et qui ont retourné la même couleur. Un noeud accepte sa couleur actuelle lorsque son compteur atteint $\beta$,
-un autre paramètre de sécurité. La Figure~\ref{fig:snowflake-loop} montre le protocole amélioré qui inclue les
-modifications suivantes:
+Snowflake améliore Slush en ajoutant un compteur unique qui capture la force de conviction d'un nœud concernant sa couleur
+actuelle. Ce compteur associé à chaque nœud stocke le nombre d'échantillons du réseau consécutifs que le nœud a
+sollicité et qui ont retourné la même couleur. Un nœud accepte la couleur actuelle lorsque son compteur atteint $\beta$,
+un autre paramètre de sécurité. La figure~\ref{fig:snowflake-loop} montre le protocole amélioré qui inclut les
+modifications suivantes\,:
 
 %O Snowflake augments Slush with a single counter that captures the strength of a node's conviction in its current color.
 %O This per-node counter stores how many consecutive samples of the network by that node have all yielded the same color.
@@ -570,9 +569,9 @@ modifications suivantes:
 %O the following modifications:
 
 \begin{compactenum}
-	\item Chaque node maintient un compteur $\mathit{cnt}$;
-    \item A chaque changement de couleur, le compteur $\mathit{cnt}$ se réinitialise à 0;
-    \item Après chaque requête réussie qui retourne $\ge \alpha$ réponses en faveur de la même couleur que le noeud,
+	\item Chaque nœud maintient un compteur $\mathit{cnt}$\,;
+    \item À chaque changement de couleur, le compteur $\mathit{cnt}$ se réinitialise à 0\,;
+    \item Après chaque requête réussie qui renvoie $\ge \alpha$ réponses en faveur de la même couleur que le nœud,
       ce dernier incrémente $\mathit{cnt}$.
 \end{compactenum}
 
@@ -646,31 +645,31 @@ modifications suivantes:
 \end{algorithmic}
 \end{figure}
 
-Quand le protocole est correctement parametré pour un seuil donné de noeuds byzantins et un niveau de garantie
+Quand le protocole est correctement paramétré pour un seuil donné de nœuds byzantins et un niveau de garantie
 $\varepsilon$, il peut garantir à la fois la sécurité de fonctionnement (P1) et la vitalité (P2, P3).
-Comme nous le démontrons plus loin, il existe un état irréversible à partir duquel une décision est inévitable. Les noeuds
+Comme nous le démontrons plus loin, il existe un état irréversible à partir duquel une décision est inévitable. Les nœuds
 légitimes commencent à se positionner après cet état irréversible et adoptent la même couleur. Une intuition
-supplémentaire, que nous ne détaillons pas dans ce papier, introduit l'existence d'un point de changement de phase à
-partir duquel les nodes byzantins perdent toute capacité à maintenir le réseau dans un état bivalent.
+supplémentaire, que nous ne détaillerons pas dans ce papier, indique l'existence d'un point de changement de phase à
+partir duquel les nœuds byzantins perdent toute capacité à maintenir le réseau dans un état bivalent.
 
 %O When the protocol is correctly parameterized for a given threshold of Byzantine nodes and a desired $\varepsilon$-guarantee, it can ensure both safety (P1) and liveness (P2, P3).
 %O As we later show, there exists an irreversible state after which a decision is inevitable. Correct nodes begin to commit past the irreversible state to adopt the same color, whp. For additional intuition, which we do not expand in this paper, there also exists a phase-shift point, where the Byzantine nodes lose ability to keep network in a bivalent state.
 
 %O \subsection{Snowball: Adding Confidence}
 
-\subsection{Snowball: Introduire la notion de confiance}
+\subsection{Snowball\,: ajout de la confiance}
 
-La notion d'état de Snowflake est éphémère: le compteur est réinitialisé à chaque changement de couleur.
+La notion d'état de Snowflake est éphémère\,: le compteur est réinitialisé à chaque changement de couleur.
 Snowball améliore Snowflake avec des \emph{compteurs de confiance} qui capturent le nombre de requêtes ayant retourné
-un résultat en faveur de la couleur du noeud au dessus d'un certain seuil (Figure ~\ref{fig:snowball-loop}).
-Un node prend une décision s'il obtient $\beta$ réponses consécutives en faveur d'une couleur. Cependant il change
+un résultat en faveur de la couleur du nœud au dessus d'un certain seuil (figure ~\ref{fig:snowball-loop}).
+Un nœud prend une décision s'il obtient $\beta$ réponses consécutives en faveur d'une couleur. Cependant, il change
 sa préférence uniquement sur la base de la confiance totale accumulée. Les différences entre Snowflake et Snowball
-sont:
+sont les suivantes\,:
 
 \begin{compactenum}
-    \item Après chaque requête réussie, le noeud incrémente son compteur de confiance associé à la couleur retournée.
-    \item Un noeud change de couleur quand la confiance associée à sa couleur actuelle devient inférieure à la
-      valeur de la confiance associée à  la nouvelle couleur.
+    \item Après chaque requête réussie, le nœud incrémente son compteur de confiance associé à la couleur retournée\,;
+    \item Un nœud change de couleur quand la confiance associée à sa couleur actuelle devient inférieure à la
+      valeur de la confiance associée à la nouvelle couleur.
 \end{compactenum}
 
 %O Snowflake's notion of state is ephemeral: the counter gets reset with every color flip.
@@ -685,7 +684,7 @@ sont:
 
 \section{Analyse}
 \label{sec:analysis}
-Pour des raisons de manque de place, nous déplaçons certains détails importants vers l'Annexe~\ref{sec:full-analysis},
+Pour des raisons de manque de place, nous déplaçons certains détails importants vers l'annexe~\ref{sec:full-analysis},
 dans laquelle nous démontrons que sous certaines hypothèses distinctes et indépendantes, la famille de protocoles de
 consensus Snow possède des propriétés de sûreté de fonctionnement (P1) et de vitalité (P2, P3). Dans cette section,
 nous résumons nos résultats principaux en fournissant des ébauches de preuves.
@@ -695,12 +694,12 @@ nous résumons nos résultats principaux en fournissant des ébauches de preuves
 %O Due to space limits, we move some core details to Appendix~\ref{sec:full-analysis}, where we show that under certain independent and distinct assumptions, the Snow family of consensus protocols provide safety (P1) and liveness (P2, P3) properties.
 %O In this section, we summarize our core results and provide some proof sketches.
 
-\paragraph{Notation} En considérant que le réseau consiste d'un ensemble de $n$ noeuds (représentés par l'ensemble
-$\mathcal{N}$), où $c$ sont des noeuds légitimes (représentés par l'ensemble $\mathcal{C}$) et $f$ sont les noeuds
-byzantins (représentés par l'ensemble $\mathcal{B}$). Soient $u, v \in \mathcal{C}$ des références à deux noeuds
+\paragraph{Notation} En considérant que le réseau consiste en un ensemble de $n$ nœuds (représentés par l'ensemble
+$\mathcal{N}$), où $c$ sont des nœuds légitimes (représentés par l'ensemble $\mathcal{C}$) et $f$ sont les nœuds
+byzantins (représentés par l'ensemble $\mathcal{B}$). Soient $u, v \in \mathcal{C}$ des références à deux nœuds
 légitimes pris au hasard dans le réseau. Soient $k, \alpha, \beta \in \mathbb{Z}^+$ des entiers positifs où
 $\alpha > \floor{k/2}$. A partir de maintenant, $k$ fera toujours référence à la taille des déchantillons du réseau,
-où $k \leq n$, et $\alpha$ sera le seuil de majorité requis pour considérer l'expérience de vote comme ``réussie''.
+où $k \leq n$, et $\alpha$ sera le seuil de majorité requis pour considérer l'expérience de vote comme «\,réussie\,».
 En général, nous définissons $\mathcal{S}$ comme étant l'état (ou la configuration) du réseau à tout moment.
 
 %O \paragraph{Notation} Let the network consist of a set of $n$ nodes (represented by set $\mathcal{N}$), where $c$ are correct nodes (represented by set $\mathcal{C}$) and $f$ are Byzantine nodes (represented by set $\mathcal{B}$).
@@ -708,25 +707,25 @@ En général, nous définissons $\mathcal{S}$ comme étant l'état (ou la config
 %O
 
 \paragraph{Framework de modélisation} Afin de modéliser nos protocoles de manière formelle, nous utilisons des
-processus Markov à temps continu (CTMC). L'espace contenant les états est dénombrable (et fini), et les transitions
-entre états s'opèrent sur un espace de temps continu. Les CTMCs proposent une modélisation naturelle de nos protocoles
-sachant que les transitions entre états ne se font pas par étapes et en marche ordonnée pour chaque noeud (à la fin de
-chaque unité de temps) mais arrivent plutôt à n'importe quel moment et indépendamment des autres noeuds.
+processus de Markov à temps continu (CTMC). L'espace contenant les états est dénombrable (et fini), et les transitions
+entre états s'opèrent sur un espace de temps continu. Les CTMC proposent une modélisation naturelle de nos protocoles
+sachant que les transitions entre états ne se font pas par étapes et en marche ordonnée pour chaque nœud (à la fin de
+chaque unité de temps) mais arrivent plutôt à n'importe quel moment et indépendamment des autres nœuds.
 
-Nous nous concentrons sur un consensus binaire, même si les résultats en term de sûreté de fonctionnement se
-généralisent sur plus de deux valeurs. Nous pouvons imaginer le réseau comme un ensemble de noeuds colorés soit en
-rouge soit en bleu, et nous ferons référence à cette configuration à l'instant $t$ comme étant $\mathcal{S}_t$.
-Nous modélisons nos protocoles à travers un processus à temps continu contenant deux états, dans lequel tous les noeuds
-sont rouges ou tous les noeuds sont bleus. L'espace $\mathcal{S}$ des états du processus stochastique est une version
-condensée de l'espace de configuration complet, où chaque état $\{0, \dots, n\}$ représente le nombre total de noeuds
+Nous concentrons l'étude sur un consensus binaire, même si les résultats en termes de sûreté de fonctionnement se
+généralisent pour plus de deux valeurs. Nous pouvons imaginer le réseau comme un ensemble de nœuds colorés, soit en
+rouge, soit en bleu, et nous ferons référence à cette configuration à l'instant $t$ comme étant $\mathcal{S}_t$.
+Nous modélisons nos protocoles à travers un processus à temps continu contenant deux états, dans lequel tous les nœuds
+sont rouges ou tous les nœuds sont bleus. L'espace $\mathcal{S}$ des états du processus stochastique est une version
+condensée de l'espace de configuration complet, où chaque état $\{0, \dots, n\}$ représente le nombre total de nœuds
 bleus dans le système.
 
 La simplification qui nous permet d'analyser ce système consiste à s'affranchir du besoin de garder un historique de
-tous les chemins d'exécution, ainsi que toutes les stratégies d'attaque possibles, et de se concentrer plutôt
-entièrement sur un unique état, sans considérer la manière d'arriver à cet état. Plus spécifiquement, l'idée principale
+tous les chemins d'exécution, ainsi que de toutes les stratégies d'attaque possibles, et de se concentrer 
+entièrement sur un unique état quelle que soit la manière d'arriver à celui-ci. Plus spécifiquement, l'idée principale
 à retenir de notre analyse est l'identification d'un état \textit{d'irréversibilité} du système, cet état à partir
-duquel un tel nombre de noeuds légitimes a adopté soit la couleur rouge soit la couleur bleue que la possibilité de
-revenir à la couleur minoritaire est très peu probable.
+duquel un tel nombre de nœuds légitimes a adopté soit la couleur rouge soit la couleur bleue que la probabilité de
+revenir à la couleur minoritaire est très faible.
 
 %O \paragraph{Modelling Framework} To formally model our protocols, we use continuous-time Markov processes (CTMC).
 %O The state space is enumerable (and finite), and state transitions occur in continuous time.
@@ -744,13 +743,13 @@ revenir à la couleur minoritaire est très peu probable.
 %O \subsection{Safety}
 
 \paragraph{Slush}
-En partant du principe que tous les noeuds partagent le même $\mathcal{N}$, et en Annexe~\ref{sec:full-analysis-churn},
-nous expliquons comment relâcher le besoin pour les noeuds d'avoir connaissance de leur appartenance. Nous modélisons
-les dynamiques du système à travers un processus à temps continu contenant deux états, tous les noeuds rouges ou tous
-les noeuds bleus. Prenons $\{X_{t \geq 0}\}$ la variable aléatoire qui décrit l'état du système à l'instant $t$, où
+Nous partons du principe que tous les nœuds partagent le même $\mathcal{N}$, et 
+nous expliquons en annexe~\ref{sec:full-analysis-churn} comment assouplir l'exigence de la connaissance des participants. Nous modélisons
+les aspects dynamiques du système grâce à un processus à temps continu contenant deux états, tous les nœuds étant rouges ou tous  % HOULA dynamics → dynamique, comme economics
+les nœuds étant bleus. Soit $\{X_{t \geq 0}\}$ la variable aléatoire qui décrit l'état du système à l'instant $t$, où
 $X_0 \in \{0, \dots, c\}$.
-Nous commençons par détailler le résultat le plus important des dynamiques de sûreté de fonctionnement de notre
-processus: les probabilités de \emph{réversibilité} du processus \textbf{Slush}. Tous les autres résultats formels de
+Nous commençons par détailler le résultat le plus important de la dynamique de la sûreté de fonctionnement de notre
+processus\,: les probabilités de \emph{réversibilité} du processus \textbf{Slush}. Tous les autres résultats formels de
 ce papier sont, en simplifiant, des dérivations et améliorations intuitives de ce résultat.
 
 %0 \paragraph{Slush}
@@ -763,8 +762,8 @@ ce papier sont, en simplifiant, des dérivations et améliorations intuitives de
 
 \begin{theorem}
 Prenons la configuration du système à l'instant $t$ comme étant $\mathcal{S}_t = n/2 + \delta$, ce qui signifie que le
-réseau a dérivé de $2\delta$ noeuds bleus de plus que les noeuds rouges ($\delta = 0$ signifie que rouges et bleus
-sont en nombre égal). $\xi_\delta$ étant la probabilité d'un basculement vers l'état où tous les noeuds sont rouges,
+réseau a dérivé de $2\delta$ nœuds bleus de plus que les nœuds rouges ($\delta = 0$ signifie que rouges et bleus
+sont en nombre égal). $\xi_\delta$ étant la probabilité d'un basculement vers l'état où tous les nœuds sont rouges,
 nous avons donc pour tout $0 \leq \delta \leq n/2$
 \begin{equation}
 \begin{split}
@@ -795,18 +794,18 @@ Chvatal~\cite{chvatal1979tail}.
 
 Nous notons que les bornes de Chvatal sont introduites ici dans un but de simplification et sont extrêmement faibles.
 Nous laissons l'expression dans sa forme complète dans le Théorème~\ref{theorem:slush_prob_convergence_minority}
-disponible en annexe, qui est aussi bien plus fort que la borne de Chvatal.
+disponible en annexe, qui est aussi significativement plus fort que la borne de Chvatal.
 Néanmoins, l'utilisation de la borne de Chvatal nous permet de faire l'observation qui consiste à dire qu'au fur et à
-mesure que la dérivation $\delta$ augmente, pour un $\alpha$ et un $k$ constants, la probabilité de basculer vers la
-valeur minoritaire décroît \emph{de manière exponentielle} (en fait encore plus rapidement vu qu'il y a un terme
-quadratique dans l'exposant inverse). De plus, la même observation est valable si l'on fait croître $\alpha$ en gardant
+mesure que la dérivation $\delta$ augmente, pour un $\alpha$ et un $k$ constants, la probabilité de basculer vers la   % HOULA drift
+valeur minoritaire décroît \emph{de manière exponentielle} (en fait encore plus rapidement puisqu'il y a un terme
+quadratique dans l'exposant inverse). De plus, cette même observation est valable si l'on fait croître $\alpha$ en gardant
 $k$ constant.
 
-Les conclusions de ce théorème démontreint une propriété clé du système: une fois que le réseau perd sa bivalence
-(ex: $\delta > 0$), il tend à se renverser et converger rapidement vers la couleur majoritaire et il devient alors
+Les conclusions de ce théorème démontrent une propriété clef du système: une fois que le réseau perd sa bivalence
+(ex: $\delta > 0$), il tend à se renverser et à converger rapidement vers la couleur majoritaire, et il devient alors
 suffisamment improbable qu'il rebascule vers la couleur minoritaire. C'est cette propriété fondamentale que nous
-exploitons dans nos protocoles, et ce qui les rend sûrs malgré le fait que l'échantillonnage se fait sur une petite
-partie du réseau de taille fixe. Le résultat principal qui s'en suit pour les garanties de sûreté de Snowflake consiste
+exploitons dans nos protocoles, et c'est ce qui les rend sûrs malgré le fait que l'échantillonnage se fait sur une petite
+partie du réseau de taille fixe. Le résultat principal qui s'ensuit pour les garanties de sûreté de fonctionnement de Snowflake consiste
 à trouver des régions (à partir de paramètres spécifiquement choisis) où la réversibilité n'est possible qu'à partir
 d'une probabilité maximale $\varepsilon$ même en conditions d'adversité.
 
@@ -818,40 +817,40 @@ d'une probabilité maximale $\varepsilon$ même en conditions d'adversité.
 
 \paragraph{Snowflake}
 
-Dans le cas de Snowflake, nous prenons comme hypothèse qu'une partie des noeuds est antagoniste. Avec Slush, une
+Dans le cas de Snowflake, nous prenons comme hypothèse qu'une partie des nœuds est antagoniste. Avec Slush, une
 fois que le réseau obtient une majorité significative pour l'une des propositions (ex: la couleur bleue), il devient
 improbable qu'une proposition minoritaire (ex: la couleur rouge) puisse être adoptée dans le futur (irréversibilité).
-De plus, les noeuds Slush ont simplement besoin d'exécuter le protocole pour un nombre déterministe $m$ de tours qui
-est connu en amont de l'exécution du protocole. Lorsqu'on introduit des noeuds antagonistes qui suivent des stratégies
-arbitraires, les noeuds ne peuvent simplement plus exécuter le protocole pour un nombre déterministe de tours vu que
-les adversaires peuvent affecter la valeur de $m$ de manière non déterministe. A la place, les noeuds légitimes doivent
-implémenter un mécanisme pour explicitement détecter que l'irréversibilité a été atteinte. Dans ce but, dans Snowflake
-chaque noeud légitime implémente une fonction de décision, $\mathcal{D}(u, \mathcal{S}_t, blue) \rightarrow \{0, 1\}$,
-qui est une variable aléatoire qui retourne $1$ si le noeud $u$ détecte que l'état d'irréversibilité a été atteint à
+De plus, les nœuds Slush ont simplement besoin d'exécuter le protocole pour un nombre déterministe $m$ de tours qui
+est connu en amont de l'exécution du protocole. Lorsqu'on introduit des nœuds antagonistes qui suivent des stratégies
+arbitraires, les nœuds ne peuvent tout simplement plus exécuter le protocole pour un nombre déterministe de tours puisque
+les adversaires peuvent affecter la valeur de $m$ de manière non déterministe. En revanche, les nœuds légitimes doivent
+implémenter un mécanisme pour explicitement détecter que l'irréversibilité a été atteinte. Dans ce but, 
+chaque nœud légitime de Snowflake implémente une fonction de décision, $\mathcal{D}(u, \mathcal{S}_t, blue) \rightarrow \{0, 1\}$,
+qui est une variable aléatoire qui retourne $1$ si le nœud $u$ détecte que l'état d'irréversibilité a été atteint à
 l'instant $t$ pour bleu. Ce mécanisme de décision est probabiliste, ce qui veut dire qu'il peut échouer, même s'il est
 conçu pour que la probabilité de cet échec soit négligeable. Nous pouvons maintenant ébaucher la preuve de Snowflake.
 
-\noindent \emph{Ebauche de preuve}. Nous définissons la stratégie d'échec comme étant l'évênement lors duquel deux
-noeuds légitimes $u$ et $v$ décident entre le bleu et le rouge, ex: $\mathcal{D}(u, \mathcal{S}_t, bleu) \rightarrow 1$
+\noindent \emph{Ébauche de preuve}. Nous définissons la stratégie d'échec comme étant l'événement lors duquel deux
+nœuds légitimes $u$ et $v$ décident entre le bleu et le rouge, ex: $\mathcal{D}(u, \mathcal{S}_t, bleu) \rightarrow 1$
 et $\mathcal{D}(v, \mathcal{S}_{t'}, rouge) \rightarrow 1$, pour deux instants $t$ et $t'$. Nous modélisons une fois de
 plus le système comme un processus à temps aléatoire. L'espace des états est défini de la même manière que pour Slush.
-Néanmoins, nous observons des subtilités critiques. Tout d'abord, même si tous les noeuds légitimes acceptent une
-couleur, les noeuds byzantins peuvent toujours basculer vers l'autre couleur. Ensuite nous devons aussi prendre en
+Néanmoins, nous observons des subtilités critiques. Tout d'abord, même si tous les nœuds légitimes acceptent une
+couleur, les nœuds byzantins peuvent toujours basculer vers l'autre couleur. Puis, nous devons aussi prendre en
 considération le mécanisme de décision $\mathcal{D}(*)$. Pour cette analyse, nous nous affranchissons du besoin de
 garder l'historique de toutes les configurations du réseau soumises à toutes les stratégies antagonistes et prenons pour
-hypothèse qu'un noeud $u$ décide d'abord d'adopter la couleur bleue. Ensuite en fonction de l'état du réseau suite à la
-décision de $u$, nous calculons la probabilité qu'un autre noeud $v$ adopte le rouge, qui est fonction à la fois de la
+hypothèse qu'un nœud $u$ décide d'abord d'adopter la couleur bleue. Ensuite, en fonction de l'état du réseau suite à la
+décision de $u$, nous calculons la probabilité qu'un autre nœud $v$ adopte le rouge, qui est fonction à la fois de la
 probabilité que le réseau bascule vers l'état minoritaire bleu et que $v$ bascule vers cet état.
 Nous démontrons qu'en choisissant correctement $k$, $\alpha$, et $\beta$, nous pouvons construire des instances
 extrêmement sécurisées de Snowflake (ex: échec de sécurité avec une probabilité de $\leq \varepsilon$) quand le réseau
-atteint un biais de $\delta$, comme le montre la Figure~\ref{fig:states_feasible_solutions}. Un exemple concret est
-présenté dans la Figure~\ref{fig:fandepsilon}.
+atteint un biais de $\delta$, comme le montre la figure~\ref{fig:states_feasible_solutions}. Un exemple concret est
+présenté en figure~\ref{fig:fandepsilon}.
 
 \begin{figure}[h]
 \begin{center}
 \input{figures/analysis2}
-\caption{Représentation de l'état d'irréversibilité qui existe quand -- même en la présence de $f$ noeuds byzantins --
-  le nombre de noeuds légitimes bleus dépasse le nombre de noeuds légitimes rouges de plus de $2\delta$.
+\caption{Représentation de l'état d'irréversibilité qui existe quand -- même en la présence de $f$ nœuds byzantins --
+  le nombre de nœuds légitimes bleus dépasse le nombre de nœuds légitimes rouges de plus de $2\delta$.
 }
 \label{fig:states_feasible_solutions}
 \end{center}
@@ -883,7 +882,7 @@ Snowball est une amélioration en terme de sécurité par rapport à Snowflake, 
 
 \noindent \emph{Ebauche de preuve}. Nous appliquons des inégalités de concentration pour prouver qu'une fois le système
 ayant atteint l'état d'irréversibilité, alors l'évolution de la confiance envers la couleur majoritaire adoptée va
-augmenter constamment et dériver de plus en plus loin des noeuds de couleur minoritaire, jusqu'à rendre la réversibilité
+augmenter constamment et dériver de plus en plus loin des nœuds de couleur minoritaire, jusqu'à rendre la réversibilité
 de plus en plus improbable avec le temps. Si cette dérive finit par se retourner, alors l'analyse de la réversibilité
 devient identique à celle de Snowflake.
 
@@ -897,31 +896,31 @@ devient identique à celle de Snowflake.
 
 Nous prenons pour hypothèse la présence antagoniste observée $0 \leq f' \leq n(k - \alpha - \psi)/k \leq f$, où $\psi$
 représente la zone tampon.
-Plus $\psi$ est grand, plus la capacité du mécanisme de décision à tendre vers une valeur est rapide. Si bien sûr $\psi$
-tend vers zéro ou devient négatif alors nous dépassons la limite supérieure de tolérance antagoniste pour le système
-paramétré, en conséquence l'attaquant peut, avec une haute probabilité, bloquer la convergence en choisissant simplement
-de ne pas répondre, et ceci même si les garanties de sûreté s'appliquent toujours.
+Plus $\psi$ est grand, plus la capacité du mécanisme de décision à tendre vers une valeur est rapide. Bien sûr, si $\psi$
+tend vers zéro ou devient négatif, alors nous dépassons la limite supérieure de tolérance antagoniste pour le système
+paramétré, et en conséquence l'attaquant peut, avec une haute probabilité, bloquer la convergence en choisissant simplement
+de ne pas répondre, ceci même si les garanties de sûreté de fonctionnement s'appliquent toujours.
 
 En partant de $\psi$ strictement positif, la convergence est strictement finie pour toutes les configurations où une
 proposition a un support d'au moins $\alpha$. De plus, non seulement la convergence est finie avec une probabilité de
 un, mais nous avons aussi une probabilité strictement positive de convergence jusqu'à un instant borné $t_{max}$, comme
-décrit dans la Proposition~\ref{lemma:finitetermination}, qui découle du Théorème~\ref{theorem:mean-convergence-time}.
+décrit dans la proposition~\ref{lemma:finitetermination}, qui découle du théorème~\ref{theorem:mean-convergence-time}.
 Cela précise la propriété de vitalité P2.
 
-\noindent \emph{Ebauche de preuve}. En utilisant la construction du système pour prouver l'irréversibilité, nous
-caractérisons la distribution de la moyenne du temps passé (les périodes "sojourn") dans chaque état avant que le
+\noindent \emph{Ébauche de preuve}. En utilisant la construction du système pour prouver l'irréversibilité, nous
+caractérisons la distribution de la moyenne du temps passé (les périodes de séjour) dans chaque état avant que le   % HOULA sojourn
 système ne termine son exécution en adoptant l'un des états. Ce temps de convergence est l'union de ces périodes.
 
-Pour les transactions non conflictuelles, vu que l'attaquant est incapable de générer un conflit, le temps de décision
-est simplement le temps de mélange, qui est $\Oh{\log{n}}$. La vitalité guarantit qu'une configuration de réseau
+Pour les transactions non conflictuelles, l'attaquant étant incapable de générer un conflit, le temps de décision
+est simplement le temps de mélange $\Oh{\log{n}}$. La vitalité guarantit qu'une configuration de réseau
 entièrement bivalent atteint un temps de convergence optimal de $\Oh{\log{n}}$ tours si le nombre d'attaquants est au
-plus $\Oh{\sqrt{n}}$, pour $\alpha = \floor{k/2} + 1$. Nous donnons plus de détails dans la
-Proposition~\ref{lemma:centrallimit}.
-Quand le nombre de noeuds antagonistes dépasse $\Oh{\sqrt{n}}$, le nombre le plus pessimiste de tours grandit de manière
-polynomiale, et quand $f$ tend vers $n/2$ ce nombre de tours tend vers des taux de convergence exponentiels.
+plus $\Oh{\sqrt{n}}$, pour $\alpha = \floor{k/2} + 1$. Nous donnons plus de détails en
+lemme~\ref{lemma:centrallimit}.
+Quand le nombre de nœuds antagonistes dépasse $\Oh{\sqrt{n}}$, le nombre le moins favorable de tours grandit de manière
+polynomiale, et quand $f$ tend vers $n/2$, ce nombre de tours tend vers des taux de convergence exponentiels.
 
-\noindent \emph{Ebauche de preuve}. Nous modifions le Théorème~\ref{theorem:mean-convergence-time} en y incluant le
-nombre de nodes antagonistes, ce qui annule toute déséquilibre dans le réseau en le gardant entièrement bivalent.
+\noindent \emph{Ebauche de preuve}. Nous modifions le théorème~\ref{theorem:mean-convergence-time} en y incluant le
+nombre de nœuds antagonistes, ce qui annule tout déséquilibre dans le réseau en le gardant entièrement bivalent.
 
 %O \subsection{Liveness}
 %O
@@ -940,18 +939,18 @@ nombre de nodes antagonistes, ce qui annule toute déséquilibre dans le réseau
 %O
 %O \noindent\emph{Proof Sketch.} We modify Theorem~\ref{theorem:mean-convergence-time} to include the adversary, which reverts any imbalances in the network by keeping network fully bivalent.
 
-\paragraph{Consensus multi-valeur}
+\paragraph{Consensus multi-valeurs}
 
-Notre protocole de consensus binaire pourrait supporter des consensus multi-valeur en exécutant des instances binaires
+Notre protocole de consensus binaire pourrait supporter des consensus multi-valeurs en exécutant des instances binaires
 logarithmiques, une pour chaque bit de la valeur proposée. Cependant, une telle réduction théorique n'est pas
-forcément efficace en pratique. A la place, nous pourrions directement incorporer des valeurs multiples comme des
-couleurs multiples dans le protocole en permettant toujours la généralisation de l'analyse de sûreté.
+forcément efficace en pratique. À la place, nous pourrions directement incorporer des valeurs multiples comme des
+couleurs multiples dans le protocole en permettant toujours la généralisation de l'analyse de sûreté de fonctionnement.
 
-Pour ce qui est de la vitalité nous ébauchons en Annexe~\ref{sec:sync-heuristic} un mécanisme d'initialisation sans
-leader, qui de toute attente nécessite $\Oh{\log{n}}$ tours dans l'hypothèse que le réseau soit synchronisé. Bien que
-la conception de ce mécanisme soit intéréssante, il est à noter qu'un tel mécanisme n'est pas nécéssaire pour un système
-de paiement décentralisé, comme nous le démontrons en Section~\ref{sec:implementation}.
-Finalement, nous développons les divergences entre vues et pertes en Annexe~\ref{sec:full-analysis-churn}.
+Pour ce qui est de la vitalité, nous ébauchons en annexe~\ref{sec:sync-heuristic} un mécanisme d'initialisation sans
+dirigean, qui nécessite $\Oh{\log{n}}$ tours attendus dans l'hypothèse que le réseau est synchronisé. Bien que
+la conception de ce mécanisme soit intéressante, il est à noter qu'un tel mécanisme n'est pas nécessaire pour un système
+de paiement décentralisé, comme nous le démontrons en section~\ref{sec:implementation}.
+Finalement, nous développons le roulement, dans le sens de renouvellement des nouds, et les divergences de vues en annexe~\ref{sec:full-analysis-churn}.
 
 %0 \paragraph{Multi-Value Consensus}
 %0 Our binary consensus protocol could support multi-value consensus by running logarithmic binary instances, one for each bit of the proposed value. However, such theoretical reduction might not be efficient in practice. Instead, we could directly incorporate multi-values as multi-colors in the protocol, where safety analysis could still be generalized.
@@ -998,7 +997,7 @@ Finalement, nous développons les divergences entre vues et pertes en Annexe~\re
 %\label{sec:evaluation}
 
 %O Using Snowball consensus, we have implemented a bare-bones payment system, Avalanche, which supports Bitcoin transactions. In this section, we describe the design and sketch how the implementation can support the value transfer primitive at the center of cryptocurrencies.
-Grâce au consensus Snowball, nous avons implémenté un système de paiement simpliste, Avalanche, qui supporte les transactions Bitcoin. Dans cette section, nous en décrivons la conception et schématisons la manière dont l'implémentation peut supporter la primitive de transfert de valeur au cœur des cryptomonnaies.
+Grâce au consensus Snowball, nous avons implémenté un système de paiement élémentaire, Avalanche, qui supporte les transactions Bitcoin. Dans cette section, nous en décrivons la conception et schématisons la manière dont l'implémentation peut supporter la primitive de transfert de valeur au cœur des cryptomonnaies.
 %O Deploying a full cryptocurrency involves bootstrapping, minting, staking, unstaking,
 %O and inflation control. While we have solutions for these issues, their full
 %O discussion is beyond the scope of this paper, whose focus is centered on the
@@ -1013,7 +1012,7 @@ Le déploiement complet d'une cryptomonnaie implique l'initialisation, l'émissi
 %First, instead of a single replicated state machine (RSM) model, where the system determines a sequence of totally-ordered transactions $T_0, T_1, T_2, \ldots$ issued by any client, we adopt a \emph{parallel consensus model}, where each client interacts independently with its own RSMs and optionally transfers ownership of its RSM to another client. The system establishes only a partial order between dependent transactions.
 %Second,
 %O In a cryptocurrency setting, cryptographic signatures enforce that only a key owner is able to create a transaction that spends a particular coin. Since correct clients follow the protocol as prescribed and never double spend coins, in Avalanche, they are guaranteed both safety and liveness for their \emph{virtuous} transactions. In contrast, liveness is not guaranteed for \emph{rogue} transactions, submitted by Byzantine clients, which conflict with one another. Such decisions may stall in the network, but have no safety impact on virtuous transactions.
-Dans une configuration de cryptomonnaie, les signatures cryptographiques imposent que seul le possesseur de la clef soit capable de créer une transaction dépensant un dépôt donné. Comme les clients corrects suivent le protocole tel qu'il est prescrit et ne peuvent pratiquer la double dépense, ils ont la garantie tant de sûreté de fonctionnement que de vitalité pour leurs transactions \emph{vertueuses}. Par contraste, la vitalité n'est pas garantie pour les transactions \emph{malveillantes} soumises par des clients byzantins, lesquelles entrent mutuellement en conflit. Ces décisions peuvent arrêter le réseau mais n'ont pas d'impact sur les transactions vertueuses.
+Dans une configuration de cryptomonnaie, les signatures cryptographiques imposent que seul le possesseur de la clef soit capable de créer une transaction dépensant un dépôt donné. Comme les clients corrects suivent le protocole tel qu'il est prescrit et ne peuvent pratiquer la double dépense, ils ont la garantie tant de la sûreté de fonctionnement que de la vitalité pour leurs transactions \emph{vertueuses}. Par contraste, la vitalité n'est pas garantie pour les transactions \emph{malveillantes} soumises par des clients byzantins, lesquelles entrent mutuellement en conflit. Ces décisions peuvent arrêter le réseau mais n'ont pas d'impact sur les transactions vertueuses.
 %O We show that this is a sensible tradeoff, and that the resulting system is sufficient for building complex payment systems.
 Nous montrons que ce compromis est raisnnable et que le système qui en résulte suffit à bâtir des systèmes de paiement complexes.
 
@@ -1102,7 +1101,7 @@ Les adresses sont identifiées par l'empreinte de leurs clefs publiques et les s
 %0 The full scripting language is used to ensure that a redeem script is authenticated to spend a UTXO\@.
 Le langage de script est utilisé pour s'assurer qu'un script d'échange est authentifié pour dépenser une UTXO\@.
 %O UTXOs are fully consumed by a valid transaction, and may generate new UTXOs spendable by named recipients.
-Les UTXO sont totalement consommées par une transaction valide et peut engendrer de nouvelles UTXO que des destinataires nommés peuvent dépenser.
+Les UTXO sont totalement consommées par une transaction valide et peuvent engendrer de nouvelles UTXO que des destinataires nommés peuvent dépenser.
 %O Multi-input transactions consume multiple UTXOs, and in Avalanche, may appear in multiple conflict sets.
 Les transactions multi-entrées consomment plusieurs UTXO et, dans Avalanche, peuvent apparaître dans plusieurs ensembles de conflits.
 %O To account for these correctly, we represent \emph{transaction-input} pairs (e.g. $\texttt{In}_{a1}$) as Avalanche vertices.
@@ -1110,7 +1109,7 @@ Pour les prendre correctement en compte, nous représentons les paires d'entrée
 %O The conflict relation of transaction-input pairs is transitive because of each pair only spends one unspent output.
 La relation des conflits de paires de sorties de transation est transitive car une seule paire ne dépense qu'une sortie non dépensée.
 %O Then, we use the conjunction of \textsc{isAccepted} for all inputs of a transaction to ensure that no transaction will be accepted unless all its inputs are accepted (Figure~\ref{fig:cash-system-b}). In other words, a transaction is accepted only if all its transaction-input pairs are accepted in their respective Snowball conflict sets.
-Nous utilisons la conjonction de \textsc{isAccepted} pour toutes les entrées d'une transaction pour nous assurer qu'aucune transaction ne sera acceptée à moins que toutes ses entrées ne soient acceptées (Figure~\ref{fig:cash-system-b}). En d'autres termes, une transaction n'est acceptée que si toutes ses paires d'entrées de transaction sont acceptées dans leurs ensembles de conflits Snowball respectifs.
+Nous utilisons la conjonction de \textsc{isAccepted} pour toutes les entrées d'une transaction pour nous assurer qu'aucune transaction ne sera acceptée à moins que toutes ses entrées ne soient acceptées (figure~\ref{fig:cash-system-b}). En d'autres termes, une transaction n'est acceptée que si toutes ses paires d'entrées de transaction sont acceptées dans leurs ensembles de conflits Snowball respectifs.
 %O Following this idea, we finally implement the DAG of transaction-input pairs such that multiple
 %O transactions can be batched together per query.
 Selon cette idée, nous pouvons finalement implémenter le DAG des paires d'entrées de transactions tel que plusieurs transactions peuvent être regroupées par requête.
@@ -1240,7 +1239,7 @@ Nous pouvons résoudre cette tension et fournir une garantie de vitalité à l'a
 %O First we adopt an adaptive parent selection strategy, where transactions are attached at the live edge of the DAG, and are retried with new parents closer to the genesis vertex. This procedure is guaranteed to terminate with uncontested, decided parents, ensuring that a transaction cannot suffer liveness failure due to contested, rogue transactions.
 D'abord nous adoptons une stratégie adaptative de sélection des parents, où les transactions sont attachées sur le bord actif du DAG et sont réessayées avec de nouveaux parents plus proche du sommet genèse. Cette procédure garantit un achèvement avec des parents incontestés, assurant ainsi qu'une transaction ne peut souffrir de défaillance de vitalité en raison de transactions contestées et malveillantes.
 %O A secondary mechanism ensures that virtuous transactions with decided ancestry will receive sufficient chits. Correct nodes examine the DAG for virtuous transactions that lack sufficient progeny and emit no-op transactions to help increase their confidence.
-Un mécanisme secondaire s'assure que les transactions vertueuses avec une ascendance décidée reçoit suffisamment de \emph{chits}. Les nœuds corrects examinent le DAG pour y trouver des transactions vertueuses manquant d'une progéniture suffisante et émettent des transactions \emph{no-op} pour accroître leur confiance.
+Un mécanisme secondaire s'assure que les transactions vertueuses avec une ascendance décidée reçoivent suffisamment de chits. Les nœuds corrects examinent le DAG pour y trouver des transactions vertueuses manquant d'une progéniture suffisante et émettent des transactions \emph{no-op} pour accroître leur confiance.
 %O With these two mechanisms in place, it is easy to see that, at worst, Avalanche will degenerate into separate instances of Snowball, and thus provide the same liveness guarantee for virtuous transactions.
 Ces deux mécanismes mis en place, il est facile de voir qu'au pire Avalanche dégénérera en instances distinctes de Snowball, fournissant ainsi la même garantie de vitalité pour les transactions vertueuses.
 
@@ -1252,7 +1251,7 @@ Contrairement à d'autres cryptomonnaies~\cite{IOTA} qui utilisent directement l
 %O Because confidence is built by collected chits, and not by just the presence of
 %O a vertex, simply flooding the network with vertices attached to the rejected
 %O side of a subgraph will not subvert the protocol.
-Comme la confiance est bâtie sur les \emph{chits} récoltés, et non simplement par la présence d'un sommet, la simple inondation du réseau par des sommets attachés à une partie rejetée du sous-graphe ne subvertit pas le protocole.
+Comme la confiance se fonde sur les chits récoltés, et non simplement par la présence d'un sommet, la simple inondation du réseau par des sommets attachés à une partie rejetée du sous-graphe ne subvertit pas le protocole.
 
 %O \subsection{Communication Complexity}
 \subsection{Complexité des communications}
@@ -1287,7 +1286,7 @@ Cet article a présenté une nouvelle famille de protocoles de consensus, accomp
 %O \tronly{These protocols are highly efficient and robust, combining the best features of classical and Nakamoto consensus.}
 \tronly{Ces protocoles sont extrêmement efficaces et robustes, et rassemblent les meilleures fonctionnalités des consensus classiques et Nakamoto.}{} 
 %O They scale well, achieve high throughput and quick finality, work without precise membership knowledge, and degrade gracefully under catastrophic adversarial attacks.
-Ils passent bien à l'échelle, permettent un haut débit et une finalité rapide, ne nécessitent pas une connaissance précise des participants et leur fonctionnement ne se dégrade que peu à peu lors d'attaques catastrophiques.
+Ils passent bien à l'échelle, permettent un haut débit et une finalité rapide, ne nécessitent pas une connaissance précise des participants et leur fonctionnement se dégrade progressivement lors d'attaques catastrophiques.
 
 %O There is much work to do to improve this line of research. \tronly{
 Il reste beaucoup à faire dans ce domaine de recherche. \tronly{

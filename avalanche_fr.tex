@@ -4,12 +4,12 @@
 %O maintains a dynamic, append-only directed acyclic graph (DAG) of all known transactions.
 Avalanche consiste en plusieurs instance Snowball à décret unique instanciées en tant que protocole multi-décrets qui maintient un graphe orienté acyclique (\emph{Directed Acyclic Graph},  DAG) dynamique en ajout seul de toutes les transactions connues.
 %O The DAG has a single sink that is the \emph{genesis vertex}.
-Le DAG possède un nœud terminal (\emph{sink}) unique qui est le \emph{genesis vertex}, le sommet genèse. % HOULA sink ? 
+Le DAG possède un nœud terminal (\emph{sink}) unique qui est le \emph{genesis vertex}, le sommet genèse.
 %O Maintaining a DAG provides two significant benefits.
-L'emploi d'un DAG procure deux avantages :
+L'emploi d'un DAG procure deux avantages\,:
 %O First, it improves efficiency, because a single vote on a DAG vertex implicitly votes for all tran
 %O sactions on the path to the genesis vertex.
-D'abord, il est plus efficient car un vote sur un sommet vote implicitement pour toutes les transactions sur le chemin vers le sommet genèse.
+D'abord, il est plus efficient car un vote sur un sommet vote implicitement pour toutes les transactions se trouvant sur le chemin du sommet genèse.
 %O Second, it also improves security, because the DAG intertwines the fate of transactions, similar to the Bitcoin blockchain.
 Ensuite, il améliore également la sécurité parce que le DAG lie fortement le sort des transactions, similaire en cela à la blockchain de Bitcoin.
 %O This renders past decisions difficult to undo without the approval of correct nodes.
@@ -21,7 +21,7 @@ Cela rend les décisions passées difficiles à défaire sans l'approbation des 
 %O When a client creates a transaction, it names one or more \emph{parents}, which are included inseparably in the transaction and form the edges of the DAG\@.
 Quand un client crée une transaction, il nomme un ou plusieurs \emph{parents}, et ceux-ci sont inclus de façon inséparable dans la transaction et forment les bords du DAG\@.
 %O The parent-child relationships encoded in the DAG may, but do not need to, correspond to application-specific dependencies; for instance, a child transaction need not spend or have any relationship with the funds received in the parent transaction.
-Les relations parent-enfant codées dans le DAG peuvent, sans obligation, correspondre à des dépendances spécifiques aux applications ; par exemple, la transaction d'un enfant ne dépense pas nécessairement, ni n'a forcément de relation avec les fonds reçus lors de la transaction parent.
+Les relations parent-enfant codées dans le DAG peuvent, sans obligation, correspondre à des dépendances spécifiques aux applications\,; par exemple, la transaction d'un enfant ne dépense pas nécessairement, ni n'a forcément de relation avec les fonds reçus lors de la transaction parent.
 % These additional relationships entangle the fate of previous decisions made by the system.
 %O We use the term \emph{ancestor set} to refer to all transactions reachable via parent edges back in history, and \emph{progeny} to refer to all children transactions and their offspring.
 Nous utilisons le terme \emph{ensemble ancêtre} pour nous référer à toutes les transactions accessibles par les arêtes parent historisées, et \emph{progéniture} pour nous référer à toutes les transactions enfant et leur descendance.
@@ -34,7 +34,7 @@ La notion de conflit est définie par l'application et est transitive, formant u
 %(Figure~\tronly{\ref{fig:dag-conflict-set}}{\ref{fig:dag-cd}})
 %O (shaded regions in Figure~\ref{fig:dag-cd}), out of which only a single one can be accepted.
 Dans notre application de cryptomonnaie, les transactions qui dépensent les mêmes fonds (\emph{double-dépense}) entrent en conflit et forment un \emph{ensemble de conflits}
-(régions ombrées en Figure~\ref{fig:dag-cd}), duquel une seule peut être acceptée.
+(régions ombrées en figure~\ref{fig:dag-cd}), duquel une seule peut être acceptée.
 %O Note that the conflict set of a virtuous transaction is always a singleton.
 On note que l'ensemble de conflits d'une transaction vertueuse est toujours un singleton.
 %Note that the graph structure of transactions that spend depend on each other, also known as the UTXO graph, is completely independent of the DAG that Avalanche maintains. As a result, any two vertices may be in conflict. Figure~\ref{fig:dag-conflicting-set} shows an example.
@@ -60,14 +60,14 @@ Un nœud ne répond positivement à la requête que si $T$ et toute son ascendan
 %O If more than a threshold of responders vote positively, the transaction is said to collect a \emph{chit}.
 Si un nombre de nœuds répondant positivement est supérieur au seuil, on dit que la transaction récolte un \emph{chit} (un bon).
 %O Nodes then compute their \emph{confidence} as the total number of chits in the progeny of that transaction.
-Les nœuds calculent ensuite leur \emph{confiance} en comptant le nombre de \emph{chits} dans la progéniture de cette transaction.
+Les nœuds calculent ensuite leur \emph{confiance} en comptant le nombre de chits dans la progéniture de cette transaction.
 %O They query a transaction just once and rely on new vertices and possible chits, added to the progeny, to build up their confidence.
-Ils n'envoient qu'une seule requête et se basent sur les nouveaux sommets les \emph{chits} possibles, ajoutés à la progéniture, pour fonder leur confiance.
+Ils n'envoient qu'une seule requête et se basent sur les nouveaux sommets les chits possibles, ajoutés à la progéniture, pour fonder leur confiance.
 %O Ties are broken by an initial preference for first-seen transactions.
 Les liens sont brisés par une préférence initiale pour les transactions vues en premier.
 %O Note that chits are decoupled from the DAG structure, making the protocol immune to attacks where
 %O the attacker generates large, padded subgraphs.
-On note que les \emph{chits} sont découplés de la structure du DAG, rendant le protocol immune aux attaques où un attaquant génère de grands sous-graphes faussement remplis.
+On note que les chits sont découplés de la structure du DAG, rendant le protocole immune aux attaques où un attaquant génère de grands sous-graphes remplis de fausses valeurs.
 
 %O \subsection{Avalanche: Specification}%\tronly{}{\vspace{-0.5em}}
 \subsection{Avalanche\,: Spécification}%\tronly{}{\vspace{-0.5em}}
@@ -187,10 +187,10 @@ On note que les \emph{chits} sont découplés de la structure du DAG, rendant le
 %O Each correct node $u$
 %O keeps track of all transactions it has learned about in set $\mathcal{T}_u$,
 %O partitioned into mutually exclusive conflict sets $\mathcal{P}_T$, $T \in \mathcal{T}_u$.
-Chaque nœud correct $u$ garde la trace de toutes les transactions dont il a été informé dans l'ensemble $\mathcal{T}_u$, partitionné en ensembles de conflits mutuellement exclusifs $\mathcal{P}_T$, $T \in \mathcal{T}_u$.
+Chaque nœud correct $u$ conserve la trace de toutes les transactions dont il a été informé dans l'ensemble $\mathcal{T}_u$, partitionné en ensembles de conflits mutuellement exclusifs $\mathcal{P}_T$, $T \in \mathcal{T}_u$.
 % Transactions are determined to be conflicting based on a deterministic function known to every node.
 %O Since conflicts are transitive, if $T_i$ and $T_j$ are conflicting, then they belong to the same conflict set, i.e. $\mathcal{P}_{T_i} = \mathcal{P}_{T_j}$. This relation may sound counter-intuitive: conflicting transitions have the \emph{equivalence} relation, because they are equivocations spending the \emph{same} funds.
-Comme les conflits sont transitifs, si $T_i$ et $T_j$ sont en conflit, ils appartiennent au même ensemble de conflits, c'est-à-dire $\mathcal{P}_{T_i} = \mathcal{P}_{T_j}$. Cette relation peut sembler contre-intuitive : les transactions en conflit ont la même relation d'\emph{équivalence} car ce sont des équivoques dépensant les \emph{mêmes} fonds.
+Comme les conflits sont transitifs, si $T_i$ et $T_j$ sont en conflit, ils appartiennent au même ensemble de conflits, c'est-à-dire $\mathcal{P}_{T_i} = \mathcal{P}_{T_j}$. Cette relation peut sembler contre-intuitive\,: les transactions en conflit ont la même relation d'\emph{équivalence} car ce sont des équivoques dépensant les \emph{mêmes} fonds.
 %\Jon{By $=$ surely you mean $\neq$?}
 
 %O We write $T' \gets T$ if $T$ has a parent edge to transaction $T'$,
@@ -203,13 +203,13 @@ Les DAG construits par des nœuds différents offrent la garantie d'être compat
 En particulier, si $T' \gets T$, alors tout nœud dans le système qui possède $T$ aura également $T'$ et la même relation $T' \gets T$ ; inversement, si f $T' \cancel{\gets} T$, alors aucun nœud n'arrivera à $T' \gets T$.
 
 %O Each node $u$ can compute a confidence value, $d_u(T)$, from the progeny as follows:
-Chaque nœud $u$ peut calculer une valeur de confiance $d_u(T)$ de sa progéniture comme suit :
+Chaque nœud $u$ peut calculer une valeur de confiance $d_u(T)$ de sa progéniture comme suit\,:
 \[ d_u(T) = \sum_{T' \in \mathcal{T}_u, T \stackrel{*}{\gets} T'}c_{uT'}\]
 %O where $c_{uT'}$ stands for the chit value of $T'$ for node $u$. Each transaction initially has a chit value of $0$ before the node gets
 %O the query results. If the node collects a threshold of $\alpha$ yes-votes after the query, the value $c_{uT'}$ is set to 1, otherwise remains $0$ forever.
-où $c_{uT'}$ représente la valeur de \emph{chit} de $T'$ pour le nœud $u$. Chaque transaction a un valeur de \emph{chit} à $0$ avant que le nœud obtienne les résultats des requêtes. Si le nœud récolte un seuil de $\alpha$ votes «\,oui\,» après la requête, la valeur $c_{uT'}$ est mise à 1, sinon elle reste éternellement à $0$.
+où $c_{uT'}$ représente la valeur de chit de $T'$ pour le nœud $u$. Chaque transaction a un valeur de chit à $0$ avant que le nœud obtienne les résultats des requêtes. Si le nœud récolte un seuil de $\alpha$ votes «\,oui\,» après la requête, la valeur $c_{uT'}$ est mise à 1, sinon elle reste éternellement à $0$.
 %O Therefore, a chit value reflects the result from the one-time query of its associated transaction and becomes immutable afterwards, while $d(T)$ can increase as the DAG grows by collecting more chits in its progeny.
-Donc, une valeur de \emph{chit} reflète le résultat de la requête à un moment donné de ses transactions associées et devient immuable après cela, alors que $d(T)$ peut augmenter au fur et à mesure de la croissance du DAG en collectant d'autres \emph{chit} dans sa progéniture.
+Donc, une valeur de chit reflète le résultat de la requête à un moment donné de ses transactions associées et devient immuable après cela, alors que $d(T)$ peut augmenter au fur et à mesure de la croissance du DAG en collectant d'autres chits dans sa progéniture.
 %O Because $c_T \in \{0, 1\}$, confidence values are monotonic.
 Comme $c_T \in \{0, 1\}$, les valeurs de confiance sont monotones.
 %\Jon{the notation $c_{uT}$ shows up before it's definet. I guess it's the number of chits counted for $T$ by participant $u$?}
@@ -239,7 +239,7 @@ Si chacun des ancêtres $T'$ répond à ce critère, la transaction est dite \em
 %O When $u$ accumulates $k$ responses, it checks whether there are $\alpha$ yes-votes for $T$, and if so grants the chit (chit value $c_T \assign 1$) for $T$.
 Quand $u$ accumule $k$ réponses, il vérifie s'il existe
 %O The above process will yield a labeling of the DAG with a chit value and associated confidence for each transaction~$T$.
-Le processus ci-dessus ramène un étiquetage du DAG avec une valeur de \emph{chit} et une confiance associée pour chaque transaction~$T$.
+Le processus ci-dessus ramène un étiquetage du DAG avec une valeur de chit et une confiance associée pour chaque transaction~$T$.
 
 \begin{figure}
 \begin{center}
@@ -252,29 +252,29 @@ Le processus ci-dessus ramène un étiquetage du DAG avec une valeur de \emph{ch
 \end{figure}
 
 %O Figure~\ref{fig:dag-cd} illustrates a sample DAG built by Avalanche.
-La Figure~\ref{fig:dag-cd} illustre un exemple de DAG construit par Avalanche.
+La figure~\ref{fig:dag-cd} illustre un exemple de DAG construit par Avalanche.
 %O Similar to Snowball, sampling in Avalanche will create a positive feedback for the preference of a single transaction in its conflict set.
-De même que pour Snowball, l'échantillonnage dans Avalanche crée une rétroaction positive pour la préférence d'une seule transaction dans sont ensemble de conflit.
+De même que pour Snowball, l'échantillonnage dans Avalanche crée une rétroaction positive pour la préférence d'une seule transaction dans son ensemble de conflits.
 %O For example, because $T_2$ has larger confidence than $T_3$, its descendants are more likely collect chits in the future compared to $T_3$.
-Par exemple, comme $T_2$ a un indice de confiance supérieur à celui de $T_3$, ses descendants seront plus à même de récolter des \emph{chits} à l'avenir que $T_3$.
+Par exemple, comme $T_2$ a un indice de confiance supérieur à celui de $T_3$, ses descendants seront plus à même de récolter des chits à l'avenir que $T_3$.
 
 %O \tronly{Similar to Bitcoin, Avalanche leaves determining the acceptance point of a transaction to the application. An application supplies an \textsc{isAccepted} predicate that can take into account the value at risk in the transaction and the chances of a decision being reverted to determine when to decide.}{}
 \tronly{Comme Bitcoin, Avalanche laisse à l'application le soin de déterminer le point d'acceptation d'une transaction. Une application fournit un prédicat \textsc{isAccepted} qui peut prendre en compte la valeur en jeu dans la transaction et les chances de réversion d'une décision pour déterminer le moment de cette décision.}{}
 
 %O Committing a transaction can be performed through a \emph{safe early commitment}. For virtuous transactions, $T$ is accepted when it is the only transaction in its conflict set and has a confidence not less than threshold $\beta_1$.
-L'engagement concernant une transaction peut être effectié par un \emph{engagement préalable sûr}. Pour les transactions vertueuses, $T$ est acceptée quand elle est la seule transaction dans son ensemble de conflit et que sa confiance n'est pas inférieure à un seuil $\beta_1$.
+L'engagement concernant une transaction peut être effectué par un \emph{engagement préalable sûr}. Pour les transactions vertueuses, $T$ est acceptée quand elle est la seule transaction dans son ensemble de conflits et que sa confiance n'est pas inférieure à un seuil $\beta_1$.
 %O As in Snowball, $T$ can also be accepted after a $\beta_2$ number of consecutive successful queries.
 Comme dans Snowball, $T$ peut aussi être acceptée après un nombre de requêtes réussies consécutives $\beta_2$.
 %O If a virtuous transaction fails to get accepted due to a problem
 %O with parents, it could be accepted if reissued with different parents.
-Si une transaction vertueuse échoue à être acceptée en raison d'un problème avec ses parents elle peut être acceptée si elle est réémise avec des parents différents.
+Si une transaction vertueuse échoue à être acceptée en raison d'un problème avec ses parents, elle peut être acceptée si elle est réémise avec des parents différents.
 %O Figure~\ref{fig:gossipchain-ongen} shows how Avalanche entangles transactions. Because transactions that consume and generate the same UTXO do not conflict with each other, any transaction can be reissued with different parents.
-La Figure~\ref{fig:gossipchain-ongen} montre comment Avalanche lie les transactions entre elles. Puisque les transactions qui consomment et génèrent la même UTXO n'entrent pas en conflit entre elles, toute transaction peut être réémise avec des parents différents.
+La figure~\ref{fig:gossipchain-ongen} montre comment Avalanche lie les transactions entre elles. Puisque les transactions qui consomment et génèrent la même UTXO n'entrent pas en conflit entre elles, toute transaction peut être réémise avec des parents différents.
 
 \tronly{
 %O Figure~\ref{fig:gossipchain-main} illustrates the protocol main loop
 %O executed by each node.
-La Figure~\ref{fig:gossipchain-main} illustre la boucle principale du protocole exécutée par chaque nœud.
+La figure~\ref{fig:gossipchain-main} illustre la boucle principale du protocole exécutée par chaque nœud.
 %O In each iteration, the node attempts to select a transaction $T$ that has not
 %O yet been queried.  If no such
 %O transaction exists, the loop will stall until a new transaction is
@@ -284,7 +284,7 @@ S'il n'existe pas de telle transaction, la boucle se met en pause jusqu'à ce qu
 %O It then selects $k$ peers and queries those peers.
 Il sélectionne ensuite $k$ pairs et les interroge.
 %O If more than $\alpha$ of those peers return a positive response, the chit value is set to~1.
-Si plus que $\alpha$ de ces pairs reviennent à une réponse positive, la valeur de \emph{chit} est mise à~1.
+Si plus que $\alpha$ de ces pairs reviennent à une réponse positive, la valeur de chit est mise à~1.
 %O After that, it updates the preferred transaction of each conflict set
 %O of the transactions in its ancestry.
 Après cela, il met à jour la transaction qu'il préfère de chaque ensemble de conflits des transactions dans son ascendance.
@@ -297,7 +297,7 @@ Le code qui sélectionne des pairs supplémentaires sur certains des $k$ pairs n
 
 %O Figure~\ref{fig:gossipchain-onquery} shows what happens when a node
 %O receives a query for transaction $T$ from peer $j$.
-La Figure~\ref{fig:gossipchain-onquery} montre ce qui se produit quand un nœud reçoir une requête pour la transaction $T$ du pair $j$.
+La figure~\ref{fig:gossipchain-onquery} montre ce qui se produit quand un nœud reçoir une requête pour la transaction $T$ du pair $j$.
 %O First it adds $T$ to $\mathcal{T}$, unless it already has it.
 Il ajoute d'abord $T$ à $\mathcal{T}$, à moins qu'il ne l'ait déjà.
 %O Then it determines if $T$ is currently strongly preferred.
