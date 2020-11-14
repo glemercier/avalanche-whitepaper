@@ -1,17 +1,17 @@
 \label{section:background}
 \tronly{
 Bitcoin~\cite{nakamoto2008bitcoin} est une cryptomonnaie qui utilise une blockchain basée sur la preuve de travail
-(PoW pour "Proof Of Work") et qui tient un livre de comptes des "sorties de transaction non dépensées", ou UTXO
-("Unspent Transaction Output") en anglais. Bien que des techniques basées sur la preuve de
-travail~\cite{DworkN92, aspnes2005exposing}, et même d'autres cryptomonnaies dont la génération de pièces est basée
-sur la preuve de travail~\cite{vishnumurthy2003karma,rivest1997payword}, ont été explorées avant l'apparition de
+(PoW pour \emph{Proof Of Work}) et qui tient un livre de comptes des «\,sorties de transaction non dépensées\,», ou UTXO
+(\emph{Unspent Transaction Output}). Bien que des techniques basées sur la preuve de
+travail~\cite{DworkN92, aspnes2005exposing}, et même d'autres cryptomonnaies dont l'émission est basée
+sur la preuve de travail~\cite{vishnumurthy2003karma,rivest1997payword}, aient été explorées avant l'apparition de
 Bitcoin, ce dernier fut le premier à incorporer la preuve de travail dans son processus de consensus. Contrairement
 aux protocoles résistants aux fautes byzantines traditionnels, Bitcoin apporte une garantie de sûreté probabiliste et
-considère que la majorité de la puissance de calcul agit de manière honnête plutôt que de contrôler les membres du
+considère que la majorité de la puissance de calcul agit de manière honnête plutôt que de contrôler les participants au
 réseau, ce qui a permis de faire émerger un protocole sans permission à l'échelle d'internet. Bien qu'il soit sans
 permission et résilient face aux attaques, Bitcoin souffre d'un débit de transaction faible (\textasciitilde{}3 tps)
-et d'une latence élevée (\textasciitilde{}5.6 heures pour un réseau comportant 20\% de noeuds byzantins et une garantie
-de sûreté de $2^{-32}$). De plus la preuve de travail nécéssite une puissance de calcul considérable qui est consommée
+et d'une latence élevée (\textasciitilde{}5.6 heures pour un réseau comportant 20\% de nœuds byzantins et une garantie
+de sûreté de $2^{-32}$). De plus la preuve de travail nécessite une puissance de calcul considérable qui est consommée
 dans le seul et unique but de maintenir la sûreté de fonctionnement.
 
 %0 Bitcoin~\cite{nakamoto2008bitcoin} is a cryptocurrency that uses a blockchain based on
@@ -28,11 +28,11 @@ D'innombrables cryptomonnaies utilisent la preuve de travail~\cite{DworkN92, asp
 un livre de comptes distribué. Tout comme Bitcoin, elles souffrent des mêmes limitations lorsqu'il s'agit de monter en
 charge. Il existe plusieurs propositions de protocoles essayant de faire meilleur usage des progrès apportés par la
 preuve de travail. Bitcoin-NG~\cite{EyalGSR16} et la version sans permission de Thunderella~\cite{PassS18} utilise
-un consensus similaire à celui de Nakamoto pour élire un leader qui va dicter les écritures dans le journal répliqué
+un consensus similaire à celui de Nakamoto pour élire un dirigeant qui va dicter les écritures dans le journal répliqué
 pour un temps donné assez long dans le but de fournir un meilleur débit de transactions. En outre, Thunderella apporte
-une borne optimiste qui, en considérant 3/4 de puissance de calcul et un leader élu honnêtes, permet de confimer les
+une borne optimiste qui, en considérant 3/4 de puissance de calcul et un dirigeant élu honnête, permet de confirmer les
 transactions rapidement. ByzCoin~\cite{Kokoris-KogiasJ16} sélectionne un échantillon réduit de participants de manière
-périodique et exécute ensuite un protocole résistant aux fautes byzantines en pratique (PBFT) entre les noeuds
+périodique et exécute ensuite un protocole résistant aux fautes byzantines en pratique (PBFT) entre les nœuds
 sélectionnés.
 
 %O % PoW family
@@ -55,9 +55,9 @@ nécéssitent une connaissance précise des membres du réseau. PBFT~\cite{castr
 protocoles les plus connus, nécessite un nombre quadratique d'échanges de messages avant de parvenir à un accord.
 Le protocole Q/U~\cite{abd2005fault} et la réplication HQ~\cite{cowling2006hq} utilisent une approche basée sur un
 quorum afin d'optimiser le protocole pour obtenir des cas de fonctionnement sans contention et parvenir à un consensus
-en un seul tour de communication. Malgré tout, même si ces protocoles améliorent les performances, ils se dégradent
+en un seul tour de communications. Malgré tout, même si ces protocoles améliorent les performances, ils se dégradent
 fortement lorsqu'ils sont soumis à une forte contention. Zyzzyva~\cite{KotlaADCW09} ajoute au protocole BFT une
-exécution spéculative pour tendre vers un cas de fonctionnement sans erreurs. Les travaux passés portant sur les
+exécution spéculative pour tendre vers un cas de fonctionnement sans erreurs. Les travaux antérieurs portant sur les
 systèmes résistants aux fautes byzantines avec contrôle d'accès nécessitent typiquement au moins $f+1$ répliques.
 CheapBFT~\cite{kapitza2012cheapbft} tire profit de composants matériels certifiés pour construire un protocole
 nécessitant exactement $f+1$ répliques.
@@ -73,44 +73,44 @@ nécessitant exactement $f+1$ répliques.
 %O Past work in permissioned BFT systems typically requires at least $3f+1$ replicas. CheapBFT~\cite{kapitza2012cheapbft} leverages trusted hardware components to construct a protocol that uses $f+1$ replicas.
 
 D'autres travaux tentent d'introduire de nouveaux protocoles qui redéfinissent et relâchent les contraintes du modèle
-de résistance aux fautes byzantines. La résistance byzantine à grande échelle~\cite{rodrigues2007large} modifie la
-résistance byzantine pratique (PBFT) pour autoriser un nombre arbitraire de répliques et un seuil d'échec, en
-fournissant une garantie de vitalité probabilitse pour un taux d'échec donné tout en protégeant la sûreté de
+de résistance aux fautes byzantines. La résistance byzantine à grande échelle~\cite{rodrigues2007large} modifie
+PBFT pour autoriser un nombre quelconque de répliques et un seuil d'échec en
+fournissant une garantie de vi\-talité probabilitse pour un taux d'échec donné tout en protégeant la sûreté de
 fonctionnement avec une probabilité élevée. Dans une autre forme de relâchement des contraintes,
 Zeno~\cite{singh2009zeno} introduit un protocole de réplication de machine d'état résistante aux fautes byzantines qui
 échange la cohérence pour une meilleure disponibilité. Plus spécifiquement, Zeno garantit une cohérence assurée au final
 plutôt qu'une linéarisation de celle-ci, ce qui veut dire que les participants n'ont pas besoin d'être conhérents mais
-doivent se mettrent d'accord au final une fois le réseau stabilisé. En fournissant une garantie de cohérence encore
-plus faible, appelée "cohérence causale par embranchement-raccord", Depot~\cite{mahajan2011depot} définit un protocole
+doivent se mettrent finalement d'accord une fois le réseau stabilisé. En fournissant une garantie de cohérence encore
+plus faible, appelée «\,cohérence causale par \emph{fork-join}\,», Depot~\cite{mahajan2011depot} définit un protocole
 garantissant la sûreté de fonctionnement pour $2f+1$ répliques.
 
-NOW~\cite{guerraoui2013highly} uttilise des sous-quorums pour diriger des instances de consensus réduites.
-L'enseignement de ce papier est que de petits quorums de taille logarithmique peuvent être extraits à partir d'un
-échantillon potentiellement large de noeuds du réseau, ce qui permet à des instances de protocole de consensus plus
+NOW~\cite{guerraoui2013highly} uttilise des sous-quorums pour diriger des ins\-tances de consensus réduites.
+Cet article enseigne que de petits quorums de taille logarithmique peuvent être extraits à partir d'un
+échantillon potentiellement large de nœuds du réseau, ce qui permet à des instances de protocole de consensus plus
 petites de tourner en parallèle.
 
 Snow White~\cite{cryptoeprint:2016:919} et Ouroboros~\cite{KiayiasRDO17} font partie des premiers protocoles à la
-sûreté prouvée basés sur la preuve d'enjeu (PoS - ou "Proof Of Stake" en anglais). Ouroboros utilise un protocole de
-bascule de jeton multi-parties sécurisé dans le but d'incorporer un caractère aléatoire dans l'élection du leader.
+sûreté prouvée basés sur la preuve d'enjeu (PoS ou \emph{Proof of Stake}). Ouroboros utilise un protocole de
+bascule de jeton multi-parties sécurisé dans le but d'incorporer un caractère aléatoire dans l'élection du dirigeant.
 Son évolution Ouroboros Praos~\cite{DavidGKR18} apporte la sûreté en présence d'attaquants entièrement adaptatifs.
-HoneyBadger~\cite{MillerXCSS16} démontre une bonne vitalité dans un réseau comportant des latences hétérogènes.
+HoneyBadger~\cite{MillerXCSS16} fournit une bonne vitalité dans un réseau comportant des latences hétérogènes.
 
-Tendermint~\cite{buchman2016tendermint, 1807.04938} change de leader à chaque bloc et a démontré ses qualités dans une
-configuration à 64 noeuds. Ripple~\cite{schwartz2014ripple} a une faible latence grâce à l'utilisation de sous-réseaux
-certifiés collectivement au sein d'un réseau plus large. La société Ripple génère une liste de noeuds vérifiés par
+Tendermint~\cite{buchman2016tendermint, 1807.04938} change de dirigeant à chaque bloc et a démontré ses qualités dans une
+configuration à 64 nœuds. Ripple~\cite{schwartz2014ripple} a une faible latence grâce à l'utilisation de sous-réseaux
+certifiés collectivement au sein d'un réseau plus large. La société Ripple génère une liste de nœuds vérifiés par
 défaut renouvelée peu souvent, qui en fait un réseau essentiellement centralisé.
 
 HotStuff~\cite{hotstuff,hotstuffpodc} améliore les coûts de communication d'une distribution quadratique vers une
 distribution linéaire et simplifie drastiquement les caractéristiques du protocole, même si les limitations liées
-à l'élection d'un leader persistent. Facebook utilise Hotstuff comme le consensus principal de son projet Libra.
+à l'élection d'un dirigeant persistent. Facebook utilise Hotstuff comme le consensus principal de son projet Libra.
 
 Dans une configuration synchrone, inspirée par Hoststuff, Sync HotStuff~\cite{synchotstuff} atteint un consensus en
 un temps $2\Delta$ avec un coût quadratique et contrairement à d'autres protocoles synchrones à étapes vérouillées, il
 opère aussi rapidement que le réseau se propage. Stellar~\cite{mazieres2015stellar} se base sur un accord byzantin
-fédéré dans lequel des \emph{tranches de quorum} permettent une confiance hétérogène entre des noeuds différents. La
+fédéré dans lequel des \emph{tranches de quorum} permettent une confiance hétérogène entre des nœuds différents. La
 sûreté de fonctionnement est garantie lorsque les transactions peuvent être reliées entre elles de manière transitive
 par des tranches de quorum. Algorand~\cite{GiladHMVZ17} utilise une fonction aléatoire vérifiable pour sélectionner un
-comité de noeuds qui participent à un protocole de consensus byzantin innovant.
+comité de nœuds qui participent à un protocole de consensus byzantin innovant.
 
 %0 Other work attempts to introduce new protocols under redefinitions and relaxations of the BFT model.
 %0 Large-scale BFT~\cite{rodrigues2007large} modifies PBFT to allow for arbitrary choice of number of replicas and failure threshold, providing a probabilistic guarantee of liveness for some failure ratio but protecting safety with high probability.
@@ -152,14 +152,13 @@ voter de manière récursive via la preuve de travail pour atteindre un consensu
 SPECTRE~\cite{SompolinskyLZ16} qui obtient un ordre linéaire à partir de tous les blocs. Tout comme PHANTOM, Conflux
 obtient également un ordre linéaire entre les transactions via la preuve de travail utilisée sur une structure DAG,
 avec une meilleure résistance aux attaques à la vitalité~\cite{confluxLLXLC18}.
-
-Avalanche est différent dans son approche par laquelle le résultat du vote est un reçu instantané déterminé par une
-requête sans preuve de travail, tandis que les votes dans PHANTOM ou Conflux sont purement déterminés par la preuve de
-travail dans la structure de transactions. A la manière de Thunderella, Meshcash~\cite{BentovHMN17} combine un protocole
+Avalanche est différent en ce que le résultat du vote est un chit à usage unique déterminé par une
+requête sans preuve de travail, alors que les votes dans PHANTOM ou Conflux sont purement déterminés par le PoW
+dans la structure des transactions. A la manière de Thunderella, Meshcash~\cite{BentovHMN17} combine un protocole
 lent basé sur la preuve de travail et un protocole de consensus rapide qui apporte une fréquence de génération de blocs
 élevée quelque soit la latence du réseau, offrant un temps de confirmation rapide. Hashgraph~\cite{baird2016hashgraph}
-est un protocole sans leader qui construit un DAG sur la base d'un "bavardage rendu aléatoire". Il nécessite une
-connaissance complète des membres du réseau à tout moment, et comme Ben-Or~\cite{ben1983another}, il s'attend à un
+est un protocole sans dirigeant qui construit un DAG sur la base d'un \emph{gossip} aléatoire. Il nécessite une
+connaissance complète des membres du réseau à tout moment, et comme Ben-Or~\cite{ben1983another}, il demande un
 nombre de messages exponentiel~\cite{aspnes2003randomized,CachinV17} pour fonctionner.
 
 %O Some protocols use a Directed Acyclic Graph (DAG) structure instead of a linear chain to achieve

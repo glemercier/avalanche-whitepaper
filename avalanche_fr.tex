@@ -51,7 +51,7 @@ On note que l'ensemble de conflits d'une transaction vertueuse est toujours un s
 Avalanche instancie une instance de Snowball pour chaque ensemble de conflit.
 %O Whereas Snowball uses repeated queries and multiple counters to capture the amount of confidence built in conflicting transactions (colors),
 %O Avalanche takes advantage of the DAG structure and uses a transaction's progeny.
-Alors que Snowball utilise des requêtes répétées et plusieurs compteurs pour obtenir le degré de confiance associé aux transactions conflictuelles (couleurs),
+Alors que Snowball utilise des requêtes répétées et plusieurs compteurs pour refléter le degré de confiance associé aux transactions conflictuelles (couleurs),
 Avalanche profite de la structure du DAG et utilise la progéniture d'une transaction.
 %O Specifically, when a transaction $T$ is queried, all transactions reachable from $T$ by following the DAG edges are implicitly part of the query.
 En particulier, quand on interroge une transaction $T$, toutes les transactions accessible depuis $T$ en suivant les arêtes du DAG font implicitement partie de la requête.
@@ -187,7 +187,7 @@ On note que les chits sont découplés de la structure du DAG, rendant le protoc
 %O Each correct node $u$
 %O keeps track of all transactions it has learned about in set $\mathcal{T}_u$,
 %O partitioned into mutually exclusive conflict sets $\mathcal{P}_T$, $T \in \mathcal{T}_u$.
-Chaque nœud correct $u$ conserve la trace de toutes les transactions dont il a été informé dans l'ensemble $\mathcal{T}_u$, partitionné en ensembles de conflits mutuellement exclusifs $\mathcal{P}_T$, $T \in \mathcal{T}_u$.
+Chaque nœud correct $u$ conserve la trace de toutes les tran\-sactions dont il a été informé dans l'ensemble $\mathcal{T}_u$, partitionné en ensembles de conflits mutuellement exclusifs $\mathcal{P}_T$, $T \in \mathcal{T}_u$.
 % Transactions are determined to be conflicting based on a deterministic function known to every node.
 %O Since conflicts are transitive, if $T_i$ and $T_j$ are conflicting, then they belong to the same conflict set, i.e. $\mathcal{P}_{T_i} = \mathcal{P}_{T_j}$. This relation may sound counter-intuitive: conflicting transitions have the \emph{equivalence} relation, because they are equivocations spending the \emph{same} funds.
 Comme les conflits sont transitifs, si $T_i$ et $T_j$ sont en conflit, ils appartiennent au même ensemble de conflits, c'est-à-dire $\mathcal{P}_{T_i} = \mathcal{P}_{T_j}$. Cette relation peut sembler contre-intuitive\,: les transactions en conflit ont la même relation d'\emph{équivalence} car ce sont des équivoques dépensant les \emph{mêmes} fonds.
@@ -196,7 +196,7 @@ Comme les conflits sont transitifs, si $T_i$ et $T_j$ sont en conflit, ils appar
 %O We write $T' \gets T$ if $T$ has a parent edge to transaction $T'$,
 Nous écrivons $T' \gets T$ si $T$ a une arête commune avev la transaction $T'$.
 %O The ``$\stackrel{*}{\gets}$''-relation is its reflexive transitive closure, indicating a path from $T$ to $T'$.
-La relation ``$\stackrel{*}{\gets}$'' est sa fermeture réflexive transitive, indiquant un chemin de $T$ vers $T'$.
+La relation ``$\stackrel{*}{\gets}$'' est sa fermeture réfle\-xive transitive, indiquant un chemin de $T$ vers $T'$.
 %O DAGs built by different nodes are guaranteed to be compatible, though at any one time, the two nodes may not have a complete view of all vertices in the system.
 Les DAG construits par des nœuds différents offrent la garantie d'être compatibles, bien qu'à un moment donné les nœuds puissent ne pas avoir une vue complète de tous les sommets dans le système.
 %O Specifically, if $T' \gets T$, then every node in the system that has $T$ will also have $T'$ and the same relation $T' \gets T$; and conversely, if $T' \cancel{\gets} T$, then no nodes will end up with $T' \gets T$.

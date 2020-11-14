@@ -44,7 +44,7 @@ la fréquence à laquelle les transactions sont confirmées à l'état nominal. 
 d'abord {\sysname} sur 125 noeuds exécutant chacun 10 processus client qui génèrent un nombre de
 400 transactions sortantes à tout moment.
 
-Comme le montre le premier groupe de barres dans la Figure~\ref{fig:eval-thr}, le système atteint 6851
+Comme le montre le premier groupe de barres dans la figure~\ref{fig:eval-thr}, le système atteint 6851
 transactions par seconde (tps) pour une taille de batch de 20 et plus de 7002 tps pour une taille de
 batch de 40. Notre système sature plus vite avec des petites tailles de batch en comparaison avec d'autres
 blockchains dont les performances sont connues\,: Bitcoin regroupe des batchs de plusieurs milliers de
@@ -74,7 +74,7 @@ Afin d'observer la manière dont le système passe à l'échelle en terme de nom
 {\sysname}, nous effectuons des expériences en gardant des paramètres identiques tout en faisant varier le
 nombre de noeuds de 125 jusqu'à 2000.
 
-La Figure~\ref{fig:eval-thr} montre que le débit global se dégrade d'environ $1.34\%$ à 6909 tps lorsque le
+La figure~\ref{fig:eval-thr} montre que le débit global se dégrade d'environ $1.34\%$ à 6909 tps lorsque le
 réseau augmente d'un facteur 16 pour atteindre $n = 2000$. Cette dégradation est mineure si on la compare au
 taux d'augmentation du réseau. Notez que l'axe X est logarithmique.
 
@@ -87,7 +87,7 @@ décision est $O(k)$ et n'augmente pas au fur et à mesure que le réseau s'agra
 \subsection{Engorgement dû à la cryptographie}
 
 Nous examinons ensuite où se situent les goulets d'étranglement dans notre implémentation.
-La barre violette à la droite de chaque groupe dans la Figure~\ref{fig:eval-thr-raw} montre le débit
+La barre violette à la droite de chaque groupe dans la figure~\ref{fig:eval-thr-raw} montre le débit
 d'Avalanche lorsque la vérification des signatures est désactivée. Les débits s'améliorent d'environ 2.6x, par
 par rapport à la barre bleue sur la gauche.
 Cela révèle que le surplus de calcul dû à la vérification cryptographique est le principal goulet d'étranglement
@@ -108,7 +108,7 @@ de l'implémentation de notre système. On peut pallier ce problème en délégu
 La latence d'une transaction est le temps écoulé à partir du moment où elle est soumise au réseau jusqu'à ce qu'elle
 soit confirmée et donc acceptée par le réseau.
 
-La Figure~\ref{fig:eval-lat1} représente un histogramme montrant la distribution des latences en utilisant la
+La figure~\ref{fig:eval-lat1} représente un histogramme montrant la distribution des latences en utilisant la
 même configuration que pour les mesures de débits à partir de 2000 noeuds. L'axe X représente le temps en secondes
 tandis que l'axe Y est la portion des transactions qui sont finalisées dans la période de temps correspondante.
 Cette figure met également en avant la Fonction de Distribution Cumulée (CDF) en accumulant le nombre de
@@ -119,7 +119,7 @@ La majorité des latences se trouve aux alentours des 206 ms avec une variance r
 indique que les noeuds convergent sur la décision finale en tant que groupe environ au même moment. La deuxième
 ligne verticale montre la latence maximale observée, qui se situe aux alentours des 0.4 secondes.
 
-La Figure~\ref{fig:eval-lat2} montre la latence de transaction pour un nombre variable de noeuds. Les arêtes
+La figure~\ref{fig:eval-lat2} montre la latence de transaction pour un nombre variable de noeuds. Les arêtes
 horizontales des boîtes représentent respectivement du bas vers le haut le minimum, le premier quartile, la médiane,
 le troisième quartile, et le maximum de latence. En définitive, les données expérimentales montrent que la latence
 médiane est plus ou moins indépendante de la taille du réseau.
@@ -150,7 +150,7 @@ pour cela les mêmes paramètres avec $n = 1000$ comme dans les expériences pr�
 le débit et la latence des transactions confirmées.
 
 La latence d'{\sysname} est seulement légèrement influencée par les clients malveillants, comme le montre la
-Figure~\ref{fig:eval-lat3}. Étonnamment, la latence maximale baisse légèrement lorsque le pourcentage de transactions
+figure~\ref{fig:eval-lat3}. Étonnamment, la latence maximale baisse légèrement lorsque le pourcentage de transactions
 conflictuelles augmente. Ce comportement s'explique par le fait que lorsqu'on introduit de telles transactions, le débit
 \emph{effectif} est réduit et soulage donc la charge du système.
 
@@ -175,7 +175,7 @@ clients malveillants, ce qui démontre que les attaques potentielles ne bénéfi
 L'expérience suivante place le système dans l'émulation d'un scénario géo-répliqué, modélisé sur le même scénario
 détaillé dans un travail préliminaire~\cite{GiladHMVZ17}.
 Nous avons sélectionné 20 villes majeures qui semblent être localisées à proximité d'un nombre conséquent de noeuds
-Bitcoin joignables, d'après ~\cite{bitnodes2018}. Ces villes couvrent l'Amérique du Nord, l'Europe, l'Asie occidentale,
+Bitcoin joignables, d'après~\cite{bitnodes2018}. Ces villes couvrent l'Amérique du Nord, l'Europe, l'Asie occidentale,
 l'Asie orientale, l'Océanie, et incluent également les 10 villes où l'on trouve le plus grand nombre de noeuds
 joignables. Nous utilisons les données de latence obtenues depuis~\cite{wondernetworkping2018} et nous émulons
 la latence des paquets réseau dans le noyau Linux en utilisant les commandes \texttt{tc} et \texttt{netem}.
@@ -186,7 +186,7 @@ nombreux liens. Nous assignons ensuite un processus client à chaque ville, qui 
 par ville à tout moment.
 
 Dans ce scénario, Avalanche atteint un débit de transactions moyen de 3401 tps, avec un écart type de 39 tps. Comme
-le montre la Figure~\ref{fig:eval-lat4}, la latence de transaction médiane est de 1.35 secondes, avec une latence
+le montre la figure~\ref{fig:eval-lat4}, la latence de transaction médiane est de 1.35 secondes, avec une latence
 maximale de 4.25 secondes. Nous supportons également le code initial de Bitcoin pour les transactions, qui dans ce
 cas donne un débit de 3530 tps avec $\sigma = 92$ tps.
 
