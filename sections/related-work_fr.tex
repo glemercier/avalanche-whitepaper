@@ -32,7 +32,7 @@ un consensus similaire à celui de Nakamoto pour élire un dirigeant qui va dict
 pour un temps donné assez long dans le but de fournir un meilleur débit de transactions. En outre, Thunderella apporte
 une borne optimiste qui, en considérant 3/4 de puissance de calcul et un dirigeant élu honnête, permet de confirmer les
 transactions rapidement. ByzCoin~\cite{Kokoris-KogiasJ16} sélectionne un échantillon réduit de participants de manière
-périodique et exécute ensuite un protocole résistant aux fautes byzantines en pratique (PBFT) entre les nœuds
+périodique et exécute ensuite un protocole similaire à PBFT entre les nœuds
 sélectionnés.
 
 %O % PoW family
@@ -73,13 +73,13 @@ nécessitant exactement $f+1$ répliques.
 %O Past work in permissioned BFT systems typically requires at least $3f+1$ replicas. CheapBFT~\cite{kapitza2012cheapbft} leverages trusted hardware components to construct a protocol that uses $f+1$ replicas.
 
 D'autres travaux tentent d'introduire de nouveaux protocoles qui redéfinissent et relâchent les contraintes du modèle
-de résistance aux fautes byzantines. La résistance byzantine à grande échelle~\cite{rodrigues2007large} modifie
+de résistance aux fautes byzantines. Large-scale BFT~\cite{rodrigues2007large} modifie
 PBFT pour autoriser un nombre quelconque de répliques et un seuil d'échec en
 fournissant une garantie de vi\-talité probabilitse pour un taux d'échec donné tout en protégeant la sûreté de
 fonctionnement avec une probabilité élevée. Dans une autre forme de relâchement des contraintes,
-Zeno~\cite{singh2009zeno} introduit un protocole de réplication de machine d'état résistante aux fautes byzantines qui
+Zeno~\cite{singh2009zeno} introduit un protocole de réplication de machine à état résistante aux fautes byzantines qui
 échange la cohérence pour une meilleure disponibilité. Plus spécifiquement, Zeno garantit une cohérence assurée au final
-plutôt qu'une linéarisation de celle-ci, ce qui veut dire que les participants n'ont pas besoin d'être conhérents mais
+plutôt qu'une linéarisation de celle-ci, ce qui veut dire que les participants n'ont pas besoin d'être cohérents mais
 doivent se mettrent finalement d'accord une fois le réseau stabilisé. En fournissant une garantie de cohérence encore
 plus faible, appelée «\,cohérence causale par \emph{fork-join}\,», Depot~\cite{mahajan2011depot} définit un protocole
 garantissant la sûreté de fonctionnement pour $2f+1$ répliques.
@@ -105,7 +105,7 @@ distribution linéaire et simplifie drastiquement les caractéristiques du proto
 à l'élection d'un dirigeant persistent. Facebook utilise Hotstuff comme le consensus principal de son projet Libra.
 
 Dans une configuration synchrone, inspirée par Hoststuff, Sync HotStuff~\cite{synchotstuff} atteint un consensus en
-un temps $2\Delta$ avec un coût quadratique et contrairement à d'autres protocoles synchrones à étapes vérouillées, il
+un temps $2\Delta$ avec un coût quadratique et contrairement à d'autres protocoles synchrones à étapes verrouillées, il
 opère aussi rapidement que le réseau se propage. Stellar~\cite{mazieres2015stellar} se base sur un accord byzantin
 fédéré dans lequel des \emph{tranches de quorum} permettent une confiance hétérogène entre des nœuds différents. La
 sûreté de fonctionnement est garantie lorsque les transactions peuvent être reliées entre elles de manière transitive
@@ -156,7 +156,7 @@ Avalanche est différent en ce que le résultat du vote est un chit à usage uni
 requête sans preuve de travail, alors que les votes dans PHANTOM ou Conflux sont purement déterminés par le PoW
 dans la structure des transactions. A la manière de Thunderella, Meshcash~\cite{BentovHMN17} combine un protocole
 lent basé sur la preuve de travail et un protocole de consensus rapide qui apporte une fréquence de génération de blocs
-élevée quelque soit la latence du réseau, offrant un temps de confirmation rapide. Hashgraph~\cite{baird2016hashgraph}
+élevée quelle que soit la latence du réseau, offrant un temps de confirmation rapide. Hashgraph~\cite{baird2016hashgraph}
 est un protocole sans dirigeant qui construit un DAG sur la base d'un \emph{gossip} aléatoire. Il nécessite une
 connaissance complète des membres du réseau à tout moment, et comme Ben-Or~\cite{ben1983another}, il demande un
 nombre de messages exponentiel~\cite{aspnes2003randomized,CachinV17} pour fonctionner.

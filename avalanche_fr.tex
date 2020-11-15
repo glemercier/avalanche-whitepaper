@@ -239,14 +239,14 @@ Si chacun des ancêtres $T'$ répond à ce critère, la transaction est dite \em
 %O When $u$ accumulates $k$ responses, it checks whether there are $\alpha$ yes-votes for $T$, and if so grants the chit (chit value $c_T \assign 1$) for $T$.
 Quand $u$ accumule $k$ réponses, il vérifie s'il existe
 %O The above process will yield a labeling of the DAG with a chit value and associated confidence for each transaction~$T$.
-Le processus ci-dessus ramène un étiquetage du DAG avec une valeur de chit et une confiance associée pour chaque transaction~$T$.
+Le processus ci-dessus étiquette le DAG avec une valeur de chit et une confiance associée pour chaque transaction~$T$.
 
 \begin{figure}
 \begin{center}
     %\tronly{\input{figures/dag-cd}}{\input{figures/dag-cd-compact}}
     \input{figures/dag-cd-compact}
 %O     \captionof{figure}{Example of $\langle \textrm{chit}, \textrm{confidence}\rangle$ values.  Darker boxes indicate transactions with higher confidence values. At most one transaction in each shaded region will be accepted.}
-    \captionof{figure}{Exemple de valeurs pour $\langle \textrm{chit}, \textrm{confidence}\rangle$. Les boîtes sombres indiquent des transactions dont l'indice de confiance est supérieur. Au plus une transaction dans chaque région ombrée sera acceptée.}
+    \captionof{figure}{Exemple de valeurs pour $\langle \textrm{chit}, \textrm{confiance}\rangle$. Les boîtes sombres indiquent des transactions dont l'indice de confiance est supérieur. Au plus une transaction dans chaque région ombrée sera acceptée.}
     \label{fig:dag-cd}
 \end{center}
 \end{figure}

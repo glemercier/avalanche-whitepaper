@@ -149,13 +149,13 @@ Une version antérieure de cet article, publié le 16 mai 2018, IPFS, était int
 
 \begin{abstract}
 %O This paper introduces a family of leaderless Byzantine fault tolerance protocols, built around a metastable mechanism via network subsampling.
-Cet article présente une famille de protocoles à tolérance de faute byzantine sans dirigeant, bâtis autour d'un mécanisme métastable \emph{via} sous-échantillonnage réseau.
+Cet article présente une famille de protocoles à tolérance de faute byzantine sans dirigeant, bâtis autour d'un méca\-nisme métastable \emph{via} sous-échantillonnage réseau.
 %O These protocols provide a strong probabilistic safety guarantee in the presence of Byzantine adversaries while their concurrent and leaderless nature enables them to achieve high throughput and scalability.
 Ces protocoles fournissent une forte garantie de sûreté probabiliste en présence d'adversaires byzantins, tandis que leur nature simultanée et sans dirigeant leur permet d'être performants et extensibles.
 %O Unlike blockchains that rely on proof-of-work, they are quiescent and green.
 Contrairement aux blockchains fondées sur la preuve de travail (\emph{proof-of-work}), ils sont économes et écologiques.
 %O Unlike traditional consensus protocols where one or more nodes typically process linear bits in the number of total nodes per decision, no node processes more than logarithmic bits. It does not require accurate knowledge of all participants and exposes new possible tradeoffs and improvements in safety and liveness for building consensus protocols.
-Contrairement aux protocoles de consensus traditionnels où, typiquement, un ou plusieurs nœuds traitent linéairement l'information pour chaque décision, aucun nœud ne traite l'information d'une manière plus complexe que logarithmique. Il ne requiert pas de connaissance précise de tous les participants et propose de nouveaux compromis et améliorations en termes de sûreté de fonctionnement et de vitalité pour la construction de nouveaux protocoles de consensus.
+Contrairement aux protocoles de consensus traditionnels où, typiquement, un ou plusieurs nœuds traitent linéairement l'information pour chaque décision, aucun nœud ne traite l'information d'une manière plus complexe que loga\-rithmiquement. Il ne requiert pas de connaissance précise de tous les participants et propose de nouveaux compromis et améliorations en termes de sûreté de fonctionnement et de vitalité pour la construction de nouveaux protocoles de consensus.
 %Finally, unlike traditional consensus protocols and similar to longest-chain protocols, our protocols provide increase in both liveness and safety guarantees when the observed adversarial presence decreases below the maximal expected bound. 
 
 %where $k$ is dependent on the security requirements of the system.
@@ -205,7 +205,7 @@ De plus, ces protocoles souffrent d'un goulet d'étranglement intrinsèque pour 
 %O This paper introduces a new family of consensus protocols called Snow.
 Cet article présente une nouvelle famille de protocoles de consensus appelés Snow.
 %O Inspired by gossip algorithms, this family gains its properties through a deliberately metastable mechanism.
-Inspirée par les algorithmes de \emph{gossip} ou bavardage, cette famille possède des propriétés grâce à un mécanisme délibérément métastable.
+Ins\-pirée par les algorithmes de \emph{gossip} ou bavardage, cette famille possède des propriétés grâce à un mécanisme délibérément métastable.
 %O Specifically, the system operates by repeatedly sampling the network at random, and steering correct nodes towards a common outcome.
 En particulier, le système opère en échantillonnant répétitivement le réseau au hasard, et en dirigeant les nœuds corrects vers un résultat commun.
 %O Analysis shows that this metastable mechanism is powerful: it can move a large network to an irreversible state quickly, where the irreversibility implies that a sufficiently large portion of the network has accepted a proposal and a conflicting proposal will not be accepted with any higher than negligible ($\varepsilon$) probability. 
@@ -215,7 +215,7 @@ L'analyse montre que ce mécanisme métastable est puissant\,: il peut rapidemen
 % \Jon{Not universal in that some applications require a hard guarantee?}
 
 %O Similar to Nakamoto consensus, the Snow protocol family provides a probabilistic safety guarantee, using a tunable security parameter that can render the possibility of a consensus failure arbitrarily small.
-De même que le consensus Nakamoto, la famille des protocoles Snow fournissent une garantie de sûreté probabiliste, grâce à un paramètre de sécurité configurable qui peut amenuiser à volonté la possibilité d'un échec du consensus.
+De même que le consensus Nakamoto, la famille des protocoles Snow fournit une garantie de sûreté probabiliste, grâce à un paramètre de sécurité configurable qui peut amenuiser à volonté la possibilité d'un échec du consensus.
 %O Unlike Nakamoto consensus, the protocols are green, quiescent and efficient; they do not rely on proof-of-work~\cite{DworkN92} and do not consume energy when there are no decisions to be made.
 Contrairement au consensus Nakamoto, ces protocoles sont écologiques, économes et efficients\,; ils ne dépendent pas d'une preuve de travail\cite{DworkN92} et ne consomment pas d'énergie quand il n'y a pas de décision à prendre.
 %0 The efficiency of the protocols stems partly from removing the leader bottleneck: each node requires $\Oh{1}$ communication overhead per round and $\Oh{\log{n}}$ rounds in expectation, whereas classical consensus protocols have one or more nodes that require $\Oh{n}$ communication per round (phase).
@@ -224,7 +224,7 @@ L'efficacité des protocoles provient en partie de l'élimination du goulet d'é
 De plus, la famille Snow tolère des incohérences dans la connaissance des participants, comme nous le verrons plus loin. Par contraste, les protocoles de consensus classiques exigent une connaisssance complète et exacte de $n$ comme fondation de la sûreté de fonctionnement.
 
 %O Snow's subsampled voting mechanism has two additional properties that improve on previous approaches for consensus. 
-Le mécanisme de vote sous-échantillonné possède deux propriété supplémentaires supérieures par rapport aux approches antérieures du consensus.
+Le mécanisme de vote sous-échantillonné possède deux propriétés additionnelles supérieures par rapport aux approches antérieures du consensus.
 %O Whereas the safety of quorum-based approaches breaks down immediately when the predetermined threshold $f$ is exceeded,
 %O Snow's probabilistic safety guarantee degrades smoothly when Byzantine participants exceed $f$.
 Alors que la sûreté de fonctionnement dans les approches basées sur un quorum s'effondre immédiatement quand le seuil prédéterminé $f$ est dépassé,
@@ -259,7 +259,7 @@ La section~\ref{sec:implementation} décrit Avalanche, un système de paiement s
 %O Section~\ref{sec:evaluation} evaluates Avalanche,
 La section~\ref{sec:evaluation} évalue Avalanche,
 %O Section~\ref{sec:related-work} presents related work, and finally, Section~\ref{sec:conclusions} summarizes our contributions.
-La section~\ref{sec:related-work} présente les travaux en rapport, et, finalement, la section~\ref{sec:conclusions} résume nos contributions.
+La section~\ref{sec:related-work} présente les travaux existants en rapport avec cette étude et, finalement, la section~\ref{sec:conclusions} résume nos contributions.
 
 %O \section{Model and Goals}
 \section{Modèle et buts}
@@ -298,7 +298,7 @@ La section~\ref{sec:related-work} présente les travaux en rapport, et, finaleme
 %O In practice, this probabilistic guarantee is as strong as traditional safety guarantees, since appropriately small choices of $\varepsilon$ can render consensus failure negligible, lower than the probability of hardware failure due to random events.
 En pratique, cette garantie probabiliste est aussi forte que les garanties de sûreté traditionnelles puisque le choix d'un petit $\varepsilon$ peut rendre la défaillance du consensus négligeable, inférieure à la probabilité d'une panne matérielle due à des événements imprévisibles.
 %OFigure~\ref{fig:fandepsilon} shows how the portion ($f/n$) of misbehaving participants (or computation power) affects the probability of system safety failure (decision of two conflicting proposals), given a choice of finality.
-La figure~\ref{fig:fandepsilon} montre comment la portion ($f/n$) de participants (ou de puissance informatique) problématique affecte la probabilité d'une défaillance de la sûreté du système (décision de deux propositions incompatibles), étant donné un choix de finalités.
+La figure~\ref{fig:fandepsilon} montre comment la portion ($f/n$) de participants (ou de puissance informatique) problématique affecte la probabilité d'une défaillance de la sûreté du système (décision concernant deux propositions incompatibles), étant donné un choix de finalités.
 % The maximum tolerated Byzantine presence $f$, is dependent on the choice of $\varepsilon$. Similar to Nakamoto consensus, given an observed Byzantine presence $f'$, where $f' \leq f$, the safety failure probability of our protocols maintains the property that $\varepsilon' \leq \varepsilon$. On the other hand, for classical consensus protocols, the failure probability is simply zero for all $f' \leq f$, and almost sure (i.e. one) for $f' > f$.
 
 \begin{figure}[h]
@@ -805,7 +805,7 @@ quadratique dans l'exposant inverse). De plus, cette même observation est valab
 $k$ constant.
 
 Les conclusions de ce théorème démontrent une propriété clef du système: une fois que le réseau perd sa bivalence
-(ex: $\delta > 0$), il tend à se renverser et à converger rapidement vers la couleur majoritaire, et il devient alors
+(par exem\-ple\,: $\delta > 0$), il tend à se renverser et à converger rapidement vers la couleur majoritaire, et il devient alors
 suffisamment improbable qu'il rebascule vers la couleur minoritaire. C'est cette propriété fondamentale que nous
 exploitons dans nos protocoles, et c'est ce qui les rend sûrs malgré le fait que l'échantillonnage se fait sur une petite
 partie du réseau de taille fixe. Le résultat principal qui s'ensuit pour les garanties de sûreté de fonctionnement de Snowflake consiste
@@ -821,8 +821,8 @@ d'une probabilité maximale $\varepsilon$ même en conditions d'adversité.
 \paragraph{Snowflake}
 
 Dans le cas de Snowflake, nous prenons comme hypothèse qu'une partie des nœuds est antagoniste. Avec Slush, une
-fois que le réseau obtient une majorité significative pour l'une des propositions (ex: la couleur bleue), il devient
-improbable qu'une proposition minoritaire (ex: la couleur rouge) puisse être adoptée dans le futur (irréversibilité).
+fois que le réseau obtient une majorité significative pour l'une des propositions (par exemple\,: la couleur bleue), il devient
+improbable qu'une proposition minoritaire (par exemple\,: la couleur rouge) puisse être adoptée dans le futur (irréversibilité).
 De plus, les nœuds Slush ont simplement besoin d'exécuter le protocole pour un nombre déterministe $m$ de tours qui
 est connu en amont de l'exécution du protocole. Lorsqu'on introduit des nœuds antagonistes qui suivent des stratégies
 arbitraires, les nœuds ne peuvent tout simplement plus exécuter le protocole pour un nombre déterministe de tours puisque
@@ -834,7 +834,7 @@ l'instant $t$ pour bleu. Ce mécanisme de décision est probabiliste, ce qui veu
 conçu pour que la probabilité de cet échec soit négligeable. Nous pouvons maintenant ébaucher la preuve de Snowflake.
 
 \noindent \emph{Ébauche de preuve}. Nous définissons la stratégie d'échec comme étant l'événement lors duquel deux
-nœuds légitimes $u$ et $v$ décident entre le bleu et le rouge, ex: $\mathcal{D}(u, \mathcal{S}_t, bleu) \rightarrow 1$
+nœuds légitimes $u$ et $v$ décident entre le bleu et le rouge, par exemple\,: $\mathcal{D}(u, \mathcal{S}_t, bleu) \rightarrow 1$
 et $\mathcal{D}(v, \mathcal{S}_{t'}, rouge) \rightarrow 1$, pour deux instants $t$ et $t'$. Nous modélisons une fois de
 plus le système comme un processus à temps aléatoire. L'espace des états est défini de la même manière que pour Slush.
 Néanmoins, nous observons des subtilités critiques. Tout d'abord, même si tous les nœuds légitimes acceptent une
@@ -845,7 +845,7 @@ hypothèse qu'un nœud $u$ décide d'abord d'adopter la couleur bleue. Ensuite, 
 décision de $u$, nous calculons la probabilité qu'un autre nœud $v$ adopte le rouge, qui est fonction à la fois de la
 probabilité que le réseau bascule vers l'état minoritaire bleu et que $v$ bascule vers cet état.
 Nous démontrons qu'en choisissant correctement $k$, $\alpha$, et $\beta$, nous pouvons construire des instances
-extrêmement sécurisées de Snowflake (ex: échec de sécurité avec une probabilité de $\leq \varepsilon$) quand le réseau
+extrêmement sécurisées de Snowflake (par exemple\,: échec de sécurité avec une probabilité de $\leq \varepsilon$) quand le réseau
 atteint un biais de $\delta$, comme le montre la figure~\ref{fig:states_feasible_solutions}. Un exemple concret est
 présenté en figure~\ref{fig:fandepsilon}.
 
@@ -953,7 +953,7 @@ Pour ce qui est de la vitalité, nous ébauchons en annexe~\ref{sec:sync-heurist
 dirigean, qui nécessite $\Oh{\log{n}}$ tours attendus dans l'hypothèse que le réseau est synchronisé. Bien que
 la conception de ce mécanisme soit intéressante, il est à noter qu'un tel mécanisme n'est pas nécessaire pour un système
 de paiement décentralisé, comme nous le démontrons en section~\ref{sec:implementation}.
-Finalement, nous développons le roulement, dans le sens de renouvellement des nouds, et les divergences de vues en annexe~\ref{sec:full-analysis-churn}.
+Finalement, nous développons le roulement, dans le sens de renouvellement des nœuds, et les divergences de vues en annexe~\ref{sec:full-analysis-churn}.
 
 %0 \paragraph{Multi-Value Consensus}
 %0 Our binary consensus protocol could support multi-value consensus by running logarithmic binary instances, one for each bit of the proposed value. However, such theoretical reduction might not be efficient in practice. Instead, we could directly incorporate multi-values as multi-colors in the protocol, where safety analysis could still be generalized.
@@ -1098,7 +1098,7 @@ En addition à la structure de DAG dans Avalanche, un graphe de \emph{unspent tr
 %}
 %{
 %O We inherit the transaction and address mechanisms from Bitcoin. At their simplest, transactions consist of multiple inputs and outputs, with corresponding redeem scripts.
-Nous héritons les mécanismes de transaction et d'adresse de Bitcoin. En simplifiant à l'extrême, les transactions consistent en multiples entrées et sorties, avec les scripts d'échange correspondants.
+Nous héritons des mécanismes de transaction et d'adresse de Bitcoin. En simplifiant à l'extrême, les transactions consistent en multiples entrées et sorties, avec les scripts d'échange correspondants.
 %O Addresses are identified by the hash of their public keys, and signatures are generated by corresponding private keys.
 Les adresses sont identifiées par l'empreinte de leurs clefs publiques et les signatures sont générées par les clefs privées.
 %0 The full scripting language is used to ensure that a redeem script is authenticated to spend a UTXO\@.
@@ -1570,7 +1570,7 @@ Enfin, nous introduisons une fonction appelée $\mathcal{A}(\mathcal{S}_t)$, la 
 %O In order for our prior framework to apply to Snowflake, we must deal with a key subtlety. 
 Afin d'appliquer notre framework antérieur à Snowflake, nous devons porter notre attention sur une subtilité essentielle.
 %O Unlike in Slush, where it is clear that once the network has reached one of the converging states and therefore may not revert back, this no longer applies to Snowflake, since any adversary $f \geq \alpha$ has strictly positive probability of reverting the system, albeit this probability may be infinitesimally small. 
-Contrairement à Slush, où il est clair qu'une fois que le réseau a atteint l'un des états convergents et ne reviendra donc pas en arrière, cela ne s'applique pas à Snowflake, puisque tout adversaire $f \geq \alpha$ a une probabilité strictement positive d'inverser la tendance du système, fût-elle infinitésimale.
+Contrairement à Slush, où il est clair qu'une fois que le réseau a atteint l'un des états convergents, il ne reviendra pas en arrière, cela ne s'applique pas à Snowflake, puisque tout adversaire $f \geq \alpha$ a une probabilité strictement positive d'inverser la tendance du système, fût-elle infinitésimale.
 %O The CTMC is flexible enough to deal with a system where there is only one absorbing state, but the long-term behavior of the system is no longer meaningful since, after an infinite amount of time, the system is guaranteed to revert, violating safety. 
 Le processus de Markov à temps continu est assez souple pour s'accommoder d'un système où il n'existe qu'un seul état absorbant, mais le comportement du système sur le long terme n'est plus significatif puisque, après un laps de temps infini, le système doit s'inverser, violant ainsi la sécurité de fonctionnement.
 %O We could trivially bound the amount of time, and show safety using this bounded time assumption by simply characterizing the distribution of $e^{tQ}$, where $Q$ is the generator. 
