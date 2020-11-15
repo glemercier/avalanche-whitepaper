@@ -181,7 +181,7 @@ L'obtention d'un accord au sein d'un ensemble d'hôtes distribués se retrouve a
 %O Traditional consensus protocols %, exemplified by PBFT~\cite{castro1999practical},
 %O rely on all-to-all communication to ensure that all correct nodes reach the same decisions with absolute certainty.
 Les protocoles de consensus traditionnels
-sont fondés sur une communication entre chaque pair pour s'assurer que tous les nœuds correct arrivent aux mêmes décisions avec une certitude absolue.
+sont fondés sur une communication entre chaque pair pour s'assurer que tous les nœuds corrects arrivent aux mêmes décisions avec une certitude absolue.
 %Because they usually require quadratic communication overhead and accurate knowledge of membership, they have been difficult to scale
 %O to large numbers of participants.
 Comme ils impliquent en général un nombre de communications croissant de façon quadratique et une connaissance exacte des membres du réseau, il s'est avéré difficile de l'étendre
@@ -477,9 +477,10 @@ suivre. Dans un souci de simplicité de présentation, nous décrirons le foncti
 %O Finally, the node decides the color it ended up with at time $m$.
 
 Avec Slush, un nœud démarre dans un état de couleur neutre. Après réception d'une transaction envoyée par un client,
-un nœud de couleur neutre adopte la couleur définie dans la transaction et initie une requête. Pour lancer une
-requête, le nœud choisit un échantillon réduit et de taille constante ($k$) de nœuds appartenant au réseau suivant
-une distribution uniformément aléatoire puis initie sa propre requête, tandis qu'un nœud déja coloré répond
+un nœud de couleur neutre adopte la couleur définie dans la transaction et initie une requête. 
+Pour lancer une requête, le nœud choisit un échantillon réduit et de taille constante ($k$) de nœuds appartenant au réseau selon une distribution uniformément aléatoire, puis lance un message de requête.
+À réception d'une requête, un nœud non coloré adopte la couleur de la requête, répond avec cette couleur et initie sa propre requête,
+tandis qu'un nœud déja coloré répond
 simplement avec sa couleur actuelle. Une fois que le nœud qui fait la requête récupère $k$ réponses, il vérifie si
 une proportion $\ge\alpha$ de l'échantillon retourne la même couleur, $\alpha > \floor{k/2}$ étant un paramètre
 du protocole. Si le seuil $\alpha$ est dépassé et que la couleur dominante revenant de l'échantillon sollicité est
@@ -1296,7 +1297,7 @@ Il reste beaucoup à faire dans ce domaine de recherche. \tronly{
 %O One such improvement could be the introduction of an adversarial network scheduler.
 Une amélioration possible consisterait à introduire un coordinateur d'attaques sur le réseau.
 %O Another}{One} improvement would be to characterize the system's guarantees under an adversary whose powers are realistically limited, whereupon performance would improve even further. \tronly{Finally, more}{More} sophisticated initialization mechanisms would bear fruitful in improving liveness of multi-value consensus.
-Une autre}{Une} serait de caractériser les garanties du système face à un adversaire dont les pouvoirs seraient limités de manière réaliste, à la suite de quoi les performances se verraient encode améliorées. \tronly{D'autres}{Plus} mécanismes d'initialisation sophistiqués seraient souhaitables pour améliorer la vitalité d'un consensus multi-valeurs. 
+Une autre}{Une} serait de caractériser les garanties du système face à un adversaire dont les pouvoirs seraient limités de manière réaliste, à la suite de quoi les performances se verraient encore améliorées. \tronly{D'autres}{Plus} mécanismes d'initialisation sophistiqués seraient souhaitables pour améliorer la vitalité d'un consensus multi-valeurs. 
 %O Overall, we hope that the protocols and analysis techniques presented here add to the arsenal of the distributed system developers and provide a foundation for new lightweight and scalable mechanisms.
 En résumé, nous espérons que les protocoles et les techniques d'analyse présentés ici renforceront l'arsenal des développeurs de systèmes distribués et permettront de bâtir de nouveaux mécanismes légers et évolutifs.
 
@@ -1563,7 +1564,10 @@ En partant d'un quelconque état non-absorbant et transitoire, il y a une probab
 %O In Snowflake, the sampled set of nodes includes Byzantine nodes.
 Dans Snowflake, l'ensemble des nœuds échantillonnés comprend des nœuds byzantins.
 %O We introduce the decision function $\mathcal{D}(*)$, which is constructed by having each node also keep track of the total number of consecutive times it has sampled a majority of the same color ($\beta$). 
-Nous introduisons finalement une fonction appelée $\mathcal{A}(\mathcal{S}_t)$ qui est construite en faisant conserver à chaque nœud la trace du nombre total de fois consécutives qu'il a échantillonné une majorité de la couleur d'échantillon ($\beta$).
+Nous introduisons finalement la fonction 
+de décision $\mathcal{D}(*)$,
+%appelée $\mathcal{A}(\mathcal{S}_t)$ qui est 
+construite en faisant conserver à chaque nœud la trace du nombre total de fois consécutives qu'il a échantillonné une majorité de la couleur d'échantillon ($\beta$).
 %O Finally, we introduce a function called $\mathcal{A}(\mathcal{S}_t)$, the adversarial strategy, that takes as parameters the entire configuration of the network at time $t$, as well as the next set of nodes chosen by the scheduler to execute, and as a side-effect, modifies the set of nodes $\mathcal{B}$ to some arbitrary configuration of colors.
 Enfin, nous introduisons une fonction appelée $\mathcal{A}(\mathcal{S}_t)$, la stratégie contradictoire, qui prend comme paramètres toute la configuration du réseau à l'instant $t$, ainsi que l'ensemble suivant de nœuds choisi par l'ordonnanceur pour exécution, avec pour effet secondaire la modification de l'ensemble de nœuds $\mathcal{B}$ vers une configuration arbitraire de couleurs.
 
